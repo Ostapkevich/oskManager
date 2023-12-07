@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Icategorycastomer, Iorder, IProperties } from './iNewOrderInterfase';
-import { OrderService } from '../../order.service';
+import { OrderService } from './order.service';
 
 
 @Component({

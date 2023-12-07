@@ -8,7 +8,7 @@ interface Iunits {
     idauthor?: string;
     weight:number;
     nameUser:string;
-    newOrEdit?:boolean;//true - новая, false-редактирование
+    newOrEdit?:boolean;
     ind?:number;
 }
 interface IOrder {

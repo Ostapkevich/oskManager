@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NewOrderComponent } from './components/new-order/new-order.component';
 import { NewOrderRoutingModule }from './new-order-routing.module';
 import { EditUnitsComponent } from './components/edit-units/edit-units.component';
-import { OrderService } from './order.service';
+import { OrderService } from './components/new-order/order.service';
 import { EditUnitsService } from './components/edit-units/edit-units.service';
 
 

@@ -1,0 +1,159 @@
+<div class="w-2/3 mx-auto  ">
+    <div class="flex flex-row gap-5">
+        <input placeholder="Заказ+Enter" type="text" id="idinpOrder" #templateOrder autocomplete="off"
+            (keydown)="inpOrderEnter($event, templateOrder.value)"
+            class="w-20 block px-1  py-2 border  sm:text-xs  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        <div class="flex gap-2 items-end">
+            <p class="text-xl text-white">Заказ:</p>
+            <p class="text-xl  text-white"> {{order?.order_machine}}</p>
+            <p class="ml-5 text-lg  text-white"> {{order?.customer}} </p>
+
+        </div>
+    </div>
+    <div class="flex flex-row justify-between  mt-4">
+        <div class="flex gap-12 items-end">
+            <div class="flex gap-2 ">
+                <button type="button"
+                    class=" p-1  text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
+                    <svg class="w-3 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 10 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 13V1m0 0L1 5m4-4 4 4" />
+                    </svg>
+                </button>
+                <button type="button"
+                    class=" p-1 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
+                    <svg class="w-3 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 10 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M5 1v12m0 0 4-4m-4 4L1 9" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="flex gap-6 items-end ">
+                <p class="text-base  text-white">{{order?.number_machine}} </p>
+                <p class="text-xl  text-white">{{order?.name_machine}}</p>
+            </div>
+
+
+        </div>
+
+        <div class="flex gap-4">
+            <button type="button" (click)="addUnit()"
+                class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить
+                узел</button>
+
+            <button type="button"
+                class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-red-600 hover:bg-red-700 focus:ring-blue-800">Удалить
+                узел</button>
+        </div>
+    </div>
+    <div class="mt-2 max-h-181 relative overflow-x-auto shadow-md ">
+        <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-400 py-2">
+            <div class="basis-0.5/12  ">
+                <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 16 12">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5.917 5.724 10.5 15 1.5" />
+                </svg>
+            </div>
+            <p class="basis-0.5/12  text-center">Номер</p>
+            <p class="basis-2/12  ml-0.5 ">Чертеж</p>
+            <p class="basis-5/12  ml-0.5 ">Название</p>
+            <p class="basis-1/12  text-center">Масса, кг</p>
+            <p class="basis-1/12  text-center">Статус</p>
+            <p class="basis-1/12  text-center">Автор</p>
+            <p class="basis-0.5/12  text-center"></p>
+            <p class="basis-0.5/12  text-center"></p>
+        </div>
+       <!--  Таблица -->
+        <table id="tblUnits" class="w-full  text-sm text-left rtl:text-right  text-gray-400">
+            <tbody id="tbodyUnits">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let unit of units">
+                    <ng-template [ngTemplateOutlet]="loadTemplate(unit)" [ngTemplateOutletContext]="{ $implicit: unit}">
+                    </ng-template>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button type="button" (click)="saveUnits()"
+        class="mt-4 float-right px-3 py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
+</div>
+
+<ng-template #readOnlyTemplate let-unit>
+    <td class="py-1 w-0.5/12">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox" (change)="boxChange($event)"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class=" py-1 w-0.5/12 text-center ">
+        {{unit.unit}}
+    </td>
+    <td class=" py-1 w-2/12">
+        {{unit.number_unit}}
+    </td>
+    <td class=" py-1 w-5/12">
+        {{unit.name_unit}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.weight}}
+    </td>
+    <td class=" py-1 w-1/12  ">
+        <div *ngIf="unit.status_unit==1" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Не в работе
+        </div>
+        <div *ngIf="unit.status_unit==2" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 me-2"></div> В работе
+        </div>
+        <div *ngIf="unit.status_unit==3" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>Готов
+        </div>
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.nameUser}}
+    </td>
+    <td class=" py-1 w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Войти</button>
+    </td>
+    <td class=" py-1 w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" (click)="editeRow($event)">Изм.</button>
+    </td>
+</ng-template>
+
+<ng-template #editTemplate let-unit>
+    <td class="py-1 w-0.5/12">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox" (change)="boxChange($event)"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class="  w-0.5/12 text-center ">
+        <input class="w-full text-center text-black  bg-gray-50 hover:bg-gray-200"  type="text" autocomplete="off" [(ngModel)]="unit.unit" />
+    </td>
+    <td class="  w-2/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" [(ngModel)]="unit.number_unit" />
+    </td>
+    <td class="  w-5/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" [(ngModel)]="unit.name_unit" />
+    </td>
+    <td class="  w-1/12 text-center">
+        <input class="w-full text-center text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" [(ngModel)]="unit.weight" />
+    </td>
+    <td class="  w-1/12  ">
+        <div class="flex items-center ">
+            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Не в работе
+        </div>
+    </td>
+    <td class="  w-1/12 text-center">
+
+    </td>
+    <td class="  w-0.5/12 ">
+        
+    </td>
+    <td class="  w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline" (click)="escape($event)">Отмена</button>
+    </td>
+
+</ng-template>

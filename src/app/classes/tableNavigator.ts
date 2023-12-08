@@ -16,6 +16,67 @@ export class TableNavigator {
 
     }
 
+    public findRowButton(target: HTMLButtonElement): number {
+       const rowsCollection = this.table.rows;
+        let i = 0
+        for (i = 0; i < rowsCollection.length; i++) {
+            if (rowsCollection[i].cells[8].firstChild == target) {
+                break;
+            }
+        }
+        return i;
+    }
+
+
+    public boxChange(event: any) {
+        const rowsCollection = this.table.rows;
+        const j = rowsCollection.length;
+        for (let i = 0; i < j; i++) {
+            if ((rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked && rowsCollection[i].cells[0].firstChild!.firstChild !== event.target) {
+                (rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked = false;
+            }
+        }
+    }
+
+    public findCheckedRowNumber(): number | null {
+        const rowsCollection = this.table.rows;
+        if (rowsCollection) {
+            for (let i = 0; i < rowsCollection.length; i++) {
+                if ((rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked) {
+                    return i;
+                }
+            }
+        }
+        return null;
+    }
+
+    public moveCheckbox(isMoveUp: boolean) {
+        const collection: any = this.table.rows;
+        let j: number;
+        if (collection) {
+            j = collection.length;
+        } else {
+            return;
+        }
+        let currentIndex = -1;
+        for (let i = 0; i < j; i++) {
+            if (collection[i].cells[0].firstChild.firstChild.checked) {
+                currentIndex = i;
+                break;
+            }
+        }
+        if (currentIndex !== -1) {
+
+            if (isMoveUp && currentIndex > 0) {
+                collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
+                collection[currentIndex - 1].cells[0].firstChild.firstChild.checked = true;
+            } else if (!isMoveUp && currentIndex < j - 1) {
+                collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
+                collection[currentIndex + 1].cells[0].firstChild.firstChild.checked = true;
+            }
+        }
+    }
+
     private highlightCurrent(): void {
         let rows: any;
         rows = this.table.rows;
@@ -49,14 +110,14 @@ export class TableNavigator {
                 for (let i = 0; i < rows.length; i++) {
                     rows[i].classList.remove('highlightedRow');
                     for (let j = 0; j < rows[i].cells.length; j++) {
-                       if (element === rows[i].cells[j]) {
+                        if (element === rows[i].cells[j]) {
                             rows[i].classList.add('highlightedRow');
                             element.classList.add('highlightedCell');
                             this.currentCell.row = i;
                             this.currentCell.column = j;
                         } else {
                             rows[i].cells[j].classList.remove('highlightedCell');
-                           
+
                         }
                     }
                 }

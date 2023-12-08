@@ -75,50 +75,23 @@ export class EditUnitsComponent implements OnInit {
   }
 
 
-  findCheckedRowNumber(): number | null {
-    const tUnits: any = document.getElementById('tblUnits');
-    const rowsCollection = tUnits.rows;
-    if (rowsCollection) {
-      for (let i = 0; i < rowsCollection.length; i++) {
-        if ((rowsCollection[i].cells[0].firstChild.firstChild as HTMLInputElement).checked) {
-          return i;
-        }
-      }
-    }
-    return null;
-  }
-
-  findRowButton(target: HTMLButtonElement): number {
-    const tUnits: any = document.getElementById('tblUnits');
-    const rowsCollection = tUnits.rows;
-    let i = 0
-    for (i = 0; i < rowsCollection.length; i++) {
-      if (rowsCollection[i].cells[8].firstChild == target) {
-        break;
-      }
-    }
-    return i;
-  }
-
   escape(event: Event) {
-    const index = this.findRowButton(event.target as HTMLButtonElement);
+    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
     this.units.splice(index, 1);
   }
 
   editeRow(event: Event) {
-    const index = this.findRowButton(event.target as HTMLButtonElement);
+    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
     this.units[index].newOrEdit = true;
     this.changedData = true;
   }
-
 
   addUnit() {
     if (!this.order) {
       return;
     }
     const editedUnit: Partial<Iunits> = {};
-    let index = this.findCheckedRowNumber();
-
+    let index = this.navigator!.findCheckedRowNumber();
     editedUnit.unit = '';
     editedUnit.number_unit = '';
     editedUnit.name_unit = '';
@@ -180,16 +153,6 @@ export class EditUnitsComponent implements OnInit {
       this.loadUnits(id);
       this.changedData = false;
     }
-  }
-
-
-  boxChange(event: any) {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach((checkbox) => {
-      if (checkbox !== event.target) {
-        (checkbox as HTMLInputElement).checked = false;
-      }
-    });
   }
 
   ngOnInit(): void {

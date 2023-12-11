@@ -1,0 +1,256 @@
+<div class="w-3/5 mx-auto  ">
+    <p class="text-4xl  text-white">Редактор проката</p>
+    <div class="flex flex-row justify-between  mt-4">
+        <form>
+            <div class="flex gap-4">
+               
+                <button id="dropdown-button" data-dropdown-toggle="dropdown"
+                    class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-e-0 border-gray-300 dark:border-gray-700 dark:text-white rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                    type="button">All categories <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 4 4 4-4" />
+                    </svg></button>
+                <div id="dropdown"
+                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdown-button">
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Shopping</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Images</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">News</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Finance</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <button id="steel-button" data-dropdown-toggle="steeldropdown"
+                    class="flex-shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-center text-gray-900 bg-gray-100 border border-e-0 border-gray-300 dark:border-gray-700 dark:text-white rounded-s-lg hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-300 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-800"
+                    type="button">All categories <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 4 4 4-4" />
+                    </svg></button>
+                <div id="steeldropdown"
+                    class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
+                    <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="steel-button">
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Shopping</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Images</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">News</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Finance</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="relative w-full">
+                    <input type="search" id="search-dropdown" autocomplete="off"
+                        class="block p-2.5 w-80 z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg rounded-s-gray-100 rounded-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500"
+                        placeholder="Search" required>
+                    <button type="submit"
+                        class="absolute top-0 end-0 p-2.5 h-full text-sm font-medium text-white bg-blue-700 rounded-e-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"><svg
+                            class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        </svg></button>
+                </div>
+            </div>
+        </form>
+
+
+        <div class="flex gap-4 ">
+            <button type="button" (click)="addRoll()"
+                class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить тип
+            </button>
+            <button type="button"
+                class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить прокат
+                        </button>
+            <button type="button"
+                class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-red-600 hover:bg-red-700 focus:ring-blue-800">Удалить
+                узел</button>
+        </div>
+    </div>
+    <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
+        <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
+            <div class="basis-0.5/12  ">
+                <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 16 12">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M1 5.917 5.724 10.5 15 1.5" />
+                </svg>
+            </div>
+            <p class="basis-0.5/12  text-center">id</p>
+            <p class="basis-3/12  ml-0.5 ">Наименование</p>
+            <p class="basis-0.5/12  text-center">Диаметр</p>
+            <p class="basis-2/12  ml-0.5 ">Толщина</p>
+            <p class="basis-1/12  ">Материал</p>
+            <p class="basis-1/12  text-center">Масса п.ед., кг</p>
+            <p class="basis-0.5/12  text-center"></p>
+            <p class="basis-0.5/12  text-center"></p>
+        </div>
+        <!--  Таблица -->
+        <table id="tblUnits" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+            <tbody id="tbodyUnits">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let unit of units">
+                    <!-- <ng-template [ngTemplateOutlet]="loadTemplate(unit)" [ngTemplateOutletContext]="{ $implicit: unit}">
+                    </ng-template> -->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+   
+</div>
+
+<ng-template #readOnlyTemplate let-unit>
+    <td class="py-1 w-0.5/12">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class=" py-1 w-0.5/12 text-center ">
+        {{unit.unit}}
+    </td>
+    <td class=" py-1 w-2/12">
+        {{unit.number_unit}}
+    </td>
+    <td class=" py-1 w-3/12">
+        {{unit.name_unit}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.weight}}
+    </td>
+
+    <td class=" py-1 w-1/12  ">
+        <div *ngIf="unit.status_unit==1" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Не в работе
+        </div>
+        <div *ngIf="unit.status_unit==2" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-yellow-400 me-2"></div> В работе
+        </div>
+        <div *ngIf="unit.status_unit==3" class="flex items-center  ">
+            <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>Готов
+        </div>
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.started}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.finished}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.nameUser}}
+    </td>
+    <td class=" py-1 w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Войти</button>
+    </td>
+    <td class=" py-1 w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Изм.</button>
+    </td>
+</ng-template>
+
+<ng-template #newTemplate let-unit>
+    <td class="py-1 w-0.5/12">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class="  w-0.5/12 text-center ">
+        <input class="t w-full text-center text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-2/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-3/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-1/12 text-center">
+        <input class="w-full cursor-text text-center text-black  bg-gray-50 hover:bg-gray-200" type="text"
+            autocomplete="off" />
+    </td>
+
+    <td class="  w-1/12  ">
+        <div class="flex items-center ">
+            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Не в работе
+        </div>
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.started}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.finished}}
+    </td>
+    <td class="  w-1/12 text-center">
+
+    </td>
+    <td class="  w-0.5/12 ">
+
+    </td>
+    <td class="  w-0,5/12 ">
+        <button href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Отмена</button>
+    </td>
+
+</ng-template>
+
+<ng-template #editTemplate let-unit>
+    <td class="py-1 w-0.5/12">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox" (
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class="  w-0.5/12 text-center ">
+        <input class="w-full  text-center text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-2/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-3/12">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class="  w-1/12 text-center">
+        <input class="w-full  text-center text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off" />
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.started}}
+    </td>
+    <td class=" py-1 w-1/12 text-center">
+        {{unit.finished}}
+    </td>
+    <td class="  w-1/12  ">
+        <div class="flex items-center ">
+            <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div> Не в работе
+        </div>
+    </td>
+    <td class="  w-1/12 text-center">
+
+    </td>
+    <td class="  w-0.5/12 ">
+
+    </td>
+    <td class="  w-0,5/12 ">
+
+    </td>
+
+</ng-template>

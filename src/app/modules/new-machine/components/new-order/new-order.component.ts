@@ -58,6 +58,7 @@ export class NewOrderComponent implements OnInit {
           alert(data.serverError);
           return;
         }
+             
         if (data.description=null) {
         data.description="";
        }
@@ -140,7 +141,6 @@ export class NewOrderComponent implements OnInit {
           alert(data.serverError);
           return;
         }
-       
         const str = this.dataOrder?.order_machine
         if (data.description=null) {
           data.description="";
@@ -213,7 +213,9 @@ export class NewOrderComponent implements OnInit {
               this.dataChanged = false;
               this.router.navigate([""]);
             }
-          } 
+          } else {
+            alert("Данные не сохранены!");
+          }
         },
         error: error => alert('Что-то пошло не так : ' + error.message)
       });

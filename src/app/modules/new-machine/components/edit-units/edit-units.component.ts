@@ -19,7 +19,7 @@ export class EditUnitsComponent implements OnInit {
   userName: string = "Иванов П.К.";
   order: IOrder | undefined;
   units: Partial<Iunits>[] = [];
-  сhangedData = false;
+
 
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
@@ -38,9 +38,49 @@ export class EditUnitsComponent implements OnInit {
     }
   }
 
+  async btnDelClick() {
+    try {
+      const i = this.navigator?.findCheckedRowNumber();
+      if (i == null) {
+        return;
+      }
+      const idSp = this.units[i].id_specification;
+      if (!idSp) {
+        alert('Для удаления добавленного узла используйте кнопку "Омена".')
+        return;
+      }
+      else {
+        let data = await this.editUnitsService.isEmptyUnit(idSp);
+        if ((data as []).length > 0) {
+          let answer = prompt(`Вы действительно хотите удалить узел и входящие в него данные? 
+        Для подтверждения введите номер узла ${this.units[i].unit}.`);
+          if (answer !== this.units[i].unit) {
+            return;
+          }
+        } else if ((data as []).length === 0) {
+          if (confirm("Вы действительно хотите удалить узел?") === false) {
+            return;
+          }
+        } else {
+          alert('Что-то пошло не так...');
+          return;
+        }
+        data = await this.editUnitsService.deleteUnit(idSp);
+        if (data.response) {
+          alert("Узел удален!");
+          this.loadUnits(this.order?.order_machine!);
+          this.changedData = false;
+        } else {
+          alert('Что-то пошло не так...');
+        }
+      }
+    } catch (error: any) {
+      alert(error.message);
+    }
+  }
 
   saveUnits() {
-    if (this.changedData = false) {
+    if (this.changedData === false) {
       return;
     }
     let sentUnits: Partial<Iunits>[] = [];
@@ -52,6 +92,8 @@ export class EditUnitsComponent implements OnInit {
       delete sentUnits[i].idauthor;
       delete sentUnits[i].nameUser;
       delete sentUnits[i].status_unit;
+      delete sentUnits[i].started;
+      delete sentUnits[i].finished;
       if (item.id_specification === undefined) {
         this.units[i].status_unit = 1;
         sentUnits[i].id_specification = null;
@@ -68,12 +110,41 @@ export class EditUnitsComponent implements OnInit {
           this.loadUnits(this.order?.order_machine!);
           this.changedData = false;
           alert('Данные сохранены!');
+        } else {
+          alert('Данные не сохранены!');
         }
       },
       error: error => alert('Что-то пошло не так : ' + error.message)
     });
   }
 
+  escapeAll() {
+    if (this.changedData === false) {
+      return;
+    } else {
+      if (confirm("Отменить все несохраненные изменения?") === false) {
+        return;
+      }
+    }
+    this.loadUnits(this.order?.order_machine!);
+    this.changedData = false;
+  }
+
+
+  moveUnit(isMoveUp: boolean) {
+    let i = this.navigator?.findCheckedRowNumber();
+    if (i !== null) {
+      const unit = this.units[i!];
+      if (isMoveUp && i! > 0) {
+        this.units[i!] = this.units[i! - 1];
+        this.units[i! - 1] = unit;
+      } else if (!isMoveUp && i! < this.units.length - 1) {
+        this.units[i!] = this.units[i! + 1];
+        this.units[i! + 1] = unit;
+      }
+      this.changedData = true;
+    }
+  }
 
   escape(event: Event) {
     const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
@@ -105,40 +176,22 @@ export class EditUnitsComponent implements OnInit {
     this.changedData = true;
   }
 
-  loadOrder(id: string) {
-    this.editUnitsService.loadOrder(id).subscribe({
-      next: (data: any) => {
-        if (data == null) {
-          alert("Данный заказ закрыт или не существует!");
-          return;
-        }
-        if (data.serverError) {
-          alert(data.serverError);
-          return;
-        }
-        this.order = data;
-      }
-      ,
-      error: error => alert('Что то пошло не так : ' + error.message)
-    });
+  async loadOrder(id: string) {
+    const data = await this.editUnitsService.loadOrder(id)
+    if ((data as []).length === 0) {
+      alert("Данный заказ закрыт или не существует!");
+      return;
+    }
+    this.order = data;
   }
 
-
-  loadUnits(id: string) {
-    this.editUnitsService.loadUnits(id).subscribe({
-      next: (data: any) => {
-        if (data.serverError) {
-          alert(data.serverError);
-          return;
-        }
-        if (data !== undefined) {
-          this.units = data;
-
-        }
-      }
-      ,
-      error: error => alert('Что то пошло не так : ' + error.message)
-    });
+  async loadUnits(id: string) {
+    const data = await this.editUnitsService.loadUnits(id)
+    if ((data as Array<any>).length > 0) {
+      this.units = data;
+    } else {
+      this.units.length = 0;
+    }
   }
 
 

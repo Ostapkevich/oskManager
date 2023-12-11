@@ -39,8 +39,8 @@
               <li>
                 <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Новый заказ</a>
               </li>
-              <li aria-labelledby="dropdownNavbarLink">
-                <button id="doubleDropdownButton" data-dropdown-toggle="doubleDropdown"
+              <li aria-labelledby="newOrderLink">
+                <button id="btnNewOrder" data-dropdown-toggle="doubleDropdown"
                   data-dropdown-placement="right-start" type="button"
                   class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Формирование
                   заказа<svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
@@ -48,10 +48,10 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="m1 1 4 4 4-4" />
                   </svg></button>
-                <!--doubleDropdown -->
+                <!--NewOrder -->
                 <div id="doubleDropdown"
                   class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
-                  <ul class="py-2 text-sm  text-gray-200" aria-labelledby="doubleDropdownButton">
+                  <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnNewOrder">
                     <li>
                       <a [routerLink]="['instruments/newOrder','new']"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Создать заказ</a>
@@ -73,9 +73,49 @@
                   </ul>
                 </div>
               </li>
+              <li aria-labelledby="libraryLink">
+                <button id="btnLibrary" data-dropdown-toggle="idLibrary"
+                  data-dropdown-placement="right-start" type="button"
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Материалы
+                  <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="m1 1 4 4 4-4" />
+                  </svg></button>
+                <!--library -->
+                <div id="idLibrary"
+                  class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
+                  <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
+                    <li>
+                      <a [routerLink]="['materials/rolled']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Прокат</a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['materials/hardware']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Метизы</a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['materials/other']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Материалы</a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['materials/cutting']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Режущий инструмент</a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['materials/measuring']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Мерительный инструмент</a>
+                    </li>
+                    <li>
+                      <a [routerLink]="['/materials/other']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Другие</a>
+                    </li>
+                    
+                  </ul>
+                </div>
+              </li>
               <li>
-                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Редактировать
-                  заказ</a>
+                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Материалы</a>
               </li>
             </ul>
             <div class="py-1">
@@ -85,6 +125,7 @@
           </div>
 
         </li>
+       
         <li>
           <a href="#"
             class="block py-2 pl-3 pr-4  rounded   md:border-0  md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">Склад</a>

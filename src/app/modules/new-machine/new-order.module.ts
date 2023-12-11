@@ -13,7 +13,7 @@ import { EditUnitsService } from './components/edit-units/edit-units.service';
     CommonModule,
     FormsModule,
     NewOrderRoutingModule,
-        
+            
   ],
   declarations: [NewOrderComponent, EditUnitsComponent],
   providers:[OrderService, EditUnitsService],

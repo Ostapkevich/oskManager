@@ -10,6 +10,8 @@ interface Iunits {
     nameUser:string;
     newOrEdit?:boolean;
     ind?:number;
+    started?:string;
+    finished?:string;
 }
 interface IOrder {
     order_machine:string;

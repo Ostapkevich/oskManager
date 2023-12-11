@@ -17,10 +17,10 @@ export class TableNavigator {
     }
 
     public findRowButton(target: HTMLButtonElement): number {
-       const rowsCollection = this.table.rows;
+        const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
-            if (rowsCollection[i].cells[8].firstChild == target) {
+            if (rowsCollection[i].cells[10].firstChild == target) {
                 break;
             }
         }
@@ -50,13 +50,13 @@ export class TableNavigator {
         return null;
     }
 
-    public moveCheckbox(isMoveUp: boolean) {
+    public moveCheckbox(isMoveUp: boolean): number | null {
         const collection: any = this.table.rows;
         let j: number;
         if (collection) {
             j = collection.length;
         } else {
-            return;
+            return null;
         }
         let currentIndex = -1;
         for (let i = 0; i < j; i++) {
@@ -69,12 +69,15 @@ export class TableNavigator {
 
             if (isMoveUp && currentIndex > 0) {
                 collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
-                collection[currentIndex - 1].cells[0].firstChild.firstChild.checked = true;
+                collection[currentIndex - 2].cells[0].firstChild.firstChild.checked = true;
+                return currentIndex;
             } else if (!isMoveUp && currentIndex < j - 1) {
                 collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
-                collection[currentIndex + 1].cells[0].firstChild.firstChild.checked = true;
+                collection[currentIndex + 2].cells[0].firstChild.firstChild.checked = true;
+                return currentIndex
             }
         }
+        return null;
     }
 
     private highlightCurrent(): void {
@@ -128,6 +131,7 @@ export class TableNavigator {
 
     private setupKeyboardNavigation(): void {
         document.addEventListener('keydown', (event) => {
+
             switch (event.key) {
                 case 'ArrowUp':
                     this.moveUp();
@@ -145,16 +149,28 @@ export class TableNavigator {
         });
     }
 
+
+
+    private isInputElement(row: number, column: number): void {
+        let inputInCell = this.table.rows[row].cells[column].querySelector('input');
+        if (inputInCell) {
+            inputInCell.focus();
+        }
+    }
+
     private moveUp(): void {
         if (this.currentCell.row > 0) {
             this.currentCell.row--;
+            this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
         }
     }
 
+
     private moveDown(): void {
         if (this.currentCell.row < this.table.rows.length - 1) {
             this.currentCell.row++;
+            this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
         }
     }
@@ -162,6 +178,7 @@ export class TableNavigator {
     private moveLeft(): void {
         if (this.currentCell.column > 0) {
             this.currentCell.column--;
+            this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
         }
     }
@@ -169,6 +186,7 @@ export class TableNavigator {
     private moveRight(): void {
         if (this.currentCell.column < this.table.rows[0].cells.length - 1) {
             this.currentCell.column++;
+            this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
         }
     }

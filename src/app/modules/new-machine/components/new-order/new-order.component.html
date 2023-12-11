@@ -1,4 +1,4 @@
-<form class="w-2/3 mx-auto " #newOrderform="ngForm" id="orderform" autocomplete="off"
+<form class="w-3/5 mx-auto " #newOrderform="ngForm" id="orderform" autocomplete="off"
     (change)="formChange(newOrderform)" novalidate>
     <div class="mb-6">
         <div class="flex flex-row justify-between">
@@ -179,6 +179,5 @@
 
     <button type="button" [disabled]="newOrderform.invalid || newOrderform.untouched" (click)="saveOrder(newOrderform.value, htmlShipment.value)"
         class="mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
-    <button type="button" 
-        class="mt-8 text-white  focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">form</button>
+   
 </form>

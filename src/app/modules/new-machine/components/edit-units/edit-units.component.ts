@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
-import { OnInit } from '@angular/core';
-import { TemplateRef, ViewChild } from '@angular/core';
+import {Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { EditUnitsService } from './edit-units.service';
 import { Iunits, IOrder } from './IUnits';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
+
 
 @Component({
   selector: 'app-new-unit',
   templateUrl: './edit-units.component.html',
   styleUrls: ['./edit-units.component.css']
+
 })
 export class EditUnitsComponent implements OnInit {
   constructor(private editUnitsService: EditUnitsService) {
@@ -79,43 +79,41 @@ export class EditUnitsComponent implements OnInit {
     }
   }
 
-  saveUnits() {
-    if (this.changedData === false) {
-      return;
-    }
-    let sentUnits: Partial<Iunits>[] = [];
-    let i = 0;
-    for (const item of this.units) {
-      sentUnits.push(item);
-      sentUnits[i].ind = i;
-      sentUnits[i].order_machine = this.order?.order_machine;
-      delete sentUnits[i].idauthor;
-      delete sentUnits[i].nameUser;
-      delete sentUnits[i].status_unit;
-      delete sentUnits[i].started;
-      delete sentUnits[i].finished;
-      if (item.id_specification === undefined) {
-        this.units[i].status_unit = 1;
-        sentUnits[i].id_specification = null;
+  async saveUnits() {
+    try {
+      if (this.changedData === false) {
+        return;
       }
-      i++;
+      let sentUnits: Partial<Iunits>[] = [];
+      let i = 0;
+      for (const item of this.units) {
+        sentUnits.push(item);
+        sentUnits[i].ind = i;
+        sentUnits[i].order_machine = this.order?.order_machine;
+        delete sentUnits[i].idauthor;
+        delete sentUnits[i].nameUser;
+        delete sentUnits[i].status_unit;
+        delete sentUnits[i].started;
+        delete sentUnits[i].finished;
+        if (item.id_specification === undefined) {
+          this.units[i].status_unit = 1;
+          sentUnits[i].id_specification = null;
+        }
+        i++;
+      }
+      const data = await this.editUnitsService.saveUnits(sentUnits);
+      if (data.response === 'ok') {
+        this.loadUnits(this.order?.order_machine!);
+        this.changedData = false;
+        alert('Данные сохранены!');
+      } else {
+        alert('Данные не сохранены!');
+      }
+    } catch (error) {
+      alert ((error as Error).message);
     }
-    this.editUnitsService.saveUnits(sentUnits).subscribe({
-      next: (data: any) => {
-        if (data.serverError) {
-          alert(data.serverError);
-          return;
-        }
-        if (data.response === 'ok') {
-          this.loadUnits(this.order?.order_machine!);
-          this.changedData = false;
-          alert('Данные сохранены!');
-        } else {
-          alert('Данные не сохранены!');
-        }
-      },
-      error: error => alert('Что-то пошло не так : ' + error.message)
-    });
+  
+
   }
 
   escapeAll() {
@@ -177,21 +175,31 @@ export class EditUnitsComponent implements OnInit {
   }
 
   async loadOrder(id: string) {
-    const data = await this.editUnitsService.loadOrder(id)
-    if ((data as []).length === 0) {
-      alert("Данный заказ закрыт или не существует!");
-      return;
+    try {
+      const data = await this.editUnitsService.loadOrder(id)
+      if ((data as []).length === 0) {
+        alert("Данный заказ закрыт или не существует!");
+        return;
+      }
+      this.order = data;
+    } catch (error) {
+      alert((error as Error).message);
     }
-    this.order = data;
+
   }
 
   async loadUnits(id: string) {
-    const data = await this.editUnitsService.loadUnits(id)
-    if ((data as Array<any>).length > 0) {
-      this.units = data;
-    } else {
-      this.units.length = 0;
+    try {
+      const data = await this.editUnitsService.loadUnits(id)
+      if ((data as Array<any>).length > 0) {
+        this.units = data;
+      } else {
+        this.units.length = 0;
+      }
+    } catch (error) {
+      alert((error as Error).message);
     }
+
   }
 
 

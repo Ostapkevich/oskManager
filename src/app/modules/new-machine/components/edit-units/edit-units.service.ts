@@ -19,7 +19,7 @@ export class EditUnitsService {
             resolve(data);
           }
           ,
-          error: error => reject(error) 
+          error: error => reject(error)
         }
       );
     })
@@ -36,7 +36,7 @@ export class EditUnitsService {
             resolve(data);
           }
           ,
-          error: error=> reject(error)
+          error: error => reject(error)
         }
       );
     })
@@ -82,9 +82,21 @@ export class EditUnitsService {
     });
   }
 
-  saveUnits(units: Partial<Iunits>[]) {
-    return this.httpEditUnits.put(`http://localhost:3000/editUnits/saveUnits`, units);
-
-
+  saveUnits(units: Partial<Iunits>[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      return this.httpEditUnits.put(`http://localhost:3000/editUnits/saveUnits`, units).subscribe({
+        next: (data: any) => {
+          if (data.serverError) {
+            let error: Error
+            reject(new Error(data.serverError));
+          } else {
+            resolve(data);
+          }
+        },
+        error: error => alert('Что-то пошло не так : ' + error.message)
+      }
+      )
+    }
+    )
   }
 }

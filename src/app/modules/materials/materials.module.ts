@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialsRoutingModule } from './materials-routing.module';
 import { RolledComponent } from './components/rolled/rolled.component';
-import { MaterialService } from './material.service';
+
 
 
 @NgModule({
@@ -11,7 +11,7 @@ import { MaterialService } from './material.service';
     CommonModule,
     MaterialsRoutingModule,
     ],
-  providers:[MaterialService],
+  providers:[],
 })
 export class MaterialsModule {
 

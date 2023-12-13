@@ -1,7 +1,8 @@
 import {Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { EditUnitsService } from './edit-units.service';
+//import { EditUnitsService } from './edit-units.service';
 import { Iunits, IOrder } from './IUnits';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
+import { AppService } from 'src/app/app.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { TableNavigator } from 'src/app/classes/tableNavigator';
 
 })
 export class EditUnitsComponent implements OnInit {
-  constructor(private editUnitsService: EditUnitsService) {
+  constructor( private appService:AppService) {
 
   }
   changedData = false;
@@ -50,7 +51,7 @@ export class EditUnitsComponent implements OnInit {
         return;
       }
       else {
-        let data = await this.editUnitsService.isEmptyUnit(idSp);
+        let data = await this.appService.get(`http://localhost:3000/editUnits/isEmptyUnit-${idSp}`);
         if ((data as []).length > 0) {
           let answer = prompt(`Вы действительно хотите удалить узел и входящие в него данные? 
         Для подтверждения введите номер узла ${this.units[i].unit}.`);
@@ -65,7 +66,7 @@ export class EditUnitsComponent implements OnInit {
           alert('Что-то пошло не так...');
           return;
         }
-        data = await this.editUnitsService.deleteUnit(idSp);
+        data = await this.appService.delete(`http://localhost:3000/editUnits/deleteUnit-${idSp}`);
         if (data.response) {
           alert("Узел удален!");
           this.loadUnits(this.order?.order_machine!);
@@ -101,7 +102,7 @@ export class EditUnitsComponent implements OnInit {
         }
         i++;
       }
-      const data = await this.editUnitsService.saveUnits(sentUnits);
+      const data = await this.appService.put(`http://localhost:3000/editUnits/saveUnits`,sentUnits);
       if (data.response === 'ok') {
         this.loadUnits(this.order?.order_machine!);
         this.changedData = false;
@@ -176,7 +177,7 @@ export class EditUnitsComponent implements OnInit {
 
   async loadOrder(id: string) {
     try {
-      const data = await this.editUnitsService.loadOrder(id)
+      const data = await this.appService.get(`http://localhost:3000/editUnits/getOrder-${id}`)
       if ((data as []).length === 0) {
         alert("Данный заказ закрыт или не существует!");
         return;
@@ -190,7 +191,7 @@ export class EditUnitsComponent implements OnInit {
 
   async loadUnits(id: string) {
     try {
-      const data = await this.editUnitsService.loadUnits(id)
+      const data = await this.appService.get(`http://localhost:3000/editUnits/getUnits-${id}`)
       if ((data as Array<any>).length > 0) {
         this.units = data;
       } else {

@@ -43,7 +43,7 @@ export class EditUnitsService {
   }
 
 
-  isEmptyUnit(idSp: number): Promise<any> {
+  /* isEmptyUnit(idSp: number): Promise<any> {
     return new Promise((resolve, reject) => {
       this.httpEditUnits.get(`http://localhost:3000/editUnits/isEmptyUnit-${idSp}`).subscribe(
         {
@@ -59,11 +59,11 @@ export class EditUnitsService {
         }
       );
     });
-  }
+  } */
 
 
 
-  deleteUnit(id: number): Promise<any> {
+ /*  deleteUnit(id: number): Promise<any> {
     return new Promise((resolve, reject) => {
       this.httpEditUnits.delete(`http://localhost:3000/editUnits/deleteUnit-${id}`).subscribe(
         {
@@ -80,9 +80,9 @@ export class EditUnitsService {
         }
       );
     });
-  }
+  } */
 
-  saveUnits(units: Partial<Iunits>[]): Promise<any> {
+  /* saveUnits(units: Partial<Iunits>[]): Promise<any> {
     return new Promise((resolve, reject) => {
       return this.httpEditUnits.put(`http://localhost:3000/editUnits/saveUnits`, units).subscribe({
         next: (data: any) => {
@@ -98,5 +98,5 @@ export class EditUnitsService {
       )
     }
     )
-  }
+  } */
 }

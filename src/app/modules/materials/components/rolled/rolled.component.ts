@@ -1,7 +1,7 @@
 import { Navigation } from '@angular/router';
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { MaterialService } from '../../material.service';
-import { ItypeAndsteel, Irolled } from './iMaterials';
+import { Isteel, IrolledType, Irolled, Imaterial } from './iMaterials';
+import { AppService } from 'src/app/app.service';
 
 
 @Component({
@@ -11,12 +11,13 @@ import { ItypeAndsteel, Irolled } from './iMaterials';
 })
 export class RolledComponent implements OnInit {
 
-  constructor(private materialService: MaterialService) {
+  constructor(private appService: AppService) {
 
   }
 
   units: string = ''
-  typeAndSteel: ItypeAndsteel | undefined;
+  rolledType: IrolledType[] | undefined;
+  steels: Isteel[] | undefined
   rolleds: Irolled[] | undefined;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
@@ -24,40 +25,35 @@ export class RolledComponent implements OnInit {
   editTemplate!: TemplateRef<any>;
 
   loadTemplate(rolled: Irolled) {
-    if (rolled.isEdited===undefined) {
+    if (rolled.isEdited === undefined) {
       return this.readOnlyTemplate
     } else {
       return this.editTemplate;
     }
   }
 
-
   async getData(url: string) {
     try {
-      const data = await this.materialService.getData(url);
-      if ((data as []).length !== 0) {
-        switch (url) {
-          case 'http://localhost:3000/materials/rolledTypeAndSteel':
-            this.typeAndSteel = data;
-            break;
-          case 'http://localhost:3000/materials/rolled':
-            this.rolleds = data;
-            break;
-          default:
-            break;
-        }
+      const data:Imaterial = await this.appService.get(url);
+      if ((data.rolled_type as []).length !== 0) {
+        this.rolledType = data.rolled_type;
+      }
+      if ((data.steels as []).length !== 0) {
+        this.steels = data.steels;
+      }
+      if ((data.rolleds as []).length !== 0) {
+        this.rolleds = data.rolleds;
       }
     } catch (error) {
       alert((error as Error).message);
     }
   }
 
-
-  async loadSteels(url: string) {
+  async getRolled(url: string) {
     try {
-      const data = await this.materialService.getData(url);
+      const data = await this.appService.get(url);
       if ((data as []).length !== 0) {
-        this.typeAndSteel = data;
+        this.rolleds = data;
       }
     } catch (error) {
       alert((error as Error).message);
@@ -68,7 +64,6 @@ export class RolledComponent implements OnInit {
   addRoll() { }
 
   ngOnInit(): void {
-    this.getData('http://localhost:3000/materials/rolledTypeAndSteel');
     this.getData('http://localhost:3000/materials/rolled');
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);

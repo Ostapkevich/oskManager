@@ -5,7 +5,7 @@
             <div>
                 <select id="selectRolled"
                     class="border   text-sm  block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option  *ngFor="let item of typeAndSteel?.rolled_type" value="{{item.idrolled_type}}">
+                    <option  *ngFor="let item of rolledType" value="{{item.idrolled_type}}">
                         {{item.name_typerolled}} </option>
                    
                 </select>
@@ -13,7 +13,7 @@
             <div>
                 <select id="selectSteel"
                     class="border   text-sm r  block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option  *ngFor="let item of typeAndSteel?.steels" value="{{item.idsteel}}">
+                    <option  *ngFor="let item of steels" value="{{item.idsteel}}">
                         {{item.steel}} </option>
                    
                 </select>
@@ -95,9 +95,9 @@
     <td class=" py-1 w-1/12">
         {{rolled.d}}
     </td>
-    <td class=" py-1 w-1/12 text-center">
-        {{rolled.t}}
-    </td>
+    <td class=" py-1 w-1/12 text-center">        
+        {{rolled.t}}     
+    </td>       
     <td class=" py-1 w-1/12 text-center">
         {{rolled.steel}}
     </td>

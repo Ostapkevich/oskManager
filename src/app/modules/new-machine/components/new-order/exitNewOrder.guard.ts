@@ -6,9 +6,7 @@ export const exitNewOrder = (newMachineComp: NewOrderComponent, route: Activated
     document.getElementById('id_machine')!.dispatchEvent(event);
     if (newMachineComp.dataChanged === true) {
         if (confirm("Данные не сохранены! Все равно выйти?")) {
-            newMachineComp.dataChanged = false;
-            newMachineComp.newOrderform!.reset();
-            newMachineComp.dataOrder = undefined;
+           
         } else {
             return false;
         }

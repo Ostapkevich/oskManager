@@ -32,9 +32,9 @@ export class RolledComponent implements OnInit {
     }
   }
 
-  async getData(url: string) {
+  async getData() {
     try {
-      const data:Imaterial = await this.appService.get(url);
+      const data:Imaterial = await this.appService.query('get', 'http://localhost:3000/materials/rolled');
       if ((data.rolled_type as []).length !== 0) {
         this.rolledType = data.rolled_type;
       }
@@ -45,26 +45,26 @@ export class RolledComponent implements OnInit {
         this.rolleds = data.rolleds;
       }
     } catch (error) {
-      alert((error as Error).message);
+      alert(error);
     }
   }
 
-  async getRolled(url: string) {
+ /*  async getRolled(url: string) {
     try {
-      const data = await this.appService.get(url);
+      const data = await this.appService.query('get',url);
       if ((data as []).length !== 0) {
         this.rolleds = data;
       }
     } catch (error) {
-      alert((error as Error).message);
+      alert(error);
     }
-  }
+  } */
 
 
   addRoll() { }
 
   ngOnInit(): void {
-    this.getData('http://localhost:3000/materials/rolled');
+    this.getData();
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
   }

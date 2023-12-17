@@ -42,8 +42,8 @@
               <li aria-labelledby="newOrderLink">
                 <button id="btnNewOrder" data-dropdown-toggle="doubleDropdown"
                   data-dropdown-placement="right-start" type="button"
-                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Формирование
-                  заказа<svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Заказ
+                  <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="m1 1 4 4 4-4" />
@@ -53,14 +53,10 @@
                   class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
                   <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnNewOrder">
                     <li>
-                      <a [routerLink]="['instruments/newOrder','new']"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Создать заказ</a>
+                      <a [routerLink]="['instruments/newOrder']"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать заказ</a>
                     </li>
-                    <li>
-                      <a [routerLink]="['instruments/newOrder','edit']"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Редактировать заказ
-                      </a>
-                    </li>
+                   
                     <li>
                       <a [routerLink]="['instruments/formOrder']" id="linkFormOder"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать состав</a>

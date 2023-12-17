@@ -1,9 +1,8 @@
-<form class="w-3/5 mx-auto " #newOrderform="ngForm" id="orderform" autocomplete="off"
-    (change)="formChange(newOrderform)" novalidate>
-    <div class="mb-6">
-        <div class="flex flex-row justify-between">
-            <p *ngIf="newOrder=='new'" class="text-4xl  text-white">Создание заказа</p>
-            <p *ngIf="newOrder=='edit'" class="text-4xl  text-white">Редактирование заказа</p>
+<form class="w-1/2 mx-auto " #orderform="ngForm" id="orderform" autocomplete="off" (change)="formChange(orderform)"
+    novalidate>
+   
+        <div class="mt-10 flex flex-row justify-between">
+            <p class="text-4xl  text-white">Формирование заказа</p>
             <div class="flex flex-row  gap-x-3 justify-end">
                 <div>
                     <p class=" block mb-2 text-sm font-medium  text-white">Аналог</p>
@@ -11,71 +10,70 @@
                         class="px-3 py-2 text-sm font-medium text-center text-white   ocus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Выбрать</button>
                 </div>
                 <div>
-                    <label for="customers"
-                        class="block mb-2 text-sm font-medium  text-blue-500">Заказчик</label>
+                    <label for="customers" class="block mb-2 text-sm font-medium  text-blue-500">Заказчик</label>
                     <select id="customers" name="idcustomer" #templateCustomer [ngModel]="customerOnload"
                         class="  border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                        <option *ngFor="let item of category_customer?.customers" value="{{item.idcustomer}}">
+                        <option *ngFor="let item of customers" value="{{item.idcustomer}}">
                             {{item.customer}}</option>
                     </select>
                 </div>
                 <div>
-                    <label for="categories"
-                        class="block mb-2 text-sm font-medium  text-white">Категория</label>
+                    <label for="categories" class="block mb-2 text-sm font-medium  text-white">Категория</label>
                     <select id="categories" name="idcategory" #templateCategory [ngModel]="categoryOnload"
                         class=" border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                        <option *ngFor="let item of category_customer?.categories" value="{{item.idcategory}}">
+                        <option *ngFor="let item of categories" value="{{item.idcategory}}">
                             {{item.category}}</option>
                     </select>
                 </div>
                 <div>
-                    <label for="plane"
-                        class="block mb-2 text-sm font-medium  text-white">Отгрузка</label>
+                    <label for="plane" class="block mb-2 text-sm font-medium  text-white">Отгрузка</label>
                     <input type="date" id="plane" name="shipment" #htmlShipment [ngModel]="dataOrder?.shipment"
                         class=" border text-sm    block w-full ps-10 p-2  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
         </div>
-        <div class="  flex flex-row gap-4 mt-5">
+        <div class=" flex flex-row gap-4 mt-5">
             <div class="basis-1/12">
                 <label for="order_machine" class="block mb-2 text-sm font-medium  text-white">Заказ
                     {{dataOrder?.order_machine}}
                 </label>
-                <input *ngIf="newOrder=='new'" autofocus id="order_machine" name="order_machine" ngModel
-                    #templateOrder="ngModel" required maxlength="7"
-                    class="  border  text-base   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                <input *ngIf="newOrder=='edit'" autofocus id="order_machine" name="order_machine" ngModel
+                <input autofocus id="order_machine" name="order_machine" [ngModel]="dataOrder?.order_machine"
                     placeholder="№ заказа" #htmlOrder="ngModel" required maxlength="7"
                     (keydown)="getNewOrder($event, htmlOrder.value)"
                     class="  border  text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
-
-            <div class="basis-1/6">
+            <div class="basis-3/12">
                 <label for="id_machine" class=" block mb-2 text-sm font-medium  text-white">№ изделия
                 </label>
                 <input autofocus id="id_machine" name="number_machine" [ngModel]="dataOrder?.number_machine"
-                    #templateNumber="ngModel" required maxlength="25"
-                    class="  border ext-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+                    #templateNumber="ngModel" required maxlength="25" required
+                    class="  border text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
-            <div class="basis-3/4">
+            <div class="basis-7/12">
                 <label for="name_machine" class="block mb-2 text-sm font-medium  text-white">Название
                 </label>
                 <input type="text" id="name_machine" name="name_machine" [ngModel]="dataOrder?.name_machine"
-                    #templateName="ngModel" required="" maxlength="80"
+                    #templateName="ngModel" required="" maxlength="80" required=""
                     class=" border  text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="basis-1/12">
+                <label for="id_weight" class=" block mb-2 text-sm font-medium  text-white">Масса, кг
+                </label>
+                <input autofocus id="id_weight" name="weight" [ngModel]="dataOrder?.weight"
+                    #templateWeight="ngModel"  maxlength="9"
+                    class="  border text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
         <label for="message" class="block mb-1 mt-1 text-sm font-medium  text-white">Описание</label>
         <textarea id="message" name="description" [ngModel]="dataOrder?.description" rows="3"
             class="block p-0.5 mt-2 w-full text-sm   border   bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
             placeholder="" [maxLength]="500"></textarea>
-    </div>
+    
 
     <div class="grid grid-cols-2 gap-3 ">
         <div class="grid gap-3  md:grid-cols-12">
             <div class="col-span-10">
-                <label for="char0"
-                    class="block mb-3 text-sm font-medium  text-white">Характеристика</label>
+                <label for="char0" class="block mb-3 text-sm font-medium  text-white">Характеристика</label>
                 <input type="text" id="char0" name="char0" [ngModel]="dataProperties[0].property"
                     class="text-right  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                     placeholder="1" maxlength="60">
@@ -126,8 +124,7 @@
 
         <div class="grid gap-3  md:grid-cols-12">
             <div class="col-span-10">
-                <label for="char7"
-                    class="block mb-3 text-sm font-medium  text-white">Характеристика</label>
+                <label for="char7" class="block mb-3 text-sm font-medium  text-white">Характеристика</label>
                 <input type="text" id="char7" name="char7" [ngModel]="dataProperties[7].property"
                     class="text-right  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                     placeholder="8" maxlength="60">
@@ -177,7 +174,14 @@
         </div>
     </div>
 
-    <button type="button" [disabled]="newOrderform.invalid || newOrderform.untouched" (click)="saveOrder(newOrderform.value, htmlShipment.value)"
-        class="mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
-   
+<div class="flex justify-end gap-5"> 
+    <button *ngIf="dataOrder?.order_machine"  type="button" (click)="save('btnSave')" 
+    class=" mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
+    <button *ngIf="!dataOrder?.order_machine" type="button" (click)="save('btnCreate')" 
+    class="  mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Создать</button>
+    <button  type="button" (click)="clean()" 
+    class=" mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Очистить</button>
+</div>    
+  
+
 </form>

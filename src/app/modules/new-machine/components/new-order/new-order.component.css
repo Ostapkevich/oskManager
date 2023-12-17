@@ -1,5 +1,6 @@
-input.ng-invalid {
+/* input.ng-invalid {
     border: solid rgb(63, 131, 248) 2px;
-}
+} */
 
-
+input.ng-touched.ng-invalid {border:solid red 2px;}
+input.ng-untouched.ng-invalid {border:solid rgb(63, 131, 248) 2px;}

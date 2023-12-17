@@ -1,21 +1,30 @@
 
 interface Iorder {
-  order_machine:string;
+  order_machine: string;
   number_machine: string;
   name_machine: string;
   description: string;
-  idcustomer:number;
-  idcategory:number;
-  shipment:string;
- }
+  idcustomer: number;
+  idcategory: number;
+  shipment: string;
+  weight:number;  
+}
 
 interface IProperties {
-  idproperty? : number|null;
-  order_machine?:string|undefined;
+  idproperty?: number | null;
+  order_machine?: string | undefined;
   property?: string;
   val?: string;
- }
+}
 
+interface Icustomers {
+  idcustomer: number;
+  customer: string;
+}
+interface Icategories {
+  idcategory: number;
+  category: string;
+}
 interface Icategorycastomer {
   customers: [
     {
@@ -31,4 +40,4 @@ interface Icategorycastomer {
   ]
 }
 
-export { Icategorycastomer, Iorder, IProperties }; 
+export { Icategorycastomer, Iorder, IProperties, Icustomers, Icategories }; 

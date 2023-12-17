@@ -5,7 +5,7 @@ import { EditUnitsComponent} from './components/edit-units/edit-units.component'
 import { exitNewOrder } from './components/new-order/exitNewOrder.guard';
 
 const routes: Routes = [
- {path:'newOrder/:newOrder', component:NewOrderComponent, canDeactivate:[exitNewOrder] },
+ {path:'newOrder', component:NewOrderComponent, canDeactivate:[exitNewOrder] },
  {path:'formOrder', component:EditUnitsComponent},
 ];
 

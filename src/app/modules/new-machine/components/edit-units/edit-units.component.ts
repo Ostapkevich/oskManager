@@ -1,5 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-//import { EditUnitsService } from './edit-units.service';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Iunits, IOrder } from './IUnits';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { AppService } from 'src/app/app.service';
@@ -12,7 +11,7 @@ import { AppService } from 'src/app/app.service';
 
 })
 export class EditUnitsComponent implements OnInit {
-  constructor( private appService:AppService) {
+  constructor(private appService: AppService) {
 
   }
   changedData = false;
@@ -39,83 +38,7 @@ export class EditUnitsComponent implements OnInit {
     }
   }
 
-  async btnDelClick() {
-    try {
-      const i = this.navigator?.findCheckedRowNumber();
-      if (i == null) {
-        return;
-      }
-      const idSp = this.units[i].id_specification;
-      if (!idSp) {
-        alert('Для удаления добавленного узла используйте кнопку "Омена".')
-        return;
-      }
-      else {
-        let data = await this.appService.get(`http://localhost:3000/editUnits/isEmptyUnit-${idSp}`);
-        if ((data as []).length > 0) {
-          let answer = prompt(`Вы действительно хотите удалить узел и входящие в него данные? 
-        Для подтверждения введите номер узла ${this.units[i].unit}.`);
-          if (answer !== this.units[i].unit) {
-            return;
-          }
-        } else if ((data as []).length === 0) {
-          if (confirm("Вы действительно хотите удалить узел?") === false) {
-            return;
-          }
-        } else {
-          alert('Что-то пошло не так...');
-          return;
-        }
-        data = await this.appService.delete(`http://localhost:3000/editUnits/deleteUnit-${idSp}`);
-        if (data.response) {
-          alert("Узел удален!");
-          this.loadUnits(this.order?.order_machine!);
-          this.changedData = false;
-        } else {
-          alert('Что-то пошло не так...');
-        }
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-  }
 
-  async saveUnits() {
-    try {
-      if (this.changedData === false) {
-        return;
-      }
-      let sentUnits: Partial<Iunits>[] = [];
-      let i = 0;
-      for (const item of this.units) {
-        sentUnits.push(item);
-        sentUnits[i].ind = i;
-        sentUnits[i].order_machine = this.order?.order_machine;
-        delete sentUnits[i].idauthor;
-        delete sentUnits[i].nameUser;
-        delete sentUnits[i].status_unit;
-        delete sentUnits[i].started;
-        delete sentUnits[i].finished;
-        if (item.id_specification === undefined) {
-          this.units[i].status_unit = 1;
-          sentUnits[i].id_specification = null;
-        }
-        i++;
-      }
-      const data = await this.appService.put(`http://localhost:3000/editUnits/saveUnits`,sentUnits);
-      if (data.response === 'ok') {
-        this.loadUnits(this.order?.order_machine!);
-        this.changedData = false;
-        alert('Данные сохранены!');
-      } else {
-        alert('Данные не сохранены!');
-      }
-    } catch (error) {
-      alert ((error as Error).message);
-    }
-  
-
-  }
 
   escapeAll() {
     if (this.changedData === false) {
@@ -162,6 +85,7 @@ export class EditUnitsComponent implements OnInit {
     }
     const editedUnit: Partial<Iunits> = {};
     let index = this.navigator!.findCheckedRowNumber();
+    editedUnit.id_specification = null;
     editedUnit.unit = '';
     editedUnit.number_unit = '';
     editedUnit.name_unit = '';
@@ -175,47 +99,111 @@ export class EditUnitsComponent implements OnInit {
     this.changedData = true;
   }
 
-  async loadOrder(id: string) {
+  async inpOrderEnter($event: KeyboardEvent, id: string) {
     try {
-      const data = await this.appService.get(`http://localhost:3000/editUnits/getOrder-${id}`)
-      if ((data as []).length === 0) {
-        alert("Данный заказ закрыт или не существует!");
-        return;
-      }
-      this.order = data;
-    } catch (error) {
-      alert((error as Error).message);
-    }
+      if ($event.key === 'Enter' && id !== "") {
+        if (this.changedData === true) {
+          if (confirm("Данные не сохранены! Продолжить без сохранения?") === false) {
+            return;
+          }
+        }
+        const data = await this.appService.query('get', `http://localhost:3000/editUnits/getOrderAndUnits-${id}`)
+        if ((data as []).length === 0) {
+          this.units.length = 0;
+          this.order = undefined;
+          this.changedData = false;
+          alert("Данный заказ закрыт или не существует!");
+          return;
+        }
+        this.order = data[0].order[0];
+        this.units = data[0].units;
+        this.changedData = false;
 
+      }
+    } catch (error) {
+      alert(error);
+    }
   }
 
   async loadUnits(id: string) {
     try {
-      const data = await this.appService.get(`http://localhost:3000/editUnits/getUnits-${id}`)
-      if ((data as Array<any>).length > 0) {
-        this.units = data;
-      } else {
-        this.units.length = 0;
-      }
+      const data = await this.appService.query('get', `http://localhost:3000/editUnits/getUnits-${id}`)
+      this.units = data;
     } catch (error) {
-      alert((error as Error).message);
+      alert(error);
     }
 
   }
 
-
-  inpOrderEnter($event: KeyboardEvent, id: string) {
-    if ($event.key === 'Enter' && id !== "") {
-      if (this.changedData === true) {
-        if (confirm("Данные не сохранены! Продолжить без сохранения?") === false) {
+  async btnDelClick() {
+    try {
+      const i = this.navigator?.findCheckedRowNumber();
+      if (i == null) {
+        return;
+      }
+      const idSp = this.units[i].id_specification;
+      if (!idSp) {
+        alert('Для удаления добавленного узла используйте кнопку "Омена".')
+        return;
+      }
+      else {
+        let data = await this.appService.query('get', `http://localhost:3000/editUnits/isEmptyUnit-${idSp}`);
+        if ((data as []).length > 0) {
+          let answer = prompt(`Вы действительно хотите удалить узел и входящие в него данные? 
+        Для подтверждения введите номер узла ${this.units[i].unit}.`);
+          if (answer !== this.units[i].unit) {
+            return;
+          }
+        } else if ((data as []).length === 0) {
+          if (confirm("Вы действительно хотите удалить узел?") === false) {
+            return;
+          }
+        } else {
+          alert('Что-то пошло не так...');
           return;
         }
+        data = await this.appService.query('delete', `http://localhost:3000/editUnits/deleteUnit`,[idSp,this.order?.order_machine]);
+        this.units = data;
+        alert("Узел удален!");
       }
-      this.loadOrder(id);
-      this.loadUnits(id);
-      this.changedData = false;
+    } catch (error: any) {
+      alert(error);
     }
   }
+
+  async saveUnits() {
+    try {
+      if (this.changedData === false) {
+        return;
+      }
+      let sentUnits: Partial<Iunits>[] = [];
+      let i = 0;
+      for (const item of this.units) {
+        sentUnits.push(item);
+        sentUnits[i].ind = i;
+        sentUnits[i].order_machine = this.order?.order_machine;
+        delete sentUnits[i].idauthor;
+        delete sentUnits[i].nameUser;
+        delete sentUnits[i].status_unit;
+        delete sentUnits[i].started;
+        delete sentUnits[i].finished;
+        delete sentUnits[i].newOrEdit;
+        if (item.id_specification === undefined) {
+          this.units[i].status_unit = 1;
+          sentUnits[i].id_specification = null;
+        }
+        i++;
+      }
+      const data = await this.appService.query('put', `http://localhost:3000/editUnits/saveUnits-${this.order?.order_machine!}`, sentUnits);
+      this.units = data;
+      alert('Данные сохранены!');
+      this.changedData = false;
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
 
   ngOnInit(): void {
     let event = new Event("click");

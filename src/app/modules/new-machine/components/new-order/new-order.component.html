@@ -10,7 +10,7 @@
                         class="px-3 py-2 text-sm font-medium text-center text-white   ocus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Выбрать</button>
                 </div>
                 <div>
-                    <label for="cust" class="block mb-2 text-sm font-medium  text-blue-500">Заказчик</label>
+                    <label for="cust" class="block mb-2 text-sm font-medium  text-white">Заказчик</label>
                     <select id="cust" name="idcust"  [ngModel]="dataOrder?.idcustomer"
                         class="  border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                         <option *ngFor="let item of customers" value="{{item.idcustomer}}">
@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <label for="cat" class="block mb-2 text-sm font-medium  text-white">Категория</label>
-                    <select id="cat" name="idcat"  [ngModel]="dataOrder?.idcategory"
+                    <select id="cat" name="idcat" [ngModel]="dataOrder?.idcategory"
                         class=" border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                         <option *ngFor="let item of categories" value="{{item.idcategory}}">
                             {{item.category}}</option>
@@ -27,7 +27,7 @@
                 </div>
                 <div>
                     <label for="plane" class="block mb-2 text-sm font-medium  text-white">Отгрузка</label>
-                    <input type="date" id="plane" name="shipment" #htmlShipment [ngModel]="dataOrder?.shipment"
+                    <input type="date" id="plane" name="shipment" [ngModel]="dataOrder?.shipment"
                         class=" border text-sm    block w-full ps-10 p-2  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>

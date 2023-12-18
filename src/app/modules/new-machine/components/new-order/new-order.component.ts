@@ -1,8 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
-import { ActivatedRoute } from '@angular/router';
-//import { Subscription } from 'rxjs';
 import { Icategorycastomer, Iorder, IProperties, Icategories, Icustomers } from './iNewOrderInterfase';
 import { AppService } from 'src/app/app.service';
 
@@ -17,22 +14,17 @@ import { AppService } from 'src/app/app.service';
 export class NewOrderComponent implements OnInit {
 
 
-  constructor(private router: Router, private activateRoute: ActivatedRoute, private appService: AppService) {
-    /*  this.newOrder = activateRoute.snapshot.params['newOrder'];
-     this.subscription = activateRoute.params.subscribe(
-       (params) => (this.newOrder = params['newOrder']));
-  */
+  constructor(private appService: AppService) {
 
   }
-  // private subscription: Subscription;
-  // isNewOrde = true;
-  // customerOnload: number | undefined;
-  //categoryOnload: number | undefined;
+
+
   dataChanged: boolean | null | undefined = false;
   customers: Icustomers[] | undefined;
   categories: Icategories[] | undefined;
   dataProperties: Array<IProperties> = [];
   dataOrder!: Iorder | undefined;
+
 
 
   @ViewChild("orderform", { static: false })
@@ -49,14 +41,23 @@ export class NewOrderComponent implements OnInit {
         return;
       }
     }
-    this.dataOrder = undefined;
+    //delete this.dataOrder?.order_machine;
+   // this.dataOrder!.order_machine = undefined;
     this.orderform?.reset();
-    this.dataOrder = { idcategory: 0, idcustomer: 0 }
-     this.dataChanged = false;
-
+    (document.getElementById('cust') as HTMLInputElement).value = '0';
+    (document.getElementById('cat') as HTMLInputElement).value = '0';
+    (document.getElementById('plane') as HTMLInputElement).value = new Date().toISOString().split('T')[0];
+    //   this.dataOrder = { idcategory: 0, idcustomer: 0, shipment:new Date().toISOString().split('T')[0] };
+    this.dataChanged = false;
+    const valueDate = new Date().toISOString().split('T')[0];
+    this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
+    this.dataProperties.length=0;
+    for (let index = 0; index < 14; index++) {
+      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+    }
   }
 
-   async getNewOrder($event: KeyboardEvent, id: string) {
+  async getNewOrder($event: KeyboardEvent, id: string) {
     try {
       if ($event.key !== 'Enter') {
         return;
@@ -67,7 +68,7 @@ export class NewOrderComponent implements OnInit {
     } catch (error) {
       alert(error);
     }
-  
+
   }
 
 
@@ -99,6 +100,8 @@ export class NewOrderComponent implements OnInit {
           this.dataOrder!.shipment = shipment;
         } else {
           this.dataOrder = data.order;
+          this.dataOrder!.idcustomer = 0;
+          this.dataOrder!.shipment = new Date().toISOString().split('T')[0];
         }
         this.dataChanged = true;
       }
@@ -107,9 +110,16 @@ export class NewOrderComponent implements OnInit {
         this.dataChanged = false;
       }
       if ((data as Object).hasOwnProperty('properties')) {
-        this.dataProperties = data.properties;
+        let i = 0;
+        for (const iterator of data.properties) {
+          this.dataProperties[i] = iterator;
+          i++;
+        }
+        for (i = i; i < 14; i++) {
+          this.dataProperties[i] = ({ property: "", val: "", idproperty: 0 })
+        }
       }
-    
+
     } catch (error) {
       alert(error);
     }
@@ -146,10 +156,6 @@ export class NewOrderComponent implements OnInit {
         oldNameOrder = '';
         method = 'post';
         url = 'http://localhost:3000/newOrder/createOrder';
-        if (!formValue.idcategory || !formValue.idcustomer) {
-          alert("Выберите заказчика и категорию!");
-          return;
-        }
       }
       const props: Array<IProperties> = [];
       for (let i = 0; i < 14; i++) {
@@ -164,15 +170,15 @@ export class NewOrderComponent implements OnInit {
           number_machine: formValue.number_machine,
           name_machine: formValue.name_machine,
           description: formValue.description,
-          idcustomer: formValue.idcust,
-          idcategory: formValue.idcat,
+          idcustomer: (document.getElementById('cust') as HTMLSelectElement).value,
+          idcategory: (document.getElementById('cat') as HTMLSelectElement).value,
           weight: formValue.weight,
           shipment: formValue.shipment,
           oldNameOrder: oldNameOrder
         },
         insertProps: props
       }
-    
+
       const data = await this.appService.query(method, url, dataServer);
       if (data.response === 'ok') {
         alert('Даные сохранены!');
@@ -187,14 +193,16 @@ export class NewOrderComponent implements OnInit {
     }
   }
 
-  async castCat() {
+  async onLoad() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       this.customers = data.customers;
       this.categories = data.categories;
-      this.dataOrder = { idcategory: 0, idcustomer: 0 }
-      /*  this.customerOnload = 0;
-       this.categoryOnload = 0; */
+      const valueDate = new Date().toISOString().split('T')[0];
+      this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
+      for (let index = 0; index < 14; index++) {
+        this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+      }
 
     } catch (error) {
       alert(error)
@@ -203,10 +211,9 @@ export class NewOrderComponent implements OnInit {
 
 
   ngOnInit() {
-    this.castCat();
-    for (let index = 0; index < 14; index++) {
-      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
-    }
+    this.onLoad();
+
+  
     let event = new Event("click");
     document.getElementById('id_machine')!.dispatchEvent(event);
   }

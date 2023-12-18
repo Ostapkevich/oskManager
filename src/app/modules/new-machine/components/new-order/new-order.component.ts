@@ -41,20 +41,9 @@ export class NewOrderComponent implements OnInit {
         return;
       }
     }
-    //delete this.dataOrder?.order_machine;
-   // this.dataOrder!.order_machine = undefined;
     this.orderform?.reset();
-    (document.getElementById('cust') as HTMLInputElement).value = '0';
-    (document.getElementById('cat') as HTMLInputElement).value = '0';
-    (document.getElementById('plane') as HTMLInputElement).value = new Date().toISOString().split('T')[0];
-    //   this.dataOrder = { idcategory: 0, idcustomer: 0, shipment:new Date().toISOString().split('T')[0] };
     this.dataChanged = false;
-    const valueDate = new Date().toISOString().split('T')[0];
-    this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
-    this.dataProperties.length=0;
-    for (let index = 0; index < 14; index++) {
-      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
-    }
+    this.initialization();
   }
 
   async getNewOrder($event: KeyboardEvent, id: string) {
@@ -193,17 +182,23 @@ export class NewOrderComponent implements OnInit {
     }
   }
 
+  initialization( ){
+    const valueDate = new Date().toISOString().split('T')[0];
+    this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
+    this.dataProperties.length=0;
+    for (let index = 0; index < 14; index++) {
+      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+    }
+  }
+
+
+
   async onLoad() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       this.customers = data.customers;
       this.categories = data.categories;
-      const valueDate = new Date().toISOString().split('T')[0];
-      this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
-      for (let index = 0; index < 14; index++) {
-        this.dataProperties.push({ property: "", val: "", idproperty: 0 })
-      }
-
+      this.initialization();
     } catch (error) {
       alert(error)
     }
@@ -212,8 +207,6 @@ export class NewOrderComponent implements OnInit {
 
   ngOnInit() {
     this.onLoad();
-
-  
     let event = new Event("click");
     document.getElementById('id_machine')!.dispatchEvent(event);
   }

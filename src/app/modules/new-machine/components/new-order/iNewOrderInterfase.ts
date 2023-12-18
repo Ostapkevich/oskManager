@@ -1,13 +1,13 @@
 
 interface Iorder {
-  order_machine: string;
-  number_machine: string;
-  name_machine: string;
-  description: string;
-  idcustomer: number;
-  idcategory: number;
-  shipment: string;
-  weight:number;  
+  order_machine?: string;
+  number_machine?: string;
+  name_machine?: string;
+  description?: string;
+  idcustomer?: number;
+  idcategory?: number;
+  shipment?: string;
+  weight?:number;  
 }
 
 interface IProperties {

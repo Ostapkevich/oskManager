@@ -10,16 +10,16 @@
                         class="px-3 py-2 text-sm font-medium text-center text-white   ocus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Выбрать</button>
                 </div>
                 <div>
-                    <label for="customers" class="block mb-2 text-sm font-medium  text-blue-500">Заказчик</label>
-                    <select id="customers" name="idcustomer" #templateCustomer [ngModel]="customerOnload"
+                    <label for="cust" class="block mb-2 text-sm font-medium  text-blue-500">Заказчик</label>
+                    <select id="cust" name="idcust"  [ngModel]="dataOrder?.idcustomer"
                         class="  border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                         <option *ngFor="let item of customers" value="{{item.idcustomer}}">
                             {{item.customer}}</option>
                     </select>
                 </div>
                 <div>
-                    <label for="categories" class="block mb-2 text-sm font-medium  text-white">Категория</label>
-                    <select id="categories" name="idcategory" #templateCategory [ngModel]="categoryOnload"
+                    <label for="cat" class="block mb-2 text-sm font-medium  text-white">Категория</label>
+                    <select id="cat" name="idcat"  [ngModel]="dataOrder?.idcategory"
                         class=" border  text-sm    block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                         <option *ngFor="let item of categories" value="{{item.idcategory}}">
                             {{item.category}}</option>
@@ -82,44 +82,44 @@
                 <label for="val0" class="block mb-3 text-sm font-medium  text-white">Значение</label>
                 <input type="text" id="val0" name="val0" [ngModel]="dataProperties[0].val"
                     class="  border ext-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="" maxlength="6">
+                    placeholder="" maxlength="10">
             </div>
             <input type="text" id="char1" name="char1" [ngModel]="dataProperties[1].property"
                 class="col-span-10 text-right   border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="2" maxlength="60">
             <input type="text" id="val1" name="val1" [ngModel]="dataProperties[1].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char2" name="char2" [ngModel]="dataProperties[2].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="3" maxlength="60">
             <input type="text" id="val2" name="val2" [ngModel]="dataProperties[2].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char3" name="char3" [ngModel]="dataProperties[3].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="4" maxlength="60">
             <input type="text" id="val3" name="val3" [ngModel]="dataProperties[3].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char4" name="char4" [ngModel]="dataProperties[4].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="5" maxlength="60">
             <input type="text" id="val4" name="val4" [ngModel]="dataProperties[4].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char5" name="char5" [ngModel]="dataProperties[5].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="6" maxlength="60">
             <input type="text" id="val5" name="val5" [ngModel]="dataProperties[5].val"
                 class="col-span-2  border text-sm  block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char6" name="char6" [ngModel]="dataProperties[6].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="7" maxlength="60">
             <input type="text" id="val6" name="val6" [ngModel]="dataProperties[6].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
         </div>
 
         <div class="grid gap-3  md:grid-cols-12">
@@ -133,44 +133,44 @@
                 <label for="val7" class="block mb-3 text-sm font-medium  text-white">Значение</label>
                 <input type="text" id="val7" name="val7" [ngModel]="dataProperties[7].val"
                     class=" border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="" maxlength="6">
+                    placeholder="" maxlength="10">
             </div>
             <input type="text" id="char8" name="char8" [ngModel]="dataProperties[8].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="9" maxlength="60">
             <input type="text" id="val8" name="val8" [ngModel]="dataProperties[8].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char9" name="char9" [ngModel]="dataProperties[9].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="10" maxlength="60">
             <input type="text" id="val9" name="val9" [ngModel]="dataProperties[9].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char10" name="char10" [ngModel]="dataProperties[10].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="11" maxlength="60">
             <input type="text" id="val10" name="val10" [ngModel]="dataProperties[10].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char11" name="char11" [ngModel]="dataProperties[11].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="12" maxlength="60">
             <input type="text" id="val11" name="val11" [ngModel]="dataProperties[11].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char12" name="char12" [ngModel]="dataProperties[12].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="13" maxlength="60">
             <input type="text" id="val12" name="val12" [ngModel]="dataProperties[12].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
             <input type="text" id="char13" name="char13" [ngModel]="dataProperties[13].property"
                 class="text-right col-span-10  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
                 placeholder="14" maxlength="60">
             <input type="text" id="val13" name="val13" [ngModel]="dataProperties[13].val"
                 class="col-span-2  border  text-sm   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                placeholder="" maxlength="6">
+                placeholder="" maxlength="10">
         </div>
     </div>
 
@@ -181,7 +181,9 @@
     class="  mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Создать</button>
     <button  type="button" (click)="clean()" 
     class=" mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Очистить</button>
-</div>    
+    
+</div>   
+
   
 
 </form>

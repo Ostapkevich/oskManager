@@ -25,21 +25,15 @@ export class NewOrderComponent implements OnInit {
 
   }
   // private subscription: Subscription;
- // isNewOrde = true;
-  customerOnload: number | undefined;
-  categoryOnload: number | undefined;
+  // isNewOrde = true;
+  // customerOnload: number | undefined;
+  //categoryOnload: number | undefined;
   dataChanged: boolean | null | undefined = false;
   customers: Icustomers[] | undefined;
   categories: Icategories[] | undefined;
   dataProperties: Array<IProperties> = [];
   dataOrder!: Iorder | undefined;
 
-
-  @ViewChild("templateCustomer", { static: false })
-  customerRef: ElementRef | undefined;
-
-  @ViewChild("templateCategory", { static: false })
-  categoryRef: ElementRef | undefined;
 
   @ViewChild("orderform", { static: false })
   orderform: NgForm | undefined;
@@ -57,20 +51,23 @@ export class NewOrderComponent implements OnInit {
     }
     this.dataOrder = undefined;
     this.orderform?.reset();
-    this.dataChanged = false;
+    this.dataOrder = { idcategory: 0, idcustomer: 0 }
+     this.dataChanged = false;
+
   }
 
-  getNewOrder($event: KeyboardEvent, id: string) {
+   async getNewOrder($event: KeyboardEvent, id: string) {
     try {
       if ($event.key !== 'Enter') {
         return;
       } else if (id === "") {
         return;
       }
-      this.loadOrder(id, 'false');
+      await this.loadOrder(id, 'false');
     } catch (error) {
       alert(error);
     }
+  
   }
 
 
@@ -87,74 +84,38 @@ export class NewOrderComponent implements OnInit {
   async loadOrder(id: string, isAnalog: 'false' | 'true') {
     try {
       const data: { order: Iorder, properties: IProperties[] } = await this.appService.query('get', `http://localhost:3000/newOrder/loadOrder${id}/${isAnalog}`);
-      if (!data.order) {
+      if ((data as Object).hasOwnProperty('order') === false) {
         alert("Данный заказ закрыт или не существует!");
         return;
       }
-      /*    if (data.order.description === null) {
-           data.order.description = "";
-         } */
-      const order = this.dataOrder?.order_machine;
-      const shipment = this.dataOrder?.shipment;
-      this.dataOrder = data.order;
-      if (data.properties) {
+      if (isAnalog === 'true') {
+        if ((this.dataOrder as Object).hasOwnProperty('order_machine')) {
+          const order_machine = this.dataOrder!.order_machine
+          const idcustomer = this.dataOrder!.idcustomer;
+          const shipment = this.dataOrder!.shipment;
+          this.dataOrder = data.order;
+          this.dataOrder!.order_machine = order_machine;
+          this.dataOrder!.idcustomer = idcustomer;
+          this.dataOrder!.shipment = shipment;
+        } else {
+          this.dataOrder = data.order;
+        }
+        this.dataChanged = true;
+      }
+      else {
+        this.dataOrder = data.order;
+        this.dataChanged = false;
+      }
+      if ((data as Object).hasOwnProperty('properties')) {
         this.dataProperties = data.properties;
       }
-      if (isAnalog === 'true') {
-        if (order) {
-          this.dataOrder!.order_machine = order;
-        }
-        if (shipment) {
-          this.dataOrder!.shipment = shipment;
-        }
-      }
-      this.categoryOnload = this.dataOrder?.idcategory;
-      let select: HTMLSelectElement;
-      let options: any;
-      if (isAnalog === 'false') {
-        this.customerOnload = this.dataOrder?.idcustomer;
-        let inputDate: any;
-        inputDate = document.getElementById("plane");
-        inputDate.value = this.dataOrder?.shipment;
-        select = this.customerRef?.nativeElement;
-        options = select.children;
-        const len = options.length;
-        for (let i = 0; i < len; i++) {
-          if (+options[i].value === this.dataOrder?.idcustomer) {
-            select.options[i].selected = true;
-            break;
-          }
-        }
-      }
-      select = this.categoryRef?.nativeElement;
-      options = select.children;
-      const len = options.length;
-      for (let i = 0; i < len; i++) {
-        if (+options[i].value === this.dataOrder?.idcategory) {
-          select.options[i].selected = true;
-          break;
-        }
-      }
-      let i = 0;
-      for (const iterator of data.properties) {
-        this.dataProperties[i] = iterator;
-        i++;
-      }
-      for (i = i; i < 14; i++) {
-        this.dataProperties[i] = ({ property: "", val: "", idproperty: 0 })
-      }
-      if (isAnalog === 'true') {
-        this.dataChanged = true;
-      } else {
-        this.dataChanged = false;
-      }
-
+    
     } catch (error) {
       alert(error);
     }
   }
 
-  async createOrder(dataForm: any, shipment: any) {
+  async save(btn: string) {
     if (this.orderform?.invalid === true) {
       alert('Заполните обязательные поля!');
       return;
@@ -163,46 +124,10 @@ export class NewOrderComponent implements OnInit {
       return;
     }
     try {
-
-      if (shipment !== "" && Date.parse(shipment) < Date.now()) {
-        if (confirm('Дата отгрузки должна быть больше текущей даты. Изменить дату отгрузки?') === true) {
-          return;
-        }
-      } else if (shipment === "") {
-        dataForm.shipment = null;
-      }
-      if (!dataForm.idcategory || !dataForm.idcustomer) {
-        alert("Выберите заказчика и категорию!");
-        return;
-      }
-      
-      const data = await this.appService.query('post', 'http://localhost:3000/newOrder/createOrder', dataForm);
-      if (data.response === 'ok') {
-        this.dataChanged = false;
-      //  this.isNewOrde = false;
-        this.loadOrder(dataForm.order_machine, 'false');
-        alert("Даные сохранены!");
-      } else {
-        alert("Что-то пошло не так... Данные не сохранены!");
-      }
-    } catch (error) {
-      alert(error);
-    }
-  }
-
-  async save(btn:string) {
-    if (this.orderform?.invalid === true) {
-      alert('Заполните обязательные поля!');
-      return;
-    }
-    if (this.dataChanged === false) {
-      return;
-    }
-    try {
-      let  oldNameOrder:string;
-      let method:'put'|'post';
-      let url:string;
-      const formValue=this.orderform!.value;
+      let oldNameOrder: string;
+      let method: 'put' | 'post';
+      let url: string;
+      const formValue = this.orderform!.value;
       if (formValue.shipment !== "" && Date.parse(formValue.shipment) < Date.now()) {
         if (confirm('Дата отгрузки должна быть больше текущей даты. Изменить дату отгрузки?') === true) {
           return;
@@ -210,18 +135,18 @@ export class NewOrderComponent implements OnInit {
       } else if (formValue.shipment === "") {
         formValue.shipment = null;
       }
-      if (btn==='btnSave') {
-        oldNameOrder=this.dataOrder?.order_machine!;
-        method='put';
-        url='http://localhost:3000/newOrder/saveOrder';
-           if (this.dataOrder?.order_machine !== formValue.order_machine && !confirm("Хотите изменить номер заказа?")) {
+      if (btn === 'btnSave') {
+        oldNameOrder = this.dataOrder?.order_machine!;
+        method = 'put';
+        url = 'http://localhost:3000/newOrder/saveOrder';
+        if (this.dataOrder?.order_machine !== formValue.order_machine && !confirm("Хотите изменить номер заказа?")) {
           return;
         }
-      }else{
-        oldNameOrder='';
-        method='post';
-        url='http://localhost:3000/newOrder/createOrder';
-        if (!formValue.idcategory || !formValue.value.idcustomer) {
+      } else {
+        oldNameOrder = '';
+        method = 'post';
+        url = 'http://localhost:3000/newOrder/createOrder';
+        if (!formValue.idcategory || !formValue.idcustomer) {
           alert("Выберите заказчика и категорию!");
           return;
         }
@@ -232,22 +157,23 @@ export class NewOrderComponent implements OnInit {
           props.push({ order_machine: formValue.order_machine, property: formValue[`char${i}`], val: formValue[`val${i}`] });
         }
       }
-      const dataServer= {
+      const dataServer = {
         mainData:
         {
           order_machine: formValue.order_machine,
           number_machine: formValue.number_machine,
           name_machine: formValue.name_machine,
           description: formValue.description,
-          idcustomer: formValue.idcustomer,
-          idcategory: formValue.idcategory,
+          idcustomer: formValue.idcust,
+          idcategory: formValue.idcat,
           weight: formValue.weight,
           shipment: formValue.shipment,
           oldNameOrder: oldNameOrder
         },
         insertProps: props
       }
-      const data = await this.appService.query(method, url,dataServer);
+    
+      const data = await this.appService.query(method, url, dataServer);
       if (data.response === 'ok') {
         alert('Даные сохранены!');
         this.loadOrder(formValue.order_machine, 'false');
@@ -261,12 +187,15 @@ export class NewOrderComponent implements OnInit {
     }
   }
 
-
   async castCat() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       this.customers = data.customers;
       this.categories = data.categories;
+      this.dataOrder = { idcategory: 0, idcustomer: 0 }
+      /*  this.customerOnload = 0;
+       this.categoryOnload = 0; */
+
     } catch (error) {
       alert(error)
     }

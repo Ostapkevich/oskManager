@@ -36,10 +36,8 @@ export class NewOrderComponent implements OnInit {
         return;
       }
     }
-    if (this.dataOrder && (this.dataOrder as Object).hasOwnProperty('order_machine') === true) {
-      delete this.dataOrder.order_machine;
-    }
      this.orderform?.reset();
+     this.dataOrder=undefined;
     this.dataProperties.length = 0;
     for (let index = 0; index < 14; index++) {
       this.dataProperties.push({ property: "", val: "", idproperty: 0 })
@@ -158,7 +156,7 @@ export class NewOrderComponent implements OnInit {
       }
       const props: Array<IProperties> = [];
       for (let i = 0; i < 14; i++) {
-        if (formValue[`char${i}`] !== "" ) {
+        if (formValue[`char${i}`] !== "" && formValue[`char${i}`] !== null ) {
           props.push({ order_machine: formValue.order_machine, property: formValue[`char${i}`], val: formValue[`val${i}`] });
         }
       }
@@ -196,6 +194,9 @@ export class NewOrderComponent implements OnInit {
 
   async onLoad() {
     try {
+      for (let index = 0; index < 14; index++) {
+        this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+      }
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       if ((data as Object).hasOwnProperty('customers')) {
         this.customers = data.customers;
@@ -206,9 +207,7 @@ export class NewOrderComponent implements OnInit {
         (document.getElementById('cat') as HTMLSelectElement).selectedIndex = 0;
       }
       (document.getElementById('plane') as HTMLDataElement).value = new Date().toISOString().split('T')[0];
-      for (let index = 0; index < 14; index++) {
-        this.dataProperties.push({ property: "", val: "", idproperty: 0 })
-      }
+     
     } catch (error) {
       alert(error)
     }

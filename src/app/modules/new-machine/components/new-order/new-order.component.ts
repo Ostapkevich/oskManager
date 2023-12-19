@@ -37,10 +37,20 @@ export class NewOrderComponent implements OnInit {
       }
     }
     if (this.dataOrder && (this.dataOrder as Object).hasOwnProperty('order_machine') === true) {
-      delete (this.dataOrder.order_machine);
+      delete this.dataOrder.order_machine;
     }
-    this.orderform?.reset();
-    this.initialization(false);
+     this.orderform?.reset();
+    this.dataProperties.length = 0;
+    for (let index = 0; index < 14; index++) {
+      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+    }
+    if ((document.getElementById('cat') as HTMLSelectElement).length > 0) {
+      (document.getElementById('cat') as HTMLSelectElement).selectedIndex = 0;
+    }
+    if ((document.getElementById('cust') as HTMLSelectElement).length > 0) {
+      (document.getElementById('cust') as HTMLSelectElement).selectedIndex = 0;
+    }
+    (document.getElementById('plane') as HTMLDataElement).value = new Date().toISOString().split('T')[0];
     this.dataChanged = false;
 
   }
@@ -77,7 +87,7 @@ export class NewOrderComponent implements OnInit {
         return;
       }
       if (isAnalog === 'true') {
-        if ((this.dataOrder as Object).hasOwnProperty('order_machine')) {
+        if ( this.dataOrder && (this.dataOrder as Object).hasOwnProperty('order_machine') === true ) {
           const order_machine = this.dataOrder!.order_machine
           const idcustomer = this.dataOrder!.idcustomer;
           const shipment = this.dataOrder!.shipment;
@@ -87,22 +97,21 @@ export class NewOrderComponent implements OnInit {
           this.dataOrder!.shipment = shipment;
         } else {
           this.dataOrder = data.order;
-          this.dataOrder!.idcustomer = 0;
-          this.dataOrder!.shipment = new Date().toISOString().split('T')[0];
         }
+        (document.getElementById('cat') as HTMLSelectElement).value = String(this.dataOrder.idcategory);
         this.dataChanged = true;
       }
       else {
         this.dataOrder = data.order;
         this.dataChanged = false;
+        (document.getElementById('cat') as HTMLSelectElement).value = String(this.dataOrder.idcategory);
+        (document.getElementById('cust') as HTMLSelectElement).value = String(this.dataOrder.idcustomer);
+        (document.getElementById('plane') as HTMLDataElement).value = this.dataOrder.shipment!;
       }
       if ((data as Object).hasOwnProperty('properties')) {
-        let i = 0;
-        for (const iterator of data.properties) {
-          this.dataProperties[i] = iterator;
-          i++;
-        }
-        for (i = i; i < 14; i++) {
+        this.dataProperties = data.properties;
+        let i: number;
+        for (i = this.dataProperties.length; i < 14; i++) {
           this.dataProperties[i] = ({ property: "", val: "", idproperty: 0 })
         }
       }
@@ -112,6 +121,10 @@ export class NewOrderComponent implements OnInit {
   }
 
   async save(btn: string) {
+    if ((document.getElementById('cat') as HTMLSelectElement).length === 0 || (document.getElementById('cust') as HTMLSelectElement).length === 0) {
+      alert("Добавте категории и заказчиков!");
+      return;
+    }
     if (this.orderform?.invalid === true) {
       alert('Заполните обязательные поля! Поле с массой должно содержать только цифры с точкой.');
       return;
@@ -145,7 +158,7 @@ export class NewOrderComponent implements OnInit {
       }
       const props: Array<IProperties> = [];
       for (let i = 0; i < 14; i++) {
-        if (formValue[`char${i}`] !== "") {
+        if (formValue[`char${i}`] !== "" ) {
           props.push({ order_machine: formValue.order_machine, property: formValue[`char${i}`], val: formValue[`val${i}`] });
         }
       }
@@ -159,7 +172,7 @@ export class NewOrderComponent implements OnInit {
           idcustomer: (document.getElementById('cust') as HTMLSelectElement).value,
           idcategory: (document.getElementById('cat') as HTMLSelectElement).value,
           weight: formValue.weight,
-          shipment: formValue.shipment,
+          shipment: (document.getElementById('plane') as HTMLDataElement).value,
           oldNameOrder: oldNameOrder
         },
         insertProps: props
@@ -180,33 +193,22 @@ export class NewOrderComponent implements OnInit {
     }
   }
 
-  initialization(isOnload: boolean) {
-    this.dataProperties.length = 0;
-    for (let index = 0; index < 14; index++) {
-      this.dataProperties.push({ property: "", val: "", idproperty: 0 })
-    }
-    const valueDate = new Date().toISOString().split('T')[0];
-    if (isOnload) {
-      this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
-    } else {
-      (document.getElementById('cat') as HTMLSelectElement).value = '0';
-      (document.getElementById('cust') as HTMLSelectElement).value = '0';
-      (document.getElementById('plane') as HTMLDataElement).value = valueDate;
-    }
 
-  }
-
-
-  async loadCatCust() {
+  async onLoad() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       if ((data as Object).hasOwnProperty('customers')) {
         this.customers = data.customers;
+        (document.getElementById('cust') as HTMLSelectElement).selectedIndex = 0;
       }
       if ((data as Object).hasOwnProperty('categories')) {
         this.categories = data.categories;
+        (document.getElementById('cat') as HTMLSelectElement).selectedIndex = 0;
       }
-
+      (document.getElementById('plane') as HTMLDataElement).value = new Date().toISOString().split('T')[0];
+      for (let index = 0; index < 14; index++) {
+        this.dataProperties.push({ property: "", val: "", idproperty: 0 })
+      }
     } catch (error) {
       alert(error)
     }
@@ -214,20 +216,12 @@ export class NewOrderComponent implements OnInit {
 
 
   ngOnInit() {
-    this.loadCatCust();
-    this.initialization(true);
+    this.onLoad();
     let event = new Event("click");
     document.getElementById('id_machine')!.dispatchEvent(event);
   }
 
-  check() {
-    console.clear();
-    console.log('pristine: ', this.orderform?.pristine)
-    console.log('touched: ', this.orderform?.touched)
-    console.log('untouched: ', this.orderform?.untouched)
-    console.log('dirty: ', this.orderform?.dirty)
-    console.log('invalid: ', this.orderform?.invalid)
-  }
+
 
 }
 

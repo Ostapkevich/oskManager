@@ -185,7 +185,7 @@ export class NewOrderComponent implements OnInit {
   }
 
 
-  async onLoad() {
+  async loadCatCust() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       this.customers = data.customers;
@@ -196,7 +196,7 @@ export class NewOrderComponent implements OnInit {
       if ((data as Object).hasOwnProperty('cuscategoriestomers')) {
         this.categories = data.categories;
       } */
-      this.initialization();
+     
     } catch (error) {
       alert(error)
     }
@@ -204,7 +204,8 @@ export class NewOrderComponent implements OnInit {
 
 
   ngOnInit() {
-    this.onLoad();
+    this.loadCatCust();
+    this.initialization();
     let event = new Event("click");
     document.getElementById('id_machine')!.dispatchEvent(event);
   }

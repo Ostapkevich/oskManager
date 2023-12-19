@@ -59,8 +59,8 @@
             <div class="basis-1/12">
                 <label for="id_weight" class=" block mb-2 text-sm font-medium  text-white">Масса, кг
                 </label>
-                <input autofocus id="id_weight" name="weight" [ngModel]="dataOrder?.weight"
-                    #templateWeight="ngModel"  maxlength="9"
+                <input pattern="^\d{1,6}(\.\d{1,3})?$" maxlength="10" autofocus id="id_weight" name="weight" [ngModel]="dataOrder?.weight"
+                    #templateWeight="ngModel"  maxlength="10"
                     class="  border text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
@@ -181,9 +181,6 @@
     class="  mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Создать</button>
     <button  type="button" (click)="clean()" 
     class=" mt-8 text-white   focus:ring-4 focus:outline-none  font-medium  text-sm w-full sm:w-auto px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Очистить</button>
-    
+   
 </div>   
-
-  
-
 </form>

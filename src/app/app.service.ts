@@ -35,7 +35,9 @@ export class AppService {
       callBack.subscribe(
         {
           next: (data: any) => {
-           
+           if ((data as Object).hasOwnProperty('serverError')) {
+            reject(new Error(data.serverError));
+           }
             resolve(data);
           }
           ,

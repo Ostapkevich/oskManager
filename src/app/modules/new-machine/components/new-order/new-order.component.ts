@@ -13,15 +13,14 @@ import { AppService } from 'src/app/app.service';
 export class NewOrderComponent implements OnInit {
 
   constructor(private appService: AppService) {
-   
-   }
+
+  }
 
   dataChanged: boolean | null | undefined = false;
   customers: Icustomers[] | undefined;
   categories: Icategories[] | undefined;
   dataProperties: Array<IProperties> = [];
   dataOrder!: Iorder | undefined;
-
 
 
   @ViewChild("orderform", { static: false })
@@ -37,9 +36,13 @@ export class NewOrderComponent implements OnInit {
         return;
       }
     }
+    if (this.dataOrder && (this.dataOrder as Object).hasOwnProperty('order_machine') === true) {
+      delete (this.dataOrder.order_machine);
+    }
     this.orderform?.reset();
+    this.initialization(false);
     this.dataChanged = false;
-    this.initialization();
+
   }
 
   async getNewOrder($event: KeyboardEvent, id: string) {
@@ -62,6 +65,7 @@ export class NewOrderComponent implements OnInit {
       return
     }
     this.loadOrder(analogOrder, 'true');
+
   }
 
 
@@ -109,7 +113,7 @@ export class NewOrderComponent implements OnInit {
 
   async save(btn: string) {
     if (this.orderform?.invalid === true) {
-      alert('Заполните обязательные поля!');
+      alert('Заполните обязательные поля! Поле с массой должно содержать только цифры с точкой.');
       return;
     }
     if (this.dataChanged === false) {
@@ -170,33 +174,39 @@ export class NewOrderComponent implements OnInit {
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
       }
+
     } catch (error) {
       alert(error);
     }
   }
 
-  initialization() {
-    const valueDate = new Date().toISOString().split('T')[0];
-    this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
+  initialization(isOnload: boolean) {
     this.dataProperties.length = 0;
     for (let index = 0; index < 14; index++) {
       this.dataProperties.push({ property: "", val: "", idproperty: 0 })
     }
+    const valueDate = new Date().toISOString().split('T')[0];
+    if (isOnload) {
+      this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
+    } else {
+      (document.getElementById('cat') as HTMLSelectElement).value = '0';
+      (document.getElementById('cust') as HTMLSelectElement).value = '0';
+      (document.getElementById('plane') as HTMLDataElement).value = valueDate;
+    }
+
   }
 
 
   async loadCatCust() {
     try {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
-      this.customers = data.customers;
-      this.categories = data.categories;
-   /*    if ((data as Object).hasOwnProperty('customers')) {
+      if ((data as Object).hasOwnProperty('customers')) {
         this.customers = data.customers;
       }
-      if ((data as Object).hasOwnProperty('cuscategoriestomers')) {
+      if ((data as Object).hasOwnProperty('categories')) {
         this.categories = data.categories;
-      } */
-     
+      }
+
     } catch (error) {
       alert(error)
     }
@@ -205,9 +215,18 @@ export class NewOrderComponent implements OnInit {
 
   ngOnInit() {
     this.loadCatCust();
-    this.initialization();
+    this.initialization(true);
     let event = new Event("click");
     document.getElementById('id_machine')!.dispatchEvent(event);
+  }
+
+  check() {
+    console.clear();
+    console.log('pristine: ', this.orderform?.pristine)
+    console.log('touched: ', this.orderform?.touched)
+    console.log('untouched: ', this.orderform?.untouched)
+    console.log('dirty: ', this.orderform?.dirty)
+    console.log('invalid: ', this.orderform?.invalid)
   }
 
 }

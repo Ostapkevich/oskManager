@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 import { Icategorycastomer, Iorder, IProperties, Icategories, Icustomers } from './iNewOrderInterfase';
 import { AppService } from 'src/app/app.service';
 
-
 @Component({
   selector: 'app-new-machine',
   templateUrl: './new-order.component.html',
@@ -13,11 +12,9 @@ import { AppService } from 'src/app/app.service';
 })
 export class NewOrderComponent implements OnInit {
 
-
   constructor(private appService: AppService) {
-
-  }
-
+   
+   }
 
   dataChanged: boolean | null | undefined = false;
   customers: Icustomers[] | undefined;
@@ -33,7 +30,6 @@ export class NewOrderComponent implements OnInit {
   formChange(dataForm: NgForm) {
     this.dataChanged = dataForm.dirty;
   }
-
 
   clean() {
     if (this.dataChanged === true) {
@@ -57,7 +53,6 @@ export class NewOrderComponent implements OnInit {
     } catch (error) {
       alert(error);
     }
-
   }
 
 
@@ -67,7 +62,6 @@ export class NewOrderComponent implements OnInit {
       return
     }
     this.loadOrder(analogOrder, 'true');
-
   }
 
 
@@ -108,7 +102,6 @@ export class NewOrderComponent implements OnInit {
           this.dataProperties[i] = ({ property: "", val: "", idproperty: 0 })
         }
       }
-
     } catch (error) {
       alert(error);
     }
@@ -182,15 +175,14 @@ export class NewOrderComponent implements OnInit {
     }
   }
 
-  initialization( ){
+  initialization() {
     const valueDate = new Date().toISOString().split('T')[0];
     this.dataOrder = { idcategory: 0, idcustomer: 0, shipment: valueDate };
-    this.dataProperties.length=0;
+    this.dataProperties.length = 0;
     for (let index = 0; index < 14; index++) {
       this.dataProperties.push({ property: "", val: "", idproperty: 0 })
     }
   }
-
 
 
   async onLoad() {
@@ -198,6 +190,12 @@ export class NewOrderComponent implements OnInit {
       const data: Icategorycastomer = await this.appService.query('get', 'http://localhost:3000/newOrder/selectcustcat');
       this.customers = data.customers;
       this.categories = data.categories;
+   /*    if ((data as Object).hasOwnProperty('customers')) {
+        this.customers = data.customers;
+      }
+      if ((data as Object).hasOwnProperty('cuscategoriestomers')) {
+        this.categories = data.categories;
+      } */
       this.initialization();
     } catch (error) {
       alert(error)

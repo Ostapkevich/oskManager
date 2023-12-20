@@ -7,7 +7,7 @@ interface IrolledType {
 interface Isteel {
   idsteel: number;
   steel: string;
-  index: number;
+  ind: number;
 }
 
 interface Irolled {

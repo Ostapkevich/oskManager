@@ -37,12 +37,12 @@
             class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
             <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
               <li>
-                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Новый заказ</a>
+                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Пусто</a>
               </li>
               <li aria-labelledby="newOrderLink">
                 <button id="btnNewOrder" data-dropdown-toggle="doubleDropdown"
                   data-dropdown-placement="right-start" type="button"
-                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Заказ
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Проектирование
                   <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -53,18 +53,17 @@
                   class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
                   <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnNewOrder">
                     <li>
-                      <a [routerLink]="['instruments/newOrder']"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать заказ</a>
+                      <a  routerLink="instruments/newOrder"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Создать заказ</a>
                     </li>
                    
                     <li>
-                      <a [routerLink]="['instruments/formOrder']" id="linkFormOder"
+                      <a routerLink="instruments/formOrder" id="linkFormOder"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать состав</a>
                     </li>
                     <li>
-                      <button id="doubleDr" type="button" aria-expanded="true"
-                        class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Формирование
-                        заказа</button>
+                      <a routerLink="instruments/formOrder" id="linkFormOder"
+                      class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">База чертежей</a>
                     </li>
                   </ul>
                 </div>
@@ -72,7 +71,7 @@
               <li aria-labelledby="libraryLink">
                 <button id="btnLibrary" data-dropdown-toggle="idLibrary"
                   data-dropdown-placement="right-start" type="button"
-                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Материалы
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Покупные и материалы
                   <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -83,27 +82,27 @@
                   class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
                   <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
                     <li>
-                      <a [routerLink]="['materials/rolled']"
+                      <a routerLink="materials/rolled"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Прокат</a>
                     </li>
                     <li>
-                      <a [routerLink]="['materials/hardware']"
+                      <a routerLink="materials/hardware"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Метизы</a>
                     </li>
                     <li>
-                      <a [routerLink]="['materials/other']"
+                      <a routerLink="materials/other"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Материалы</a>
                     </li>
                     <li>
-                      <a [routerLink]="['materials/cutting']"
+                      <a routerLink="materials/cutting"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Режущий инструмент</a>
                     </li>
                     <li>
-                      <a [routerLink]="['materials/measuring']"
+                      <a routerLink="materials/measuring"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Мерительный инструмент</a>
                     </li>
                     <li>
-                      <a [routerLink]="['/materials/other']"
+                      <a routerLink="materials/other"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Другие</a>
                     </li>
                     
@@ -111,7 +110,7 @@
                 </div>
               </li>
               <li>
-                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Материалы</a>
+                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Пусто</a>
               </li>
             </ul>
             <div class="py-1">

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams} from '@angular/common/http';
 
 
 @Injectable({
@@ -14,7 +14,15 @@ export class AppService {
       let callBack;
       switch (method) {
         case 'get':
-          callBack = this.httpAppClient.get(url);
+          let param = new HttpParams();
+          if (body) {
+            let j = 0;
+            for (const i of body as []) {
+              param = param.append(String('sql' + j), i);
+              j++;
+            }
+          }
+          callBack = this.httpAppClient.get(url, { params: param });
           break;
         case 'post':
           callBack = this.httpAppClient.post(url, body);
@@ -24,10 +32,12 @@ export class AppService {
           break;
         case 'delete':
           let par = new HttpParams();
-          let j = 0;
-          for (const i of body as []) {
-            par = par.append(String('q' + j), i);
-            j++;
+          if (body) {
+            let j = 0;
+            for (const i of body as []) {
+              par = par.append(String('q' + j), i);
+              j++;
+            }
           }
           callBack = this.httpAppClient.delete(url, { params: par });
           break;
@@ -35,9 +45,9 @@ export class AppService {
       callBack.subscribe(
         {
           next: (data: any) => {
-           if ((data as Object).hasOwnProperty('serverError')) {
-            reject(new Error(data.serverError));
-           }
+            if ((data as Object).hasOwnProperty('serverError')) {
+              reject(new Error(data.serverError));
+            }
             resolve(data);
           }
           ,

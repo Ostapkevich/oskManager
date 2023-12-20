@@ -2,6 +2,7 @@ import { Navigation } from '@angular/router';
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { Isteel, IrolledType, Irolled, Imaterial } from './iMaterials';
 import { AppService } from 'src/app/app.service';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -23,6 +24,9 @@ export class RolledComponent implements OnInit {
   readOnlyTemplate!: TemplateRef<any>;
   @ViewChild('editTemplate', { static: false })
   editTemplate!: TemplateRef<any>;
+  @ViewChild('rolledModal', { static: false })
+  rolledForm!: NgForm;
+  links:number[]=[1,2,3,4,5];
 
   loadTemplate(rolled: Irolled) {
     if (rolled.isEdited === undefined) {
@@ -32,15 +36,28 @@ export class RolledComponent implements OnInit {
     }
   }
 
-  async getData() {
+  async onLoad() {
     try {
-      const data:Imaterial = await this.appService.query('get', 'http://localhost:3000/materials/rolled');
+      const data:Imaterial = await this.appService.query('get', 'http://localhost:3000/materials/onLoad');
       if ((data.rolled_type as []).length !== 0) {
         this.rolledType = data.rolled_type;
       }
       if ((data.steels as []).length !== 0) {
         this.steels = data.steels;
       }
+      if ((data.rolleds as []).length !== 0) {
+        this.rolleds = data.rolleds;
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  async getRolleds(rolledtype: number, steel: number, position: number) {
+    try {
+      const data:Imaterial = await this.appService.query('get', `http://localhost:3000/materials/rolleds/${rolledtype}/${steel}/${position}`);
+   
       if ((data.rolleds as []).length !== 0) {
         this.rolleds = data.rolleds;
       }
@@ -64,7 +81,8 @@ export class RolledComponent implements OnInit {
   addRoll() { }
 
   ngOnInit(): void {
-    this.getData();
+    this.onLoad();
+   
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
   }

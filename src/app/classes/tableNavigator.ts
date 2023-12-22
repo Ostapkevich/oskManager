@@ -6,21 +6,23 @@ interface Cell {
 export class TableNavigator {
     private table: HTMLTableElement;
     private currentCell: Cell;
-
-    constructor(table: HTMLTableElement) {
+    private indexCellCheckbox: number;
+    private indexCellButton: number;
+    constructor(table: HTMLTableElement, indexCellCheckbox: number, indexCellButton: number) {
         this.table = table;
         this.currentCell = { row: 0, column: 0 };
         this.highlightCurrent();
         this.setupKeyboardNavigation();
         this.setupMouseNavigation(table);
-
+        this.indexCellCheckbox = indexCellCheckbox;
+        this.indexCellButton = indexCellButton;
     }
 
     public findRowButton(target: HTMLButtonElement): number {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
-            if (rowsCollection[i].cells[10].firstChild == target) {
+            if (rowsCollection[i].cells[this.indexCellButton].firstChild == target) {
                 break;
             }
         }
@@ -32,8 +34,8 @@ export class TableNavigator {
         const rowsCollection = this.table.rows;
         const j = rowsCollection.length;
         for (let i = 0; i < j; i++) {
-            if ((rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked && rowsCollection[i].cells[0].firstChild!.firstChild !== event.target) {
-                (rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked = false;
+            if ((rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement).checked && rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild !== event.target) {
+                (rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement).checked = false;
             }
         }
     }
@@ -42,7 +44,7 @@ export class TableNavigator {
         const rowsCollection = this.table.rows;
         if (rowsCollection) {
             for (let i = 0; i < rowsCollection.length; i++) {
-                if ((rowsCollection[i].cells[0].firstChild!.firstChild as HTMLInputElement).checked) {
+                if ((rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement).checked) {
                     return i;
                 }
             }
@@ -60,7 +62,7 @@ export class TableNavigator {
         }
         let currentIndex = -1;
         for (let i = 0; i < j; i++) {
-            if (collection[i].cells[0].firstChild.firstChild.checked) {
+            if (collection[i].cells[this.indexCellCheckbox].firstChild.firstChild.checked) {
                 currentIndex = i;
                 break;
             }
@@ -68,12 +70,12 @@ export class TableNavigator {
         if (currentIndex !== -1) {
 
             if (isMoveUp && currentIndex > 0) {
-                collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
-                collection[currentIndex - 2].cells[0].firstChild.firstChild.checked = true;
+                collection[currentIndex].cells[this.indexCellCheckbox].firstChild.firstChild.checked = false;
+                collection[currentIndex - 2].cells[this.indexCellCheckbox].firstChild.firstChild.checked = true;
                 return currentIndex;
             } else if (!isMoveUp && currentIndex < j - 1) {
-                collection[currentIndex].cells[0].firstChild.firstChild.checked = false;
-                collection[currentIndex + 2].cells[0].firstChild.firstChild.checked = true;
+                collection[currentIndex].cells[this.indexCellCheckbox].firstChild.firstChild.checked = false;
+                collection[currentIndex + 2].cells[this.indexCellCheckbox].firstChild.firstChild.checked = true;
                 return currentIndex
             }
         }
@@ -104,7 +106,7 @@ export class TableNavigator {
         }
     }
 
-    public setupMouseNavigation(table: HTMLTableElement): void {
+    private setupMouseNavigation(table: HTMLTableElement): void {
         table.addEventListener('click', (event) => {
             let element: any = event.target;
             if (element.tagName === 'TD') {
@@ -184,7 +186,7 @@ export class TableNavigator {
     }
 
     private moveRight(): void {
-        if (this.currentCell.column < this.table.rows[0].cells.length - 1) {
+        if (this.currentCell.column < this.table.rows[this.indexCellCheckbox].cells.length - 1) {
             this.currentCell.column++;
             this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();

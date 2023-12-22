@@ -11,13 +11,22 @@ interface Isteel {
 }
 
 interface Irolled {
-  id_rolled: number;
+  id_rolled?: number;
   name_rolled: string;
-  d: number;
-  t: number;
-  steel: string;
+  d?: number;
+  t?: number;
+  steel?: string;
   weight: number;
   isEdited?: boolean;
+}
+
+interface IaddRolled {
+  name_rolled: string,
+  idsteel: number,
+  idrolled_type: number,
+  d?: number,
+  weight: number,
+  t?: number
 }
 
 interface Imaterial {
@@ -25,4 +34,4 @@ interface Imaterial {
   steels:Isteel[];
   rolleds:Irolled[];
 }
-export { IrolledType, Isteel, Irolled, Imaterial}
+export { IrolledType, Isteel, Irolled, Imaterial, IaddRolled}

@@ -17,12 +17,14 @@ export class AppService {
           let param = new HttpParams();
           if (body) {
             let j = 0;
-            for (const i of body as []) {
+            for (const i of body ) {
               param = param.append(String('sql' + j), i);
               j++;
             }
+            callBack = this.httpAppClient.get(url, { params: param });
+            break;
           }
-          callBack = this.httpAppClient.get(url, { params: param });
+          callBack = this.httpAppClient.get(url);
           break;
         case 'post':
           callBack = this.httpAppClient.post(url, body);
@@ -34,12 +36,14 @@ export class AppService {
           let par = new HttpParams();
           if (body) {
             let j = 0;
-            for (const i of body as []) {
+            for (const i of body ) {
               par = par.append(String('q' + j), i);
               j++;
             }
+            callBack = this.httpAppClient.delete(url, { params: par });
+            break;
           }
-          callBack = this.httpAppClient.delete(url, { params: par });
+          callBack = this.httpAppClient.delete(url);
           break;
       }
       callBack.subscribe(

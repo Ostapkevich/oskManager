@@ -118,7 +118,7 @@ export class EditUnitsComponent implements OnInit {
         this.order = data[0].order[0];
         this.units = data[0].units;
         this.changedData = false;
-
+        this.navigator = new TableNavigator(document.getElementById('tblUnits') as HTMLTableElement,0,10);
       }
     } catch (error) {
       alert(error);
@@ -208,6 +208,6 @@ export class EditUnitsComponent implements OnInit {
   ngOnInit(): void {
     let event = new Event("click");
     document.getElementById('idinpOrder')!.dispatchEvent(event);
-    this.navigator = new TableNavigator(document.getElementById('tblUnits') as HTMLTableElement);
+    //this.navigator = new TableNavigator(document.getElementById('tblUnits') as HTMLTableElement,0,10);
   }
 }

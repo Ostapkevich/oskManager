@@ -1,0 +1,8 @@
+input.ng-touched.ng-invalid {border:solid red 2px;}
+input.ng-untouched.ng-invalid {border:solid rgb(63, 131, 248) 2px;}
+.highlightedRow{
+    background-color: rgb(0, 41, 131);
+    }
+    .highlightedCell{
+        background-color:rgb(40, 78, 80);
+        }

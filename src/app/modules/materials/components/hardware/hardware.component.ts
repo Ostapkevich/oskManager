@@ -1,23 +1,22 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { Isteel, IrolledType, Irolled, IRolledMaterial } from './iRolled';
 import { AppService } from 'src/app/app.service';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
+import { IhardwareType, Ihardware, IHardwareMaterial } from './iHardware';
+import { Isteel } from '../../iSteel';
 
 @Component({
-  selector: 'app-rolled',
-  templateUrl: './rolled.component.html',
-  styleUrls: ['./rolled.component.css']
+  selector: 'app-hardware',
+  templateUrl: './hardware.component.html',
+  styleUrls: ['./hardware.component.css']
 })
-export class RolledComponent implements OnInit {
+export class HardwareComponent {
 
-  constructor(private appService: AppService) {
-
-  }
+  constructor(private appService: AppService) { }
 
   units: string = ''
-  rolledType: IrolledType[] | undefined;
+  hardwareType: IhardwareType[] | undefined;
   steels: Isteel[] | undefined
-  rolleds: Irolled[] = [];
+  hardwares: Ihardware[] = [];
   index: number = 1;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
@@ -29,7 +28,7 @@ export class RolledComponent implements OnInit {
   page: number = 1;
   navigator: TableNavigator | undefined;
 
-  loadTemplate(rolled: Irolled) {
+  loadTemplate(rolled: Ihardware) {
     if (rolled.isEdited === false) {
       return this.readOnlyTemplate;
     } else {
@@ -38,7 +37,7 @@ export class RolledComponent implements OnInit {
   }
 
   nextPage() {
-    if (this.rolleds.length < 20) {
+    if (this.hardwares.length < 20) {
       return;
     }
     this.page++;
@@ -79,7 +78,7 @@ export class RolledComponent implements OnInit {
   }
 
   tableEditRow(event: Event) {
-    for (const item of this.rolleds) {
+    for (const item of this.hardwares) {
       if (item.isEdited === true) {
         alert('Редактирование допускается по одной строке!');
         return;
@@ -87,23 +86,23 @@ export class RolledComponent implements OnInit {
     }
     const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
     console.log(index)
-    this.rolleds[index].isEdited = true;
+    this.hardwares[index].isEdited = true;
   }
 
   async loadRolleds(rolledtype: number, steel: number, position: number, str?: string) {
     try {
-      let data: IRolledMaterial;
+      let data: IHardwareMaterial;
       if (str && str.length > 0) {
         const resultArray: string[] = [str];
 
-        data = await this.appService.query('get', `http://localhost:3000/rolled/getRolled/${rolledtype}/${steel}/${position}`, resultArray);
+        data = await this.appService.query('get', `http://localhost:3000/hardware/getHardware/${rolledtype}/${steel}/${position}`, resultArray);
       } else {
-        data = await this.appService.query('get', `http://localhost:3000/rolled/getRolled/${rolledtype}/${steel}/${position}`);
+        data = await this.appService.query('get', `http://localhost:3000/hardware/getHardware/${rolledtype}/${steel}/${position}`);
       }
-      this.rolleds!.length = 0;
-      if ((data.rolleds as []).length !== 0) {
-        this.rolleds = data.rolleds;
-        for (const item of this.rolleds) {
+      this.hardwares!.length = 0;
+      if ((data.hardwares as []).length !== 0) {
+        this.hardwares = data.hardwares;
+        for (const item of this.hardwares) {
           item.isEdited = false;
         }
       }
@@ -117,11 +116,11 @@ export class RolledComponent implements OnInit {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
-      const name_rolled = this.rolleds[index].name_rolled;
-      const d = this.rolleds[index].d;
-      const weight = this.rolleds[index].weight;
-      const t = this.rolleds[index].t;
-      const id_rolled = this.rolleds[index].id_rolled
+      const name_rolled = this.hardwares[index].name_hardware;
+      const d = this.hardwares[index].d;
+      const weight = this.hardwares[index].weight;
+      const t = this.hardwares[index].L;
+      const id_rolled = this.hardwares[index].idhardware
 
       if (name_rolled === '') {
         alert('Не введено название проката!');
@@ -152,9 +151,9 @@ export class RolledComponent implements OnInit {
         t: t || null,
         id_rolled: id_rolled
       }
-      const data = await this.appService.query('put', 'http://localhost:3000/rolled/updateRolled', dataServer);
+      const data = await this.appService.query('put', 'http://localhost:3000/hardware/updateHardware', dataServer);
       if (data.response === 'ok') {
-        this.rolleds[index].isEdited = false;
+        this.hardwares[index].isEdited = false;
        alert('Данные сохранены!');
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
@@ -201,13 +200,13 @@ export class RolledComponent implements OnInit {
         weight: +weight,
         t: +t || null
       }
-      const data = await this.appService.query('post', 'http://localhost:3000/rolled/addRolled', dataServer);
+      const data = await this.appService.query('post', 'http://localhost:3000/hardware/addHardware', dataServer);
       if (data.response === 'ok') {
         alert('Позиция добавлена!');
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
       }
-      this.rolleds.length = 0;
+      this.hardwares.length = 0;
       this.findRolleds();
     } catch (error) {
       alert(error);
@@ -221,8 +220,8 @@ export class RolledComponent implements OnInit {
       if (i == null) {
         return;
       }
-      const id = this.rolleds[i].id_rolled;
-      let data = await this.appService.query('get', `http://localhost:3000/rolled/isUsedRolled/${id}`);
+      const id = this.hardwares[i].idhardware;
+      let data = await this.appService.query('get', `http://localhost:3000/hardware/isUsedHardware/${id}`);
       if ((data as []).length > 0) {
         let answer = confirm(`Этот прокат используется в базе чертежей. Его удаление приведет к остутсвию этого материала в использующих его чертежах и заказах. Вы ействительно хотите удалить даную позицию?`);
         if (answer !== true) {
@@ -236,7 +235,7 @@ export class RolledComponent implements OnInit {
         alert('Что-то пошло не так...');
         return;
       }
-      data = await this.appService.query('delete', `http://localhost:3000/rolled/deleteRolled`, [id]);
+      data = await this.appService.query('delete', `http://localhost:3000/hardware/deleteHardware`, [id]);
       if (data.response === 'ok') {
         this.findRolleds();
       }
@@ -248,16 +247,16 @@ export class RolledComponent implements OnInit {
 
   async onLoad() {
     try {
-      const data: IRolledMaterial = await this.appService.query('get', 'http://localhost:3000/rolled/onLoad');
-      if ((data.rolled_type as []).length !== 0) {
-        this.rolledType = data.rolled_type;
+      const data: IHardwareMaterial = await this.appService.query('get', 'http://localhost:3000/hardware/onLoad');
+      if ((data.hardware_type as []).length !== 0) {
+        this.hardwareType = data.hardware_type;
       }
       if ((data.steels as []).length !== 0) {
         this.steels = data.steels;
       }
-      if ((data.rolleds as []).length !== 0) {
-        this.rolleds = data.rolleds;
-        for (const item of this.rolleds) {
+      if ((data.hardwares as []).length !== 0) {
+        this.hardwares = data.hardwares;
+        for (const item of this.hardwares) {
           item.isEdited = false;
         }
 
@@ -273,6 +272,4 @@ export class RolledComponent implements OnInit {
     document.getElementById('searchMaterial')!.dispatchEvent(event);
     this.navigator = new TableNavigator(document.getElementById('tblRolled') as HTMLTableElement, 0, 7);
   }
-
-
 }

@@ -1,12 +1,12 @@
 <div class="w-1/2 mx-auto  " id="idmaterial">
-    <p id="idclick" class="text-4xl  text-white">База проката</p>
+    <p id="idclick" class="text-4xl  text-white">База метизов</p>
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
                 <select id="selectRolled" (change)="firstPage()"
                     class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of rolledType" value="{{item.idrolled_type}}">
-                        {{item.name_typerolled}} </option>
+                    <option *ngFor="let item of hardwareType" value="{{item.idhardware_type}}">
+                        {{item.name_type}} </option>
                 </select>
             </div>
             <div>
@@ -77,10 +77,10 @@
         </div>
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblRolled" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of rolleds">
-                    <ng-template [ngTemplateOutlet]="loadTemplate(rolled)"
-                        [ngTemplateOutletContext]="{ $implicit: rolled}">
+            <tbody id="tbodyUnits" >
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let hardware of hardwares">
+                    <ng-template [ngTemplateOutlet]="loadTemplate(hardware)"
+                        [ngTemplateOutletContext]="{ $implicit: hardware}">
                     </ng-template>
                 </tr>
             </tbody>
@@ -111,7 +111,7 @@
 
 </div>
 
-<ng-template #readOnlyTemplate let-rolled>
+<ng-template #readOnlyTemplate let-hardware>
     <td class="py-1 w-0.5/12">
         <div class="flex justify-center">
             <input id="checkbox-table-search-1" type="checkbox" (change)="navigator?.boxChange($event)"
@@ -119,22 +119,22 @@
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{hardware.idhardware}}
     </td>
     <td class=" py-1 w-5/12">
-        {{rolled.name_rolled}}
+        {{hardware.name_hardware}}
     </td>
     <td class=" py-1 w-1/12">
-        {{rolled.d}}
+        {{hardware.d}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.t}}
+        {{hardware.L}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.steel}}
+        {{hardware.steel}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.weight}}
+        {{hardware.weight}}
     </td>
     <td class=" py-1 w-0,5/12 ">
         <button href="#" class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
@@ -143,7 +143,7 @@
     </td>
 </ng-template>
 
-<ng-template #editTemplate let-rolled>
+<ng-template #editTemplate let-hardware>
     <td class="py-1 w-0.5/12">
         <div class="flex justify-center">
             <input id="checkbox-table-search-1" type="checkbox" (change)="navigator?.boxChange($event)"
@@ -151,26 +151,26 @@
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{hardware.idhardware}}
     </td>
     <td class=" py-1 w-5/12">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.name_rolled" />
+            [(ngModel)]="hardware.name_hardware" />
     </td>
     <td class=" py-1 w-1/12">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.d" />
+            [(ngModel)]="hardware.d" />
     </td>
     <td class=" py-1 w-1/12 text-center">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.t" />
+            [(ngModel)]="hardware.L" />
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.steel}}
+        {{hardware.steel}}
     </td>
     <td class=" py-1 w-1/12 text-center">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.weight" />
+            [(ngModel)]="hardware.weight" />
     </td>
     <td class=" py-1 w-0,5/12 ">
         <button href="#" class="font-medium  text-blue-500 hover:underline"

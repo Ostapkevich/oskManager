@@ -1,14 +1,12 @@
+import { Isteel } from "../../iSteel";
+
 interface IrolledType {
   idrolled_type: number;
   name_typerolled: string;
   ind: number;
 }
 
-interface Isteel {
-  idsteel: number;
-  steel: string;
-  ind: number;
-}
+
 
 interface Irolled {
   id_rolled?: number;
@@ -16,7 +14,7 @@ interface Irolled {
   d?: number;
   t?: number;
   steel?: string;
-  weight: number;
+  weight: string;
   isEdited?: boolean;
 }
 
@@ -29,9 +27,9 @@ interface IaddRolled {
   t?: number
 }
 
-interface Imaterial {
+interface IRolledMaterial {
   rolled_type:IrolledType[];
   steels:Isteel[];
   rolleds:Irolled[];
 }
-export { IrolledType, Isteel, Irolled, Imaterial, IaddRolled}
+export { IrolledType, Isteel, Irolled, IRolledMaterial, IaddRolled}

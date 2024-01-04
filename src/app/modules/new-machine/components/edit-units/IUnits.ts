@@ -13,10 +13,10 @@ interface Iunits {
     started?:string;
     finished?:string;
 }
-interface IOrder {
+interface IUnitOrder {
     order_machine:string;
     number_machine:string;
     name_machine:string;
     customer:string;
 }
-export {Iunits, IOrder};
+export {Iunits, IUnitOrder};

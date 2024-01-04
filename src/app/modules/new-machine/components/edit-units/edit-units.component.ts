@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Iunits, IOrder } from './IUnits';
+import { Iunits, IUnitOrder } from './IUnits';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { AppService } from 'src/app/app.service';
 
@@ -17,7 +17,7 @@ export class EditUnitsComponent implements OnInit {
   changedData = false;
   navigator: TableNavigator | undefined;
   userName: string = "Иванов П.К.";
-  order: IOrder | undefined;
+  order: IUnitOrder | undefined;
   units: Partial<Iunits>[] = [];
 
 

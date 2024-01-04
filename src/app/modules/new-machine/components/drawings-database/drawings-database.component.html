@@ -1,0 +1,103 @@
+<div class="w-1/2 mx-auto mt-4 " id="idmaterial">
+    <form >
+        <div class="flex gap-16">
+            <p class="text-4xl  text-white">Новый чертеж</p>
+            <div class="flex gap-5 border-2 border-gray-600 p-3">
+                <div class="flex items-center ">
+                    <input id="detail" type="radio" value="" checked name="disabled-radio" 
+                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                    <label for="detail" class="ms-2 text-sm font-medium  text-white">Деталь</label>
+                </div>
+                <div class="flex items-center ">
+                    <input id="sb" type="radio" value="" name="disabled-radio" 
+                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Сборочный чертеж</label>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+
+    <div class="grid grid-cols-12 gap-4 items-end mt-8">
+        <div class="col-span-2">
+            <label for="numberDrawing" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
+            <input required type="text" id="numberDrawing"
+                class="border  text-sm w-full block  p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="col-span-2">
+            <label for="nameDrawing" class="block mb-2 text-sm font-medium  text-white">Название чертежа</label>
+            <input required type="text" id="nameDrawing"
+                class="border w-full text-sm  block  p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div>
+            <label for="weightDrawing" class="  block mb-2 text-sm font-medium  text-white">Масса</label>
+            <input required="\d{1,6}\.\d{1,3}" type="text" id="weightDrawing"
+                class=" border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div class="col-span-3">
+            <label class="block mb-2 text-sm font-medium text-white" for="file_drawing">Файл чертежа: jpeg, jpg,png, pdf
+            </label>
+            <input accept="jpeg, jpg, png, pdf"
+                class="block  text-sm p-2 w-full border cursor-pointer  text-gray-400 focus:outline-none bg-gray-700 border-gray-600 placeholder-gray-400"
+                id="file_drawing" type="file">
+        </div>
+
+        <button type="button"
+            class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить
+            чертеж</button>
+        <button type="button"
+            class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Проверить
+            чертеж</button>
+    </div>
+    <div *ngIf="isDetail===true" class="grid gap-4 grid-cols-12 items-end mt-6">
+        <div class=" col-span-4">
+            <label for="blank" class="block mb-2 text-sm font-medium  text-white">Заготовка</label>
+            <input disabled type="text" id="blank"
+                class="border  text-sm w-full block p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div *ngIf="isHardware===false">
+            <label for="lenghtBlank" class="block mb-2 text-sm font-medium  text-white">L черт.,мм</label>
+            <input required type="text" id="lenghtBlank"
+                class="border  text-sm w-full block  p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div *ngIf="isHardware===false">
+            <label for="diameterBlank" class="block mb-2 text-sm font-medium  text-white">D/B черт.,мм</label>
+            <input required type="text" id="diameterBlank"
+                class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        <div *ngIf="isHardware===false" class=" col-span-1">
+            <label for="heightBlank" class="block mb-2 text-sm font-medium  text-white">H черт.,мм</label>
+            <input required type="text" id="heightBlank"
+                class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        </div>
+        
+        <div class="col-start-8 col-span-2 mb-3">
+            <div class="flex gap-1">
+                <div class="flex items-center ">
+                    <input id="roll" type="radio" value="" checked name="disabled-radio" (click)="rolledComponent()"
+                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                    <label for="detail" class="ms-2 text-sm font-medium  text-white">Прокат</label>
+                </div>
+                <div class="flex items-center ">
+                    <input id="hard" type="radio" value="" name="disabled-radio" (click)="hardwareComponent()"
+                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Метизы</label>
+                </div>
+                <div class="flex items-center ">
+                    <input id="mat" type="radio" value="" name="disabled-radio" (click)="materialComponent()"
+                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Материалы</label>
+                </div>
+            </div>
+        </div>
+        <button type="button"
+            class="col-start-11 col-span-2  px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Выбрать
+            заготовку</button>
+    </div>
+
+
+
+
+</div>
+<app-rolled class="w-1/2 mx-auto" *ngIf="isDetail===true && isRolled===true" [showAddRolled]="false"></app-rolled>
+<app-hardware class="w-1/2 mx-auto" *ngIf="isDetail===true && isHardware===true" [showAddHardware]="false"></app-hardware>

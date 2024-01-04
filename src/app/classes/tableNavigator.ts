@@ -8,14 +8,16 @@ export class TableNavigator {
     private currentCell: Cell;
     private indexCellCheckbox: number;
     private indexCellButton: number;
-    constructor(table: HTMLTableElement, indexCellCheckbox: number, indexCellButton: number) {
+    private indexCellSelect: number;
+    constructor(table: HTMLTableElement, indexCellCheckbox?: number, indexCellButton?: number, indexCellSelect?:number) {
         this.table = table;
         this.currentCell = { row: 0, column: 0 };
         this.highlightCurrent();
         this.setupKeyboardNavigation();
         this.setupMouseNavigation(table);
-        this.indexCellCheckbox = indexCellCheckbox;
-        this.indexCellButton = indexCellButton;
+        this.indexCellCheckbox = indexCellCheckbox!;
+        this.indexCellButton = indexCellButton!;
+        this.indexCellSelect=indexCellSelect!;
     }
 
     public findRowButton(target: HTMLButtonElement): number {
@@ -23,6 +25,17 @@ export class TableNavigator {
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
             if (rowsCollection[i].cells[this.indexCellButton].firstChild == target) {
+                break;
+            }
+        }
+        return i;
+    }
+
+    public findRowSelect(target: HTMLSelectElement): number {
+        const rowsCollection = this.table.rows;
+        let i = 0
+        for (i = 0; i < rowsCollection.length; i++) {
+            if (rowsCollection[i].cells[this.indexCellSelect].firstChild == target) {
                 break;
             }
         }

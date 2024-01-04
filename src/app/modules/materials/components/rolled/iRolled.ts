@@ -4,6 +4,7 @@ interface IrolledType {
   idrolled_type: number;
   name_typerolled: string;
   ind: number;
+  lenghtForWeight:boolean
 }
 
 

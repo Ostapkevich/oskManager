@@ -1,9 +1,9 @@
 <div class="w-1/2 mx-auto  " id="idmaterial">
-    <p id="idclick" class="text-4xl  text-white">База метизов</p>
+    <p  *ngIf="showAddHardware===true" id="idclick" class="text-4xl  text-white">База метизов</p>
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
-                <select id="selectRolled" (change)="firstPage()"
+                <select id="selectHardware" (change)="firstPage()"
                     class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                     <option *ngFor="let item of hardwareType" value="{{item.idhardware_type}}">
                         {{item.name_type}} </option>
@@ -28,39 +28,21 @@
                     </div>
                     <input id="searchMaterial" autocomplete="off"
                         class="block w-70 p-2 ps-10 text-sm  border    bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Поиск проката" required>
-                    <button (click)="findRolleds()"
+                        placeholder="Поиск" required>
+                    <button (click)="findHardwares()"
                         class="text-white absolute end-1 bottom-1.5 h-7   focus:ring-4 focus:outline-none  font-medium  text-sm px-2  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Найти</button>
                 </div>
             </form>
         </div>
 
         <!-- Добавить Добавить Добавить Добавить Добавить Добавить -->
-
-        <div class="flex gap-2 border-gray-600 border-spacing-2 border-2 p-1">
-            <input type="number" id="diameter" placeholder="D,мм"
-                class="block w-16 py-2 px-1  border sm:text-sm  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-            <input type="number" id="width" placeholder="t/S,мм"
-                class="block w-16 py-2 px-1  border sm:text-sm  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-            <input id="weight" placeholder="m, кг" required="\d{1,4}\.\d{1,3}"
-                class="block w-20 py-2 px-1  border sm:text-sm  bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-            <div class="relative">
-                <input id="newMaterial" autocomplete="off"
-                    class="block w-80 p-2  text-sm  border   bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Новый прокат">
-                <button (click)="saveNewRolled()"
-                    class="text-white absolute end-1 bottom-1.5 h-7   focus:ring-4 focus:outline-none  font-medium  text-sm px-2  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить</button>
-            </div>
-            <button type="button" (click)="btnDel()"
-                class="px-2  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-red-600 hover:bg-red-700 focus:ring-blue-800"
-                title="Удаление повлечет удаление данной позиции везде, где она используется!">Удалить
-                прокат
-            </button>
-        </div>
+        <add-hardware *ngIf="showAddHardware===true"   (save_NewHardware)="saveNewHardware()" (btn_Del)="btnDel()"> </add-hardware>
+        
+      
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
-            <div class="basis-0.5/12  ">
+            <div class="basis-1/12  ">
                 <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 16 12">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -69,14 +51,14 @@
             </div>
             <p class="basis-1/12  text-center">id</p>
             <p class="basis-5/12  ml-0.5 ">Наименование</p>
-            <p class="basis-1/12  text-center">Диаметр, мм</p>
-            <p class="basis-1/12  ml-0.5 ">Толщина, мм</p>
-            <p class="basis-1/12  ">Материал</p>
-            <p class="basis-1/12  text-center">Масса пог., кг</p>
-            <p class="basis-0.5/12  text-center"></p>
+            <p class="basis-1/12  text-center">Диам.(D) , мм</p>
+            <p class="basis-1/12  ml-0.5 text-center ">L(X), мм</p>
+            <p class="basis-1/12 text-center ">Материал</p>
+            <p class="basis-1/12  text-center">Масса, кг</p>
+            <p class="basis-1/12  text-center"></p>
         </div>
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
-        <table id="tblRolled" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+        <table id="tblHardware" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits" >
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let hardware of hardwares">
                     <ng-template [ngTemplateOutlet]="loadTemplate(hardware)"
@@ -112,9 +94,9 @@
 </div>
 
 <ng-template #readOnlyTemplate let-hardware>
-    <td class="py-1 w-0.5/12">
+    <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id="checkbox-table-search-1" type="checkbox" (change)="navigator?.boxChange($event)"
+            <input id="checkbox-table-search-1" type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
@@ -124,7 +106,7 @@
     <td class=" py-1 w-5/12">
         {{hardware.name_hardware}}
     </td>
-    <td class=" py-1 w-1/12">
+    <td class=" py-1 w-1/12 text-center">
         {{hardware.d}}
     </td>
     <td class=" py-1 w-1/12 text-center">
@@ -136,7 +118,7 @@
     <td class=" py-1 w-1/12 text-center">
         {{hardware.weight}}
     </td>
-    <td class=" py-1 w-0,5/12 ">
+    <td class=" py-1 w-1/12 text-center">
         <button href="#" class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изм</button>
@@ -144,9 +126,9 @@
 </ng-template>
 
 <ng-template #editTemplate let-hardware>
-    <td class="py-1 w-0.5/12">
+    <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id="checkbox-table-search-1" type="checkbox" (change)="navigator?.boxChange($event)"
+            <input id="checkbox-table-search-1" type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
@@ -172,8 +154,8 @@
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
             [(ngModel)]="hardware.weight" />
     </td>
-    <td class=" py-1 w-0,5/12 ">
+    <td class=" py-1 w-1/12 text-center">
         <button href="#" class="font-medium  text-blue-500 hover:underline"
-            (click)="updateRolled($event)">Сохранить</button>
+            (click)="updateHardwares($event)">Сохранить</button>
     </td>
 </ng-template>

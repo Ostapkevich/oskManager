@@ -37,7 +37,7 @@
                 <label for="order_machine" class="block mb-2 text-sm font-medium  text-white">Заказ
                     {{dataOrder?.order_machine}}
                 </label>
-                <input autofocus id="order_machine" name="order_machine" [ngModel]="dataOrder?.order_machine"
+                <input type="number" autofocus id="order_machine" name="order_machine" [ngModel]="dataOrder?.order_machine"
                     placeholder="№ заказа" #htmlOrder="ngModel" required maxlength="7"
                     (keydown)="getNewOrder($event, htmlOrder.value)"
                     class="  border  text-lg   block w-full p-0.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">

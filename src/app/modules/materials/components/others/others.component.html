@@ -1,21 +1,15 @@
 <div class="w-1/2 mx-auto  " id="idmaterial">
-    <p *ngIf="showAddRolled===true" id="idclick" class="text-4xl  text-white">База проката</p>
+    <p  *ngIf="showAddmaterial===true" id="idclick" class="text-4xl  text-white">{{namePage}}</p>
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
-                <select id="selectRolled" (change)="firstPage()"
+                <select id="selectMaterials" (change)="firstPage()"
                     class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of rolledType" value="{{item.idrolled_type}}">
-                        {{item.name_typerolled}} </option>
+                    <option *ngFor="let item of materialType" value="{{item.idmaterial_type}}">
+                        {{item.name_type}} </option>
                 </select>
             </div>
-            <div>
-                <select id="selectSteel" (change)="firstPage()"
-                    class="border   text-sm   block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of steels" value="{{item.idsteel}}">
-                        {{item.steel}} </option>
-                </select>
-            </div>
+           
             <!-- Поиск Поиск Поиск Поиск -->
             <form>
                 <div class="relative">
@@ -28,16 +22,18 @@
                     </div>
                     <input id="searchMaterial" autocomplete="off"
                         class="block w-70 p-2 ps-10 text-sm  border    bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Поиск проката" required>
-                    <button (click)="findRolleds()"
+                        placeholder="Поиск материала" required>
+                    <button (click)="findMaterials()"
                         class="text-white absolute end-1 bottom-1.5 h-7   focus:ring-4 focus:outline-none  font-medium  text-sm px-2  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Найти</button>
                 </div>
             </form>
         </div>
 
         <!-- Добавить Добавить Добавить Добавить Добавить Добавить -->
-
-        <add-rolled *ngIf="showAddRolled===true"   (save_NewRolled)="saveNewRolled()" (btn_Del)="btnDel()"> </add-rolled>
+       
+        <add-others *ngIf="showAddmaterial===true"   (save_Material)="saveNewMaterial()" (btn_Del)="btnDel()"> </add-others>
+        
+      
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
@@ -49,19 +45,18 @@
                 </svg>
             </div>
             <p class="basis-1/12  text-center">id</p>
-            <p class="basis-5/12  ml-0.5 ">Наименование</p>
-            <p class="basis-1/12  text-center">Диам.(D), мм</p>
-            <p class="basis-1/12  ml-0.5 ">Толщ.(S), мм</p>
-            <p class="basis-1/12  text-center ">Материал</p>
-            <p class="basis-1/12  text-center">Масса пог., кг</p>
+            <p class="basis-6/12  ml-0.5 ">Наименование</p>
+            <p class="basis-1/12  text-center">X1</p>
+            <p class="basis-1/12  ml-0.5 text-center ">X2</p>
+            <p class="basis-1/12  text-center">Масса, кг</p>
             <p class="basis-1/12  text-center"></p>
         </div>
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
-        <table id="tblRolled" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of rolleds">
-                    <ng-template [ngTemplateOutlet]="loadTemplate(rolled)"
-                        [ngTemplateOutletContext]="{ $implicit: rolled}">
+        <table id="tblMaterials" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+            <tbody id="tbodyUnits" >
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
+                    <ng-template [ngTemplateOutlet]="loadTemplate(item)"
+                        [ngTemplateOutletContext]="{ $implicit: item}">
                     </ng-template>
                 </tr>
             </tbody>
@@ -87,73 +82,69 @@
                     d="m1 9 4-4-4-4" />
             </svg>
         </button>
+
     </div>
 
 </div>
 
-<ng-template #readOnlyTemplate let-rolled>
+<ng-template #readOnlyTemplate let-item>
     <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id={{rolled.id_rolled}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id="checkbox-table-search-1" type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{item.idmaterial}}
     </td>
-    <td class=" py-1 w-5/12">
-        {{rolled.name_rolled}}
-    </td>
-    <td class=" py-1 w-1/12 text-center">
-        {{rolled.d}}
+    <td class=" py-1 w-6/12">
+        {{item.name_material}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.t}}
+        {{item.x1}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.steel}}
+        {{item.x2}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.weight}}
+        {{item.weight}}
     </td>
-    <td  class=" py-1 w-1/12 text-center">
-        <button *ngIf="showAddRolled===true" class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
+    <td class=" py-1 w-1/12 text-center">
+        <button  class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изм</button>
     </td>
 </ng-template>
 
-<ng-template #editTemplate let-rolled>
-    <td class="py-1 w-0.5/12">
+<ng-template #editTemplate let-item>
+    <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id={{rolled.id_rolled}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id="checkbox-table-search-1" type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{item.idmaterial}}
     </td>
     <td class=" py-1 w-5/12">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.name_rolled" />
+            [(ngModel)]="item.name_material" />
+    </td>
+    <td class=" py-1 w-1/12">
+        <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
+            [(ngModel)]="item.x1" />
     </td>
     <td class=" py-1 w-1/12 text-center">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.d" />
+            [(ngModel)]="item.x2" />
     </td>
     <td class=" py-1 w-1/12 text-center">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.t" />
+            [(ngModel)]="item.weight" />
     </td>
     <td class=" py-1 w-1/12 text-center">
-        {{rolled.steel}}
-    </td>
-    <td class=" py-1 w-1/12 text-center">
-        <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.weight" />
-    </td>
-    <td class=" py-1 w-0,5/12 text-center ">
-        <button *ngIf="showAddRolled===true"   class="font-medium  text-blue-500 hover:underline"
-            (click)="updateRolled($event)">Сохранить</button>
+        <button  class="font-medium  text-blue-500 hover:underline"
+            (click)="updateMaterial($event)">Сохранить</button>
     </td>
 </ng-template>
+

@@ -62,7 +62,7 @@
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать состав</a>
                     </li>
                     <li>
-                      <a routerLink="instruments/formOrder" id="linkFormOder"
+                      <a routerLink="instruments/drawingsDatabase" id="linkFormOder"
                       class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">База чертежей</a>
                     </li>
                   </ul>
@@ -71,7 +71,7 @@
               <li aria-labelledby="libraryLink">
                 <button id="btnLibrary" data-dropdown-toggle="idLibrary"
                   data-dropdown-placement="right-start" type="button"
-                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Покупные и материалы
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">База материалов
                   <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                     fill="none" viewBox="0 0 10 6">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,7 +79,7 @@
                   </svg></button>
                 <!--library -->
                 <div id="idLibrary"
-                  class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow w-44 bg-gray-700">
+                  class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow  bg-gray-700">
                   <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
                     <li>
                       <a routerLink="materials/rolled"
@@ -90,21 +90,18 @@
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Метизы</a>
                     </li>
                     <li>
-                      <a routerLink="materials/other"
+                      <a routerLink="materials/others"
                         class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Материалы</a>
                     </li>
                     <li>
-                      <a routerLink="materials/cutting"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Режущий инструмент</a>
+                      <a routerLink="materials/purchased"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Покупные изделия</a>
                     </li>
                     <li>
-                      <a routerLink="materials/measuring"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Мерительный инструмент</a>
+                      <a routerLink="materials/types"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Категории материалов</a>
                     </li>
-                    <li>
-                      <a routerLink="materials/other"
-                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Другие</a>
-                    </li>
+                   
                     
                   </ul>
                 </div>

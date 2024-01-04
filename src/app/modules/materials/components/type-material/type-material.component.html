@@ -1,0 +1,146 @@
+<div class="w-1/2 mx-auto " id="idmaterial">
+    <p class="text-4xl float-left  mr-16 text-white ">Категории материалов</p>
+    <select id="types-material" (change)="changeType()"
+        class=" border  text-sm   block  p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+        <option selected>Выбери материал</option>
+        <option value="rolled_type">Прокат</option>
+        <option value="hardware_type">Метизы</option>
+        <option value="material_type">Материалы</option>
+        <option value="purchased_type">Покупные изделия</option>
+    </select>
+    <div class="mt-8 p-4 h-181 border shadow bg-gray-800 border-gray-700">
+        <div class=" max-h-181 relative overflow-x-auto shadow-md ">
+            <div class="flex">
+                <div class="flex gap-2 ml-3">
+                    <button type="button" (click)="moveItem(true)">
+                        <kbd
+                            class="inline-flex items-center px-2 py-2  border  bg-gray-600 text-gray-100 border-gray-500">
+                            <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 16 10">
+                                <path
+                                    d="M9.207 1A2 2 0 0 0 6.38 1L.793 6.586A2 2 0 0 0 2.207 10H13.38a2 2 0 0 0 1.414-3.414L9.207 1Z" />
+                            </svg>
+                            <span class="sr-only">Arrow key up</span>
+                        </kbd>
+                    </button>
+                    <button type="button" (click)="moveItem(false)">
+                        <kbd
+                            class="inline-flex items-center px-2 py-2  border  bg-gray-600 text-gray-100 border-gray-500">
+                            <svg class="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                fill="currentColor" viewBox="0 0 16 10">
+                                <path
+                                    d="M15.434 1.235A2 2 0 0 0 13.586 0H2.414A2 2 0 0 0 1 3.414L6.586 9a2 2 0 0 0 2.828 0L15 3.414a2 2 0 0 0 .434-2.179Z" />
+                            </svg>
+                            <span class="sr-only">Arrow key down</span>
+                        </kbd>
+                    </button>
+                </div>
+                <p class="text-xl  ml-6 text-white ">{{selectedType}}</p>
+                <div class="flex gap-4 ">
+                    <button type="button" (click)="addType()"
+                        class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить
+                    </button>
+                    <button type="button" (click)="escapeAll()"
+                        class="px-3  py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Отменить
+                        всё
+                    </button>
+                   
+                </div>
+            </div>
+
+            <div class="w-1/3 mt-4  flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
+                <div class="basis-1/5  ">
+                    <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 16 12">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 5.917 5.724 10.5 15 1.5" />
+                    </svg>
+                </div>
+                <p class="basis-2/5  ml-0.5 ">Наименование</p>
+                <p class="basis-1/5  ">Масса/ед.</p>
+                <p class="basis-1/5  ">Действие</p>
+            </div>
+            <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
+            <table id="tblType" class="w-1/3    text-sm text-left rtl:text-right  text-gray-300">
+                <tbody id="tbodyUnits">
+                    <tr class="border-b bg-gray-800 border-gray-600 border-x-2  hover:bg-gray-600"
+                        *ngFor="let type of typesMaterial">
+                        <ng-template [ngTemplateOutlet]="loadTemplate(type)"
+                            [ngTemplateOutletContext]="{ $implicit: type}">
+                        </ng-template>
+
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" (click)="saveTypes()"
+            class="mt-6 float-right px-3 py-2 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
+        </div>
+    </div>
+</div>
+<ng-template #readOnlyTemplate let-type>
+    <td class="py-1 w-1/5">
+        <div class="flex justify-center">
+            <input id={{type.name_type}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class=" py-1 w-2/5">
+        {{type.name_type}}
+    </td>
+    <td *ngIf="type.uselength===0" class=" py-1 w-1/5 ">
+        S, м.кв.
+    </td>
+    <td *ngIf="type.uselength===1" class=" py-1 w-1/5 ">
+        L, м.
+    </td>
+    <td class=" py-1 w-1/5 ">
+        <button class="font-medium  text-blue-500 hover:underline" (click)="editeRow($event)">Изм.</button>
+    </td>
+</ng-template>
+
+<ng-template #newTemplate let-type>
+    <td class="py-1 w-1/5">
+        <div class="flex justify-center">
+            <input id="checkbox-table-search-1" type="checkbox" (change)="tblNavigator?.boxChange($event)"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class="  w-2/5">
+        <input class="w-full  text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off"
+            [(ngModel)]="type.name_type" />
+    </td>
+    <td class="  w-1/5">
+        <select (change)="uselengthChange($event.target )" class=" border  text-sm   block   text-black  bg-gray-50 hover:bg-gray-200">
+            <option value="0"> S, м.кв.</option>
+            <option value="1">L, м.</option>
+        </select>
+    </td>
+      <td class="  w-1/5 ">
+        <button class="font-medium  text-blue-500 hover:underline" (click)="escape($event)">Отмена</button>
+    </td>
+
+</ng-template>
+
+<ng-template #editTemplate let-type>
+    <td class="py-1 w-1/5">
+        <div class="flex justify-center">
+            <input id={{type.name_type}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+                class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+        </div>
+    </td>
+    <td class="  w-2/5 text-center ">
+        <input class="w-full  text-center text-black  bg-gray-50 hover:bg-gray-200" type="text" autocomplete="off"
+            [(ngModel)]="type.name_type" />
+    </td>
+    <td class="  w-1/5">
+        <select (change)="uselengthChange($event.target)" class=" border  text-sm   block   text-black  bg-gray-50 hover:bg-gray-200">
+            <option value="0"> S, м.кв.</option>
+            <option value="1">L, м.</option>
+        </select>
+    </td>
+    <td class="  w-1/5">
+
+    </td>
+
+
+</ng-template>

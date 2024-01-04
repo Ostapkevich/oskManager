@@ -69,7 +69,7 @@ export class NewOrderComponent implements OnInit {
 
   getAnalogOrder() {
     const analogOrder = prompt("Введите номер заказа аналога");
-    if (analogOrder === "" || analogOrder === null) {
+    if (analogOrder === "" || analogOrder === null ) {
       return
     }
     this.loadOrder(analogOrder, 'true');

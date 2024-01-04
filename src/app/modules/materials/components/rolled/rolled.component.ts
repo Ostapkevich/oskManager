@@ -1,9 +1,15 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef,Input, OnChanges} from '@angular/core';
 import { Isteel, IrolledType, Irolled, IRolledMaterial } from './iRolled';
 import { AppService } from 'src/app/app.service';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
+import { AddRolledComponent } from '../add-rolled/add-rolled.component';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
 
 @Component({
+  imports:[AddRolledComponent, FormsModule, CommonModule],
+  standalone: true,
   selector: 'app-rolled',
   templateUrl: './rolled.component.html',
   styleUrls: ['./rolled.component.css']
@@ -11,12 +17,14 @@ import { TableNavigator } from 'src/app/classes/tableNavigator';
 export class RolledComponent implements OnInit {
 
   constructor(private appService: AppService) {
-
-  }
-
-  units: string = ''
+    
+    
+   }
+   
+   
+ @Input() showAddRolled: Boolean =true;
   rolledType: IrolledType[] | undefined;
-  steels: Isteel[] | undefined
+  steels: Isteel[] | undefined;
   rolleds: Irolled[] = [];
   index: number = 1;
   @ViewChild('readOnlyTemplate', { static: false })
@@ -27,7 +35,7 @@ export class RolledComponent implements OnInit {
 
 
   page: number = 1;
-  navigator: TableNavigator | undefined;
+  tblNavigator: TableNavigator | undefined;
 
   loadTemplate(rolled: Irolled) {
     if (rolled.isEdited === false) {
@@ -60,6 +68,7 @@ export class RolledComponent implements OnInit {
   }
 
   findRolleds() {
+    this.rolleds.length = 0;
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectRolled') as HTMLSelectElement).value;
     const steel = (document.getElementById('selectSteel') as HTMLSelectElement).value;
@@ -85,8 +94,7 @@ export class RolledComponent implements OnInit {
         return;
       }
     }
-    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
-    console.log(index)
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
     this.rolleds[index].isEdited = true;
   }
 
@@ -116,12 +124,12 @@ export class RolledComponent implements OnInit {
     try {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
+      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
       const name_rolled = this.rolleds[index].name_rolled;
       const d = this.rolleds[index].d;
       const weight = this.rolleds[index].weight;
       const t = this.rolleds[index].t;
-      const id_rolled = this.rolleds[index].id_rolled
+      const id_rolled = this.rolleds[index].id_rolled;
 
       if (name_rolled === '') {
         alert('Не введено название проката!');
@@ -155,9 +163,32 @@ export class RolledComponent implements OnInit {
       const data = await this.appService.query('put', 'http://localhost:3000/rolled/updateRolled', dataServer);
       if (data.response === 'ok') {
         this.rolleds[index].isEdited = false;
-       alert('Данные сохранены!');
+        alert('Данные сохранены!');
+        this.findRolleds();
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  async onLoad() {
+    try {
+      const data: IRolledMaterial = await this.appService.query('get', 'http://localhost:3000/rolled/onLoad');
+      if ((data.rolled_type as []).length !== 0) {
+        this.rolledType = data.rolled_type;
+      }
+      if ((data.steels as []).length !== 0) {
+        this.steels = data.steels;
+      }
+      if ((data.rolleds as []).length !== 0) {
+        this.rolleds = data.rolleds;
+        for (const item of this.rolleds) {
+          item.isEdited = false;
+        }
+
       }
     } catch (error) {
       alert(error);
@@ -207,8 +238,7 @@ export class RolledComponent implements OnInit {
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
       }
-      this.rolleds.length = 0;
-      this.findRolleds();
+           this.findRolleds();
     } catch (error) {
       alert(error);
     }
@@ -217,7 +247,7 @@ export class RolledComponent implements OnInit {
 
   async btnDel() {
     try {
-      const i = this.navigator?.findCheckedRowNumber();
+      const i = this.tblNavigator?.findCheckedRowNumber();
       if (i == null) {
         return;
       }
@@ -246,32 +276,12 @@ export class RolledComponent implements OnInit {
     }
   }
 
-  async onLoad() {
-    try {
-      const data: IRolledMaterial = await this.appService.query('get', 'http://localhost:3000/rolled/onLoad');
-      if ((data.rolled_type as []).length !== 0) {
-        this.rolledType = data.rolled_type;
-      }
-      if ((data.steels as []).length !== 0) {
-        this.steels = data.steels;
-      }
-      if ((data.rolleds as []).length !== 0) {
-        this.rolleds = data.rolleds;
-        for (const item of this.rolleds) {
-          item.isEdited = false;
-        }
-
-      }
-    } catch (error) {
-      alert(error);
-    }
-  }
-
   ngOnInit(): void {
     this.onLoad();
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
-    this.navigator = new TableNavigator(document.getElementById('tblRolled') as HTMLTableElement, 0, 7);
+    this.tblNavigator = new TableNavigator(document.getElementById('tblRolled') as HTMLTableElement, 0, 7);
+  
   }
 
 

@@ -8,18 +8,26 @@ interface ImaterialType {
 interface Imaterial {
   idmaterial?: number;
   name_material: string;
-  x1?: number;
-  x2?: number;
-  weight: string;
+  initial_name_material:string
+  x1: number;
+  initial_x1:number
+  x2: number;
+  initial_x2:number,
+  units: number;
+  initial_units:number;
+  specific_units:number;
+  initial_specific_units:number;
+  percent:number;
+  initial_percent:number;
   isEdited?: boolean;
 }
 
 interface IaddMaterial {
   name_material: string,
   idhardware_type: number,
-  x1?: number,
-  x2?: number,
-  weight: number,
+  x1?: number;
+  x2?: number;
+  weight: number
   
 }
 

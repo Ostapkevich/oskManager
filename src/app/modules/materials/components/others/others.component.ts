@@ -87,58 +87,40 @@ export class OthersComponent implements OnInit {
         return;
       }
     }
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,6);
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,8);
     this.materials[index].isEdited = true;
+    this.materials[index].initial_name_material = this.materials[index].name_material;
+    this.materials[index].initial_x1= this.materials[index].x1;
+    this.materials[index].initial_x1= this.materials[index].x2;
+    this.materials[index].initial_units = this.materials[index].units;
+    this.materials[index].initial_specific_units = this.materials[index].specific_units;
+    this.materials[index].initial_percent = this.materials[index].percent;
+    this.materials[index].units = 0;
+    this.materials[index].specific_units = 0;
   }
 
- /*  editeRow(event: Event) {
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
-    this.typesMaterial[index].newOrEdit = true;
-    switch (this.selectedType) {
-      case 'Прокат':
-        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
-        this.typesMaterial[index].initial_uselength = this.typesMaterial[index].uselength;
-        this.typesMaterial[index].uselength = 0;
-        break;
-      case 'Материалы':
-        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
-        this.typesMaterial[index].initial_units = this.typesMaterial[index].units;
-        this.typesMaterial[index].initial_percent = this.typesMaterial[index].percent;
-        this.typesMaterial[index].initial_specific_units = this.typesMaterial[index].specific_units;
-        this.typesMaterial[index].specific_units = 0;
-        this.typesMaterial[index].specific_units = 0;
-        break;
-      default:
-        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
-        break;
-    };
+   escape(event: any) {
+     const index = this.tblNavigator!.findRowInsertedButton(event as HTMLButtonElement, 8,1);
+     console.log(index)
+    this.materials[index].isEdited = false;
+    this.materials[index].name_material=this.materials[index].initial_name_material;
+    this.materials[index].x1=this.materials[index].initial_x1;
+    this.materials[index].x2=this.materials[index].initial_x1 ;
+    this.materials[index].units=this.materials[index].initial_units;
+    this.materials[index].specific_units=this.materials[index].initial_specific_units;
+    this.materials[index].percent=this.materials[index].initial_percent ;
+    this.materials[index].units = this.materials[index].initial_units;
+    this.materials[index].specific_units = this.materials[index].initial_specific_units;
+      } 
 
-  } */
+  specificUnitsChange(target: any){
+    const index = this.tblNavigator!.findRowSelect(target, 6);
+    this.materials[index].specific_units = +target.value; 
+  }
 
-
-  escape(event: Event) {
-   /*  const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
-    this.typesMaterial[index].newOrEdit = false;
-    switch (this.selectedType) {
-      case 'Прокат':
-        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
-        this.typesMaterial[index].uselength = this.typesMaterial[index].initial_uselength;
-        break;
-      case 'Материалы':
-        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
-        this.typesMaterial[index].percent = this.typesMaterial[index].initial_percent;
-        this.typesMaterial[index].units = this.typesMaterial[index].initial_units;
-        this.typesMaterial[index].specific_units = this.typesMaterial[index].initial_specific_units;
-        break;
-      default:
-        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
-        break;
-    }; */
-  } 
-
-  uselengthChange(target: any) {
-   /*  const index = this.tblNavigator!.findRowSelect(target, 2);
-    this.materialType[index].uselength = +target.value; */
+  unitsChange(target: any) {
+    const index = this.tblNavigator!.findRowSelect(target, 5);
+     this.materials[index].units = +target.value; 
   }
 
   async loadMaterials(materialtype: number, position: number, str?: string) {
@@ -165,21 +147,24 @@ export class OthersComponent implements OnInit {
 
   async updateMaterial(event: Event) {
     try {
-      const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
+      // 
+      const percentPattern: RegExp =  /^\d{0,3}(?:\.\d{1,2})?$/ ;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,6);
+      const index = this.tblNavigator!.findRowInsertedButton(event.target as HTMLButtonElement,8,0);
       const name_material = this.materials[index].name_material;
       const x1 = this.materials[index].x1;
       const x2 = this.materials[index].x2;
-      const weight = this.materials[index].weight;
+      const percent = this.materials[index].percent;
+      const units=this.materials[index].units;
+      const specific_units=this.materials[index].specific_units;
       const id_material = this.materials[index].idmaterial
 
       if (name_material === '') {
         alert('Не введено название материала!');
         return;
       }
-      if (weight !== null) {
-        if (weightPttern.test(weight) === false) {
+      if (percent !== null) {
+        if (percentPattern.test(String(percent)) === false) {
           alert('Введите правильно массу! Допускается 4 цифры до точки и три цифры после точки!');
           return;
         }
@@ -200,7 +185,9 @@ export class OthersComponent implements OnInit {
         name_material: name_material,
         x1: x1 || null,
         x2: x2 || null,
-        weight: weight,
+        units:units,
+        specific_units:specific_units,
+        percent:percent,
         id_material: id_material
       }
       const data = await this.appService.query('put', `http://localhost:3000/${this.nameController}/updateMaterial`, dataServer);

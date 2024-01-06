@@ -14,11 +14,11 @@ export class TableNavigator {
         this.setupKeyboardNavigation();
         this.setupMouseNavigation(table);
         this.indexCellCheckbox = indexCellCheckbox!;
-      
-      
+
+
     }
 
-    public findRowButton(target: HTMLButtonElement, indexCellButton:number): number {
+    public findRowButton(target: HTMLButtonElement, indexCellButton: number): number {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
@@ -29,10 +29,24 @@ export class TableNavigator {
         return i;
     }
 
-    public findRowSelect(target: HTMLSelectElement, indexCellSelect:number): number {
+    public findRowInsertedButton(target: HTMLButtonElement, indexCellParent: number, indexCellButton: number): number {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
+            const collect:any=rowsCollection[i].cells[indexCellParent].firstChild;
+            if (collect.children[indexCellButton] === target) {
+                break;
+            }
+        }
+        return i;
+    }
+
+
+    public findRowSelect(target: HTMLSelectElement, indexCellSelect: number): number {
+        const rowsCollection = this.table.rows;
+        let i = 0
+        for (i = 0; i < rowsCollection.length; i++) {
+           
             if (rowsCollection[i].cells[indexCellSelect].firstChild == target) {
                 break;
             }

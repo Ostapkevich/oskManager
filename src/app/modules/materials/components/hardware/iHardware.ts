@@ -1,7 +1,7 @@
 import { Isteel } from "../../iSteel";
 
 interface IhardwareType {
-  idhardware_type: number;
+  id_type: number;
   name_type: string;
   ind: number;
 }

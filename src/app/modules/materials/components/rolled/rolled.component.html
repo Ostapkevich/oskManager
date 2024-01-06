@@ -3,16 +3,18 @@
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
-                <select id="selectRolled" (change)="firstPage()"
+                <select id="selectRolled" (change)="findRolleds()"
                     class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of rolledType" value="{{item.idrolled_type}}">
-                        {{item.name_typerolled}} </option>
+                    <option value=-1>Весь прокат</option>
+                    <option *ngFor="let item of rolledType" value={{item.id_type}}>
+                        {{item.name_type}} </option>
                 </select>
             </div>
             <div>
-                <select id="selectSteel" (change)="firstPage()"
+                <select id="selectSteel" (change)="findRolleds()"
                     class="border   text-sm   block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of steels" value="{{item.idsteel}}">
+                    <option value=-1>Все стали</option>
+                    <option *ngFor="let item of steels" value={{item.idsteel}}>
                         {{item.steel}} </option>
                 </select>
             </div>
@@ -37,7 +39,7 @@
 
         <!-- Добавить Добавить Добавить Добавить Добавить Добавить -->
 
-        <add-rolled *ngIf="showAddRolled===true"   (save_NewRolled)="saveNewRolled()" (btn_Del)="btnDel()"> </add-rolled>
+        <add-rolled *ngIf="showAddRolled===true" (save_NewRolled)="saveNewRolled()" (btn_Del)="btnDel()"> </add-rolled>
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
@@ -116,7 +118,7 @@
     <td class=" py-1 w-1/12 text-center">
         {{rolled.weight}}
     </td>
-    <td  class=" py-1 w-1/12 text-center">
+    <td class=" py-1 w-1/12 text-center">
         <button *ngIf="showAddRolled===true" class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изм</button>
@@ -153,7 +155,7 @@
             [(ngModel)]="rolled.weight" />
     </td>
     <td class=" py-1 w-0,5/12 text-center ">
-        <button *ngIf="showAddRolled===true"   class="font-medium  text-blue-500 hover:underline"
+        <button *ngIf="showAddRolled===true" class="font-medium  text-blue-500 hover:underline"
             (click)="updateRolled($event)">Сохранить</button>
     </td>
 </ng-template>

@@ -68,7 +68,7 @@ export class HardwareComponent implements OnInit{
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectHardware') as HTMLSelectElement).value;
     const steel = (document.getElementById('selectSteel') as HTMLSelectElement).value;
-    if (str.length > 0) {
+       if (str.length > 0) {
       if (this.page === 1) {
         this.loadHardwares(+rolledtype, +steel, this.page - 1, str);
       } else {
@@ -90,7 +90,7 @@ export class HardwareComponent implements OnInit{
         return;
       }
     }
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,7);
      this.hardwares[index].isEdited = true;
   }
 
@@ -120,7 +120,7 @@ export class HardwareComponent implements OnInit{
     try {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,7);
       const name_rolled = this.hardwares[index].name_hardware;
       const d = this.hardwares[index].d;
       const weight = this.hardwares[index].weight;
@@ -275,6 +275,6 @@ export class HardwareComponent implements OnInit{
     this.onLoad();
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
-    this.tblNavigator = new TableNavigator(document.getElementById('tblHardware') as HTMLTableElement, 0, 7);
+    this.tblNavigator = new TableNavigator(document.getElementById('tblHardware') as HTMLTableElement, 0);
   }
 }

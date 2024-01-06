@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef,Input, OnChanges} from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, Input, OnChanges } from '@angular/core';
 import { Isteel, IrolledType, Irolled, IRolledMaterial } from './iRolled';
 import { AppService } from 'src/app/app.service';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 
 @Component({
-  imports:[AddRolledComponent, FormsModule, CommonModule],
+  imports: [AddRolledComponent, FormsModule, CommonModule],
   standalone: true,
   selector: 'app-rolled',
   templateUrl: './rolled.component.html',
@@ -17,12 +17,12 @@ import { CommonModule } from '@angular/common';
 export class RolledComponent implements OnInit {
 
   constructor(private appService: AppService) {
-    
-    
-   }
-   
-   
- @Input() showAddRolled: Boolean =true;
+
+
+  }
+
+
+  @Input() showAddRolled: Boolean = true;
   rolledType: IrolledType[] | undefined;
   steels: Isteel[] | undefined;
   rolleds: Irolled[] = [];
@@ -94,7 +94,7 @@ export class RolledComponent implements OnInit {
         return;
       }
     }
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
     this.rolleds[index].isEdited = true;
   }
 
@@ -124,7 +124,7 @@ export class RolledComponent implements OnInit {
     try {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
       const name_rolled = this.rolleds[index].name_rolled;
       const d = this.rolleds[index].d;
       const weight = this.rolleds[index].weight;
@@ -238,7 +238,7 @@ export class RolledComponent implements OnInit {
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
       }
-           this.findRolleds();
+      this.findRolleds();
     } catch (error) {
       alert(error);
     }
@@ -251,26 +251,8 @@ export class RolledComponent implements OnInit {
       if (i == null) {
         return;
       }
-      const id = this.rolleds[i].id_rolled;
-      let data = await this.appService.query('get', `http://localhost:3000/rolled/isUsedRolled/${id}`);
-      if ((data as []).length > 0) {
-        let answer = confirm(`Этот прокат используется в базе чертежей. Его удаление приведет к остутсвию этого материала в использующих его чертежах и заказах. Вы ействительно хотите удалить даную позицию?`);
-        if (answer !== true) {
-          return;
-        }
-      } else if ((data as []).length === 0) {
-        if (confirm("Вы действительно хотите удалить данную позицию?") === false) {
-          return;
-        }
-      } else {
-        alert('Что-то пошло не так...');
-        return;
-      }
-      data = await this.appService.query('delete', `http://localhost:3000/rolled/deleteRolled`, [id]);
-      if (data.response === 'ok') {
-        this.findRolleds();
-      }
-
+      await this.appService.query('delete', `http://localhost:3000/rolled/deleteRolled`, [this.rolleds[i].id_rolled]);
+      this.rolleds.splice(i,1);
     } catch (error: any) {
       alert(error);
     }
@@ -280,8 +262,8 @@ export class RolledComponent implements OnInit {
     this.onLoad();
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
-    this.tblNavigator = new TableNavigator(document.getElementById('tblRolled') as HTMLTableElement, 0, 7);
-  
+    this.tblNavigator = new TableNavigator(document.getElementById('tblRolled') as HTMLTableElement, 0);
+
   }
 
 

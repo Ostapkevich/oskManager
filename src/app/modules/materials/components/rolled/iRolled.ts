@@ -1,8 +1,8 @@
 import { Isteel } from "../../iSteel";
 
 interface IrolledType {
-  idrolled_type: number;
-  name_typerolled: string;
+  id_type: number;
+  name_type: string;
   ind: number;
   lenghtForWeight:boolean
 }

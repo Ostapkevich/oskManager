@@ -15,11 +15,15 @@ import { TableNavigator } from 'src/app/classes/tableNavigator';
 })
 export class TypeMaterialComponent implements OnInit {
   constructor(private appService: AppService) { }
-  index: number = 0;
-  changedData = false;
   typesMaterial: Partial<ItypeMaterial>[] = [];
   tblNavigator: TableNavigator | undefined;
-  selectedType: string = '';
+  selectedType: string = 'Выберите тип материала';
+  @ViewChild('readOnlyRolledTemplate', { static: false })
+  readOnlyRolledTemplate!: TemplateRef<any>;
+  @ViewChild('editRolledTemplate', { static: false })
+  editRolledTemplate!: TemplateRef<any>;
+  @ViewChild('newRolledTemplate', { static: false })
+  newRolledTemplate!: TemplateRef<any>;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
   @ViewChild('editTemplate', { static: false })
@@ -27,9 +31,46 @@ export class TypeMaterialComponent implements OnInit {
   @ViewChild('newTemplate', { static: false })
   newTemplate!: TemplateRef<any>;
 
-  escape(event: Event) {
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+
+
+
+  escapeAdded(event: Event) {
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
     this.typesMaterial.splice(index, 1);
+  }
+
+  escape(event: Event) {
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
+    this.typesMaterial[index].newOrEdit = false;
+    switch (this.selectedType) {
+      case 'Прокат':
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        this.typesMaterial[index].uselength = this.typesMaterial[index].initial_uselength;
+        break;
+      case 'Материалы':
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        break;
+      default:
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        break;
+    };
+  }
+
+  async deleteType() {
+    try {
+      const index = this.tblNavigator!.findCheckedRowNumber();
+      if (index === null || index < 0) {
+        return;
+      }
+      const materialType = (document.getElementById('types-material') as HTMLSelectElement).value;
+      const data = await this.appService.query('delete', `http://localhost:3000/types/deleteType/${materialType}/${this.typesMaterial[index].id_type}`);
+      this.typesMaterial!.length = 0;
+      if ((data.typesMaterial as []).length !== 0) {
+        this.typesMaterial = data.typesMaterial;
+      }
+    } catch (error) {
+      alert(error);
+    }
   }
 
   async changeType() {
@@ -37,7 +78,7 @@ export class TypeMaterialComponent implements OnInit {
       const materialType = (document.getElementById('types-material') as HTMLSelectElement).value;
 
       if ((document.getElementById('types-material') as HTMLSelectElement).selectedIndex === 0) {
-        this.selectedType = '';
+        this.selectedType = 'Выберите тип материала';
         this.typesMaterial!.length = 0;
         return;
       }
@@ -54,30 +95,63 @@ export class TypeMaterialComponent implements OnInit {
   }
 
   loadTemplate(type: Partial<ItypeMaterial>) {
-    if (type.id_type && type.newOrEdit === undefined) {
-      return this.readOnlyTemplate
+    if (type.id_type && (type.newOrEdit === false || type.newOrEdit === undefined)) {
+      return this.selectCase('readOnly');
     } else if (type.id_type && type.newOrEdit === true) {
-      return this.editTemplate;
+      return this.selectCase('edit');
     } else {
-      return this.newTemplate;
+      return this.selectCase('new');
+    }
+  }
+
+  selectCase(action: string): any {
+    switch (action) {
+      case 'readOnly':
+        switch (this.selectedType) {
+          case 'Прокат':
+            return this.readOnlyRolledTemplate;
+          default:
+            return this.readOnlyTemplate;
+        };
+      case 'edit':
+        switch (this.selectedType) {
+          case 'Прокат':
+            return this.editRolledTemplate;
+          default:
+            return this.editTemplate;
+        }
+      case 'new':
+        switch (this.selectedType) {
+          case 'Прокат':
+            return this.newRolledTemplate;
+          default:
+            return this.newTemplate;
+        }
     }
   }
 
   editeRow(event: Event) {
-    if (this.changedData === true) {
-      return
-    }
-    this.index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
-    this.typesMaterial[this.index].newOrEdit = true;
-    this.typesMaterial[this.index].uselength = 0;
-    this.changedData = true;
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
+    this.typesMaterial[index].newOrEdit = true;
+    switch (this.selectedType) {
+      case 'Прокат':
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        this.typesMaterial[index].initial_uselength = this.typesMaterial[index].uselength;
+        this.typesMaterial[index].uselength = 0;
+        break;
+      case 'Материалы':
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        break;
+      default:
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        break;
+    };
+
   }
 
   async saveTypes() {
     try {
-      if (this.changedData === false) {
-        return;
-      }
+
       let sentTypes: Partial<ItypeMaterial>[] = [];
       let i = 0;
       for (const item of this.typesMaterial) {
@@ -87,35 +161,33 @@ export class TypeMaterialComponent implements OnInit {
         i++;
       }
       const data = await this.appService.query('put', `http://localhost:3000/types/saveTypes/${(document.getElementById('types-material') as HTMLSelectElement).value}`, sentTypes);
-       if ((data.typesMaterial as []).length !== 0) {
+      if ((data.typesMaterial as []).length !== 0) {
         this.typesMaterial!.length = 0;
         this.typesMaterial = data.typesMaterial;
       }
       alert('Данные сохранены!');
-      this.changedData = false;
+      //this.changedData = false;
     } catch (error) {
       alert(error);
     }
   }
 
- uselengthChange(target:any){
-  this.index = this.tblNavigator!.findRowSelect(target);
-  this.typesMaterial[this.index].uselength=+target.value;
- }
+  uselengthChange(target: any) {
+    const index = this.tblNavigator!.findRowSelect(target, 2);
+    this.typesMaterial[index].uselength = +target.value;
+  }
 
   escapeAll() {
-     if (this.changedData === false) {
-       return;
-     } else {
-       if (confirm("Отменить все несохраненные изменения?") === false) {
-         return;
-       }
-     }
-     this.changeType();
-     this.changedData = false; 
+    if (confirm("Отменить все несохраненные изменения?") === false) {
+      return;
+    }
+    this.changeType();
   }
 
   moveItem(isMoveUp: boolean) {
+    if ((document.getElementById('types-material') as HTMLSelectElement).selectedIndex === 0) {
+      return;
+    }
     let i = this.tblNavigator?.findCheckedRowNumber();
     if (i !== null) {
       const unit = this.typesMaterial[i!];
@@ -126,13 +198,14 @@ export class TypeMaterialComponent implements OnInit {
         this.typesMaterial[i!] = this.typesMaterial[i! + 1];
         this.typesMaterial[i! + 1] = unit;
       }
-      this.changedData=true;
-
     }
   }
 
- 
+
   addType() {
+    if ((document.getElementById('types-material') as HTMLSelectElement).selectedIndex === 0) {
+      return;
+    }
     const editedType: Partial<ItypeMaterial> = {};
     let index = this.tblNavigator!.findCheckedRowNumber();
     editedType.id_type = null;
@@ -144,13 +217,12 @@ export class TypeMaterialComponent implements OnInit {
     } else {
       this.typesMaterial.splice(index + 1, 0, editedType);
     }
-    this.changedData = true;
   }
 
   ngOnInit(): void {
     let event = new Event("click");
     document.getElementById('tblType')!.dispatchEvent(event);
-    this.tblNavigator = new TableNavigator(document.getElementById('tblType') as HTMLTableElement, 0, 3,2);
+    this.tblNavigator = new TableNavigator(document.getElementById('tblType') as HTMLTableElement, 0);
 
   }
 }

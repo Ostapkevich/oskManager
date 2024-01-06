@@ -69,12 +69,12 @@ export class EditUnitsComponent implements OnInit {
   }
 
   escape(event: Event) {
-    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
+    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement,1);
     this.units.splice(index, 1);
   }
 
   editeRow(event: Event) {
-    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement);
+    const index = this.navigator!.findRowButton(event.target as HTMLButtonElement,1);
     this.units[index].newOrEdit = true;
     this.changedData = true;
   }
@@ -118,7 +118,7 @@ export class EditUnitsComponent implements OnInit {
         this.order = data[0].order[0];
         this.units = data[0].units;
         this.changedData = false;
-        this.navigator = new TableNavigator(document.getElementById('tblUnits') as HTMLTableElement,0,10);
+        this.navigator = new TableNavigator(document.getElementById('tblUnits') as HTMLTableElement,0);
       }
     } catch (error) {
       alert(error);

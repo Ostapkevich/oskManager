@@ -5,14 +5,16 @@
             <div>
                 <select id="selectHardware" (change)="firstPage()"
                     class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of hardwareType" value="{{item.idhardware_type}}">
+                 <option value=-1>Все метизы</option>
+                    <option *ngFor="let item of hardwareType" value={{item.id_type}}>
                         {{item.name_type}} </option>
                 </select>
             </div>
             <div>
                 <select id="selectSteel" (change)="firstPage()"
                     class="border   text-sm   block w-full p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of steels" value="{{item.idsteel}}">
+                   <option value=-1>Все стали</option>
+                    <option *ngFor="let item of steels" value={{item.idsteel}}>
                         {{item.steel}} </option>
                 </select>
             </div>

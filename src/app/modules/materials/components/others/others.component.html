@@ -1,15 +1,17 @@
 <div class="w-1/2 mx-auto  " id="idmaterial">
-    <p  *ngIf="showAddmaterial===true" id="idclick" class="text-4xl  text-white">{{namePage}}</p>
+    <p *ngIf="showAddmaterial===true" id="idclick" class="text-4xl  text-white">{{namePage}}</p>
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
                 <select id="selectMaterials" (change)="firstPage()"
-                    class="border   text-sm  block  p-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option *ngFor="let item of materialType" value="{{item.idmaterial_type}}">
+               
+                    class="border w-32 text-sm  block px-1  py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+                    <option value=-1>Все материалы</option>
+                    <option *ngFor="let item of materialType" value={{item.id_type}}>
                         {{item.name_type}} </option>
                 </select>
             </div>
-           
+
             <!-- Поиск Поиск Поиск Поиск -->
             <form>
                 <div class="relative">
@@ -30,33 +32,38 @@
         </div>
 
         <!-- Добавить Добавить Добавить Добавить Добавить Добавить -->
-       
-        <add-others *ngIf="showAddmaterial===true"   (save_Material)="saveNewMaterial()" (btn_Del)="btnDel()"> </add-others>
-        
-      
+
+        <add-others *ngIf="showAddmaterial===true" (save_Material)="saveNewMaterial()" (btn_Del)="btnDel()">
+        </add-others>
+
+
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
-        <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
-            <div class="basis-1/12  ">
-                <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 16 12">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M1 5.917 5.724 10.5 15 1.5" />
-                </svg>
-            </div>
-            <p class="basis-1/12  text-center">id</p>
-            <p class="basis-6/12  ml-0.5 ">Наименование</p>
-            <p class="basis-1/12  text-center">X1</p>
-            <p class="basis-1/12  ml-0.5 text-center ">X2</p>
-            <p class="basis-1/12  text-center">Масса, кг</p>
-            <p class="basis-1/12  text-center"></p>
-        </div>
+        <table class="w-full">
+            <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+                <tr>
+                    <td class="w-1/12  py-2">
+                        <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 5.917 5.724 10.5 15 1.5" />
+                        </svg>
+                    </td>
+                    <td class="w-1/12 text-center">id</td>
+                    <td class="w-6/12">Наименование</td>
+                    <td class="w-1/12 text-center"> X1</td>
+                    <td class="w-1/12 text-center">X2</td>
+                    <td class="w-1/12 text-center"> Масса, кг</td>
+                    <td class="w-1/12"></td>
+                </tr>
+            </tbody>
+        </table>
+
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblMaterials" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits" >
+            <tbody id="tbodyUnits">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
-                    <ng-template [ngTemplateOutlet]="loadTemplate(item)"
-                        [ngTemplateOutletContext]="{ $implicit: item}">
+                    <ng-template [ngTemplateOutlet]="loadTemplate(item)" [ngTemplateOutletContext]="{ $implicit: item}">
                     </ng-template>
                 </tr>
             </tbody>
@@ -110,7 +117,7 @@
         {{item.weight}}
     </td>
     <td class=" py-1 w-1/12 text-center">
-        <button  class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
+        <button class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изм</button>
     </td>
@@ -143,8 +150,6 @@
             [(ngModel)]="item.weight" />
     </td>
     <td class=" py-1 w-1/12 text-center">
-        <button  class="font-medium  text-blue-500 hover:underline"
-            (click)="updateMaterial($event)">Сохранить</button>
+        <button class="font-medium  text-blue-500 hover:underline" (click)="updateMaterial($event)">Сохранить</button>
     </td>
 </ng-template>
-

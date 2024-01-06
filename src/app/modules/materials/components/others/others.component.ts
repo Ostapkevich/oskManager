@@ -87,8 +87,58 @@ export class OthersComponent implements OnInit {
         return;
       }
     }
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,6);
     this.materials[index].isEdited = true;
+  }
+
+ /*  editeRow(event: Event) {
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
+    this.typesMaterial[index].newOrEdit = true;
+    switch (this.selectedType) {
+      case 'Прокат':
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        this.typesMaterial[index].initial_uselength = this.typesMaterial[index].uselength;
+        this.typesMaterial[index].uselength = 0;
+        break;
+      case 'Материалы':
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        this.typesMaterial[index].initial_units = this.typesMaterial[index].units;
+        this.typesMaterial[index].initial_percent = this.typesMaterial[index].percent;
+        this.typesMaterial[index].initial_specific_units = this.typesMaterial[index].specific_units;
+        this.typesMaterial[index].specific_units = 0;
+        this.typesMaterial[index].specific_units = 0;
+        break;
+      default:
+        this.typesMaterial[index].initial_name_type = this.typesMaterial[index].name_type;
+        break;
+    };
+
+  } */
+
+
+  escape(event: Event) {
+   /*  const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 1);
+    this.typesMaterial[index].newOrEdit = false;
+    switch (this.selectedType) {
+      case 'Прокат':
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        this.typesMaterial[index].uselength = this.typesMaterial[index].initial_uselength;
+        break;
+      case 'Материалы':
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        this.typesMaterial[index].percent = this.typesMaterial[index].initial_percent;
+        this.typesMaterial[index].units = this.typesMaterial[index].initial_units;
+        this.typesMaterial[index].specific_units = this.typesMaterial[index].initial_specific_units;
+        break;
+      default:
+        this.typesMaterial[index].name_type = this.typesMaterial[index].initial_name_type;
+        break;
+    }; */
+  } 
+
+  uselengthChange(target: any) {
+   /*  const index = this.tblNavigator!.findRowSelect(target, 2);
+    this.materialType[index].uselength = +target.value; */
   }
 
   async loadMaterials(materialtype: number, position: number, str?: string) {
@@ -117,7 +167,7 @@ export class OthersComponent implements OnInit {
     try {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement);
+      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,6);
       const name_material = this.materials[index].name_material;
       const x1 = this.materials[index].x1;
       const x2 = this.materials[index].x2;
@@ -267,6 +317,6 @@ export class OthersComponent implements OnInit {
     this.onLoad();
     let event = new Event("click");
     document.getElementById('searchMaterial')!.dispatchEvent(event);
-    this.tblNavigator = new TableNavigator(document.getElementById('tblMaterials') as HTMLTableElement, 0, 6);
+    this.tblNavigator = new TableNavigator(document.getElementById('tblMaterials') as HTMLTableElement, 0);
   }
 }

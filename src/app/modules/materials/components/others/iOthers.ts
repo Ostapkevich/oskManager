@@ -1,6 +1,6 @@
 
 interface ImaterialType {
-  idmaterial_type: number;
+  id_type: number;
   name_type: string;
   ind: number;
 }

@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
-import { AppService } from 'src/app/app.service';
+
 
 
 @Component({
@@ -9,7 +9,7 @@ import { AppService } from 'src/app/app.service';
   styleUrls: ['./add-others.component.css']
 })
 export class AddOthersComponent {
-  constructor(private appService: AppService) { }
+  constructor() { }
 
   @Output() save_Material = new EventEmitter();
   @Output() btn_Del = new EventEmitter();

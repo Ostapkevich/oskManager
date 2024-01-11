@@ -1,5 +1,5 @@
 import { Component, Output, EventEmitter} from '@angular/core';
-import { AppService } from 'src/app/app.service';
+
 
 @Component({
   standalone:true,
@@ -8,7 +8,7 @@ import { AppService } from 'src/app/app.service';
   styleUrls: ['./add-hardware.component.css']
 })
 export class AddHardwareComponent {
-constructor(private appService:AppService){}
+constructor(){}
 
   @Output()save_NewHardware = new EventEmitter();
   @Output()btn_Del = new EventEmitter();

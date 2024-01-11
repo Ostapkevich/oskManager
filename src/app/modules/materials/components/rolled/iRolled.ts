@@ -12,10 +12,14 @@ interface IrolledType {
 interface Irolled {
   id_rolled?: number;
   name_rolled: string;
+  initial_name_rolled: string;
   d?: number;
+  initial_d?: number;
   t?: number;
+  initial_t?: number;
   steel?: string;
   weight: string;
+  initial_weight: string;
   isEdited?: boolean;
 }
 

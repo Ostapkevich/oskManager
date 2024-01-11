@@ -20,6 +20,7 @@ interface Imaterial {
   percent:number;
   initial_percent:number;
   isEdited?: boolean;
+  value?:number;
 }
 
 interface IaddMaterial {

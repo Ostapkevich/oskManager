@@ -9,10 +9,14 @@ interface IhardwareType {
 interface Ihardware {
   idhardware?: number;
   name_hardware: string;
+  initial_name_hardware: string;
   d?: number;
+  initial_d?: number;
   L?: number;
+  initial_L?: number;
   steel?: string;
   weight: string;
+  initial_weight: string;
   isEdited?: boolean;
 }
 

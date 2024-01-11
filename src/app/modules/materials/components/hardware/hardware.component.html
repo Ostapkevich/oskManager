@@ -43,22 +43,29 @@
       
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
-        <div class=" flex flex-row  text-xs  uppercase  bg-gray-700 text-gray-300 py-2">
-            <div class="basis-1/12  ">
-                <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 16 12">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M1 5.917 5.724 10.5 15 1.5" />
-                </svg>
-            </div>
-            <p class="basis-1/12  text-center">id</p>
-            <p class="basis-5/12  ml-0.5 ">Наименование</p>
-            <p class="basis-1/12  text-center">Диам.(D) , мм</p>
-            <p class="basis-1/12  ml-0.5 text-center ">L(X), мм</p>
-            <p class="basis-1/12 text-center ">Материал</p>
-            <p class="basis-1/12  text-center">Масса, кг</p>
-            <p class="basis-1/12  text-center"></p>
-        </div>
+        <table class="w-full">
+            <tbody class="text-xs  uppercase  bg-gray-700 text-gray-400 ">
+                <tr>
+                    <td class="w-1/12 py-2 ">
+                        <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewBox="0 0 16 12">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 5.917 5.724 10.5 15 1.5" />
+                        </svg>
+                    </td>
+                    <td class="w-1/12  text-center">id</td>
+                    <td *ngIf="showAddHardware===true" class="w-5/12  ml-0.5 ">Наименование</td>
+                    <td *ngIf="showAddHardware===false" class="w-6/12  ml-0.5 ">Наименование</td>
+                    <td class="w-1/12  text-center">Диам.(D) , мм</td>
+                    <td class="w-1/12  ml-0.5 text-center ">L(X), мм</td>
+                    <td class="w-1/12 text-center ">Материал</td>
+                    <td class="w-1/12  text-center">Масса, кг</td>
+                    <td class="w-1/12  text-center"></td>
+                             </tr>
+            </tbody>
+        </table>
+
+
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblHardware" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits" >
@@ -105,7 +112,10 @@
     <td class=" py-1 w-1/12 text-center ">
         {{hardware.idhardware}}
     </td>
-    <td class=" py-1 w-5/12">
+    <td *ngIf="showAddHardware===true" class=" py-1 w-5/12">
+        {{hardware.name_hardware}}
+    </td>
+    <td *ngIf="showAddHardware===false" class=" py-1 w-6/12">
         {{hardware.name_hardware}}
     </td>
     <td class=" py-1 w-1/12 text-center">
@@ -120,11 +130,12 @@
     <td class=" py-1 w-1/12 text-center">
         {{hardware.weight}}
     </td>
-    <td class=" py-1 w-1/12 text-center">
-        <button href="#" class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
+    <td *ngIf="showAddHardware===true" class=" py-1 w-1/12 text-center">
+        <button  class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изм</button>
     </td>
+   
 </ng-template>
 
 <ng-template #editTemplate let-hardware>
@@ -157,7 +168,12 @@
             [(ngModel)]="hardware.weight" />
     </td>
     <td class=" py-1 w-1/12 text-center">
-        <button href="#" class="font-medium  text-blue-500 hover:underline"
+        <div class="flex justify-center gap-2">
+            <button href="#" class="font-medium  text-blue-500 hover:underline"
             (click)="updateHardwares($event)">Сохранить</button>
+            <button class="font-medium  text-blue-500 hover:underline" (click)="escape($event.target)">Отменить</button>
+        </div>
+       
+            
     </td>
 </ng-template>

@@ -8,18 +8,18 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  standalone:true,
-  imports:[AddHardwareComponent, FormsModule, CommonModule],
+  standalone: true,
+  imports: [AddHardwareComponent, FormsModule, CommonModule],
   selector: 'app-hardware',
   templateUrl: './hardware.component.html',
   styleUrls: ['./hardware.component.css']
 })
-export class HardwareComponent implements OnInit{
+export class HardwareComponent implements OnInit {
 
   constructor(private appService: AppService) { }
 
-  @Input() showAddHardware: Boolean =true;
-   hardwareType: IhardwareType[] | undefined;
+  @Input() showAddHardware: Boolean = true;
+  hardwareType: IhardwareType[] | undefined;
   steels: Isteel[] | undefined
   hardwares: Ihardware[] = [];
   index: number = 1;
@@ -64,11 +64,11 @@ export class HardwareComponent implements OnInit{
   }
 
   findHardwares() {
-    this.hardwares.length=0;
+    this.hardwares.length = 0;
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectHardware') as HTMLSelectElement).value;
     const steel = (document.getElementById('selectSteel') as HTMLSelectElement).value;
-       if (str.length > 0) {
+    if (str.length > 0) {
       if (this.page === 1) {
         this.loadHardwares(+rolledtype, +steel, this.page - 1, str);
       } else {
@@ -90,8 +90,21 @@ export class HardwareComponent implements OnInit{
         return;
       }
     }
-    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,7);
-     this.hardwares[index].isEdited = true;
+    const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
+    this.hardwares[index].isEdited = true;
+    this.hardwares[index].initial_L = this.hardwares[index].L;
+    this.hardwares[index].initial_d = this.hardwares[index].d;
+    this.hardwares[index].initial_name_hardware = this.hardwares[index].name_hardware;
+    this.hardwares[index].initial_weight = this.hardwares[index].weight;
+  }
+
+  escape(target: any) {
+    const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 7, 1);
+    this.hardwares[index].isEdited = false;
+    this.hardwares[index].L = this.hardwares[index].initial_L;
+    this.hardwares[index].d = this.hardwares[index].initial_d;
+    this.hardwares[index].name_hardware = this.hardwares[index].initial_name_hardware;
+    this.hardwares[index].weight = this.hardwares[index].initial_weight;
   }
 
   async loadHardwares(rolledtype: number, steel: number, position: number, str?: string) {
@@ -120,7 +133,7 @@ export class HardwareComponent implements OnInit{
     try {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,7);
+      const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
       const name_rolled = this.hardwares[index].name_hardware;
       const d = this.hardwares[index].d;
       const weight = this.hardwares[index].weight;
@@ -159,8 +172,8 @@ export class HardwareComponent implements OnInit{
       const data = await this.appService.query('put', 'http://localhost:3000/hardware/updateHardware', dataServer);
       if (data.response === 'ok') {
         this.hardwares[index].isEdited = false;
-       alert('Данные сохранены!');
-       this.findHardwares();
+        alert('Данные сохранены!');
+        this.findHardwares();
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
       }
@@ -179,7 +192,7 @@ export class HardwareComponent implements OnInit{
       const t = (document.getElementById('width') as HTMLInputElement).value;
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      if (idrolled_type === 1 || idsteel === 1) {
+      if (idrolled_type === -1 || idsteel === -1) {
         alert('Выберите тип и материал!');
         return;
       } else if (name_rolled === '') {
@@ -225,26 +238,8 @@ export class HardwareComponent implements OnInit{
       if (i == null) {
         return;
       }
-      const id = this.hardwares[i].idhardware;
-      let data = await this.appService.query('get', `http://localhost:3000/hardware/isUsedHardware/${id}`);
-      if ((data as []).length > 0) {
-        let answer = confirm(`Эта позиция используется в базе чертежей. Его удаление приведет к остутсвию этого материала в использующих его чертежах и заказах. Вы ействительно хотите удалить даную позицию?`);
-        if (answer !== true) {
-          return;
-        }
-      } else if ((data as []).length === 0) {
-        if (confirm("Вы действительно хотите удалить данную позицию?") === false) {
-          return;
-        }
-      } else {
-        alert('Что-то пошло не так...');
-        return;
-      }
-      data = await this.appService.query('delete', `http://localhost:3000/hardware/deleteHardware`, [id]);
-      if (data.response === 'ok') {
-        this.findHardwares();
-      }
-
+      await this.appService.query('delete', `http://localhost:3000/hardware/deleteHardware`, [this.hardwares[i].idhardware]);
+      this.hardwares.splice(i, 1);
     } catch (error: any) {
       alert(error);
     }

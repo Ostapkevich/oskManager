@@ -1,11 +1,11 @@
 <div class="w-1/2 mx-auto  " id="idmaterial">
-    <p *ngIf="showAddmaterial===true" class="text-4xl  text-white">Материалы</p>
+    <p *ngIf="showAddPurshaced===true" id="idclick" class="text-4xl  text-white">Покупные изделия</p>
     <div class="flex flex-row justify-between mt-6">
         <div class="flex flex-row gap-2  border-gray-600 border-2 p-1">
             <div>
                 <select id="selectMaterials" (change)="firstPage()"
                     class="border w-32 text-sm  block px-1  py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
-                    <option value=-1>Все материалы</option>
+                    <option value=-1>Все изделия</option>
                     <option *ngFor="let item of materialType" value={{item.id_type}}>
                         {{item.name_type}} </option>
                 </select>
@@ -32,32 +32,29 @@
 
         <!-- Добавить Добавить Добавить Добавить Добавить Добавить -->
 
-        <add-others *ngIf="showAddmaterial===true" (save_Material)="saveNewMaterial()" (btn_Del)="btnDel()">
-        </add-others>
+        <add-rolled *ngIf="showAddPurshaced===true" (save_NewRolled)="saveNewMaterial()" (btn_Del)="btnDel()" [materialType]=1 >
+        </add-rolled>
 
 
     </div>
     <div class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
-        <table id="tblOther" class="w-full">
+        <table class="w-full">
             <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
                 <tr>
-                    <td class="w-0.5/12  py-2">
+                    <td class="w-1/12  py-2">
                         <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 16 12">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M1 5.917 5.724 10.5 15 1.5" />
                         </svg>
                     </td>
-                    <td  *ngIf="showAddmaterial===true"  class="w-0.5/12 text-center">id</td>
-                    <td  *ngIf="showAddmaterial===false"  class="w-1/12 text-center">id</td>
-                    <td *ngIf="showAddmaterial===true" class="w-6/12">Наименование</td>
-                    <td *ngIf="showAddmaterial===false" class="w-7/12">Наименование</td>
-                    <td class="w-0,5/12 text-center"> X1</td>
-                    <td class="w-0,5/12 text-center">X2</td>
-                    <td class="w-1/12">Расчет</td>
-                    <td class="w-0.5/12 text-center">Коэфф.</td>
-                    <td class="w-1/12 text-center ">Ед.изм.</td>
-                    <td *ngIf="showAddmaterial===true" class="w-1.5/12 text-center">Действие</td>
+                    <td class="w-1/12 text-center">id</td>
+                    <td *ngIf="showAddPurshaced===true" class="w-4/12">Наименование</td>
+                    <td *ngIf="showAddPurshaced===false" class="w-5/12">Наименование</td>
+                    <td class="w-1/12 text-center"> X1</td>
+                    <td class="w-1/12 text-center">X2</td>
+                    <td class="w-1/12 text-center">Масса,кг</td>
+                    <td *ngIf="showAddPurshaced===true" class="w-2/12 text-center">Действие</td>
                 </tr>
             </tbody>
         </table>
@@ -73,7 +70,7 @@
         </table>
     </div>
     <div class="flex justify-end  items-end mt-4">
-        <p  class="mr-4 text-2xl  text-white">Страница {{page}}</p>
+        <p id="" class="mr-4 text-2xl  text-white">Страница {{page}}</p>
         <button (click)="firstPage()"
             class="flex items-center justify-center px-3 h-8 ms-0 leading-tight   border border-e-0  bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">Начало</button>
         <button (click)="previousPage()"
@@ -98,64 +95,31 @@
 </div>
 
 <ng-template #readOnlyTemplate let-item>
-    <td class="py-1 w-0.5/12">
+    <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input  type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id= {{item.idmaterial}}  type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
-    <td  *ngIf="showAddmaterial===true" class=" py-1 w-0.5/12 text-center ">
+    <td class=" py-1 w-1/12 text-center ">
         {{item.idmaterial}}
     </td>
-    <td  *ngIf="showAddmaterial===false" class=" py-1 w-1/12 text-center ">
-        {{item.idmaterial}}
-    </td>
-    <td *ngIf="showAddmaterial===true" class=" py-1 w-6/12">
+    <td *ngIf="showAddPurshaced===true" class=" py-1 w-4/12">
         {{item.name_material}}
     </td>
-    <td *ngIf="showAddmaterial===false" class=" py-1 w-7/12">
+    <td *ngIf="showAddPurshaced===false" class=" py-1 w-5/12">
         {{item.name_material}}
     </td>
-    <td class=" py-1 w-0.5/12 text-center">
+    <td class=" py-1 w-1/12 text-center">
         {{item.x1}}
     </td>
-    <td class=" py-1 w-0.5/12 text-center">
+    <td class=" py-1 w-1/12 text-center">
         {{item.x2}}
     </td>
-      <td *ngIf="item.specific_units===0" class=" py-1 w-1/1 ">
-       % от m, кг
-    </td>
-    <td *ngIf="item.specific_units===1" class=" py-1 w-1/12">
-        % от S, м.кв
-    </td>
-       <td *ngIf="item.specific_units===2" class=" py-1 w-1/12">
-        Lдет+, мм
-    </td>
-    <td *ngIf="item.specific_units===3" class=" py-1 w-1/12">
-        Ввод данных
-    </td>
-    <td class=" py-1 w-0.5/12 text-center">
+   <td class=" py-1 w-1/12 text-center">
         {{item.percent}}
     </td>
-    <td *ngIf="item.units===0" class=" py-1 w-1/12r text-center">
-        m, кг
-    </td>
-    <td *ngIf="item.units===1" class=" py-1 w-1/12 text-center">
-        S, м.кв
-    </td>
-    <td *ngIf="item.units===2" class=" py-1 w-1/12 text-center">
-        L, мм
-    </td>
-    <td *ngIf="item.units===3" class=" py-1 w-1/12 text-center">
-        шт.
-    </td>
-    <td *ngIf="item.units===4" class=" py-1 w-1/12 text-center">
-        V, л
-    </td>
-    <td *ngIf="item.units===5" class=" py-1 w-1/12 text-center">
-        V, м.куб
-    </td>
-    <td *ngIf="showAddmaterial===true" class=" py-1 w-1.5/12 text-center">
+    <td *ngIf="showAddPurshaced===true" class=" py-1 w-2/12 text-center">
         <button class="font-medium  hover:text-red-500  text-blue-500 hover:underline"
             title="Изменение повлечет изменения везде, где эта позиция используется!"
             (click)="tableEditRow($event)">Изменить</button>
@@ -163,52 +127,33 @@
 </ng-template>
 
 <ng-template #editTemplate let-item>
-    <td class="py-1 w-0.5/12">
+    <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id= {{item.idmaterial}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
-    <td class=" py-1 w-0.5/12 text-center ">
+    <td class=" py-1 w-1/12 text-center ">
         {{item.idmaterial}}
     </td>
-    <td class="  w-5/12">
-        <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
+    <td class="  w-4/12">
+        <input id="1f" class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.name_material" />
     </td>
-    <td class="  w-0.5/12">
-        <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
+    <td class="  w-1/12">
+        <input id="2d" class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.x1" />
     </td>
-    <td class="  w-0.5/12">
-        <input class="border   block w-full   text-black  bg-gray-50" type="text" autocomplete="off"
+    <td class="  w-1/12">
+        <input id="3vv" class="border   block w-full   text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.x2" />
     </td>
-    <td class="  w-1/12 text-center">
-        <select id="selectUnits" (change)="unitsChange($event.target)"
-            class="border p-0.5  text-sm   block   bg-gray-50 border-gray-900 placeholder-gray-400 text-black focus:ring-blue-500 focus:border-blue-500">
-            <option value=0>m, кг</option>
-            <option value=1>S, м.кв</option>
-            <option value=2>L, мм</option>
-            <option value=3>шт.</option>
-            <option value=4>V, л</option>
-            <option value=5>V, м.куб</option>
-        </select>
-    </td>
-    <td class=" w-1/12 text-center">
-        <select id="selectSpesificUnits" (change)="specificUnitsChange($event.target)"
-            class="border p-0.5  text-sm   block   bg-gray-50 border-gray-900 placeholder-gray-400 text-black focus:ring-blue-500 focus:border-blue-500">
-            <option value=0>m, кг</option>
-            <option value=1>S, м.кв</option>
-            <option value=2>L+, мм</option>
-            <option value=3>Ввод данных</option>
-        </select>
-    </td>
-    <td class=" w-0.5/12">
-        <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
+    
+    <td class=" w-1/12">
+        <input id="4cc" class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.percent" />
     </td>
-    <td class=" w-1.5/12 text-center">
+    <td class=" w-2/12 text-center">
         <div class="flex justify-center gap-2">
             <button class="font-medium  text-blue-500 hover:underline"
                 (click)="updateMaterial($event)">Сохранить</button>

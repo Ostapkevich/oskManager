@@ -14,16 +14,13 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./others.component.css']
 })
 export class OthersComponent implements OnInit {
+
   constructor(protected appService: AppService) {
-    this.namePage='Материалы';
-    this.nameController='materials'
+  
    }
-  namePage='' ;
-  nameController=''
   @Input() showAddmaterial: Boolean = true;
   materialType: ImaterialType[] | undefined;
   materials: Imaterial[] = [];
-  index: number = 1;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
   @ViewChild('editTemplate', { static: false })
@@ -80,6 +77,28 @@ export class OthersComponent implements OnInit {
     }
   }
 
+  async loadMaterials(materialtype: number, position: number, str?: string) {
+    try {
+      let data: IMaterials;
+      if (str && str.length > 0) {
+        const resultArray: string[] = [str];
+
+        data = await this.appService.query('get', `http://localhost:3000/materials/getMaterial/${materialtype}/${position}`, resultArray);
+      } else {
+        data = await this.appService.query('get', `http://localhost:3000/materials/getMaterial/${materialtype}/${position}`);
+      }
+      this.materials!.length = 0;
+      if ((data.materials as []).length !== 0) {
+        this.materials = data.materials;
+        for (const item of this.materials) {
+          item.isEdited = false;
+        }
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
+
   tableEditRow(event: Event) {
     for (const item of this.materials) {
       if (item.isEdited === true) {
@@ -91,7 +110,7 @@ export class OthersComponent implements OnInit {
     this.materials[index].isEdited = true;
     this.materials[index].initial_name_material = this.materials[index].name_material;
     this.materials[index].initial_x1= this.materials[index].x1;
-    this.materials[index].initial_x1= this.materials[index].x2;
+    this.materials[index].initial_x2= this.materials[index].x2;
     this.materials[index].initial_units = this.materials[index].units;
     this.materials[index].initial_specific_units = this.materials[index].specific_units;
     this.materials[index].initial_percent = this.materials[index].percent;
@@ -99,13 +118,12 @@ export class OthersComponent implements OnInit {
     this.materials[index].specific_units = 0;
   }
 
-   escape(event: any) {
-     const index = this.tblNavigator!.findRowInsertedButton(event as HTMLButtonElement, 8,1);
-     console.log(index)
+   escape(target: any) {
+    const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 8,1);
     this.materials[index].isEdited = false;
     this.materials[index].name_material=this.materials[index].initial_name_material;
     this.materials[index].x1=this.materials[index].initial_x1;
-    this.materials[index].x2=this.materials[index].initial_x1 ;
+    this.materials[index].x2=this.materials[index].initial_x2 ;
     this.materials[index].units=this.materials[index].initial_units;
     this.materials[index].specific_units=this.materials[index].initial_specific_units;
     this.materials[index].percent=this.materials[index].initial_percent ;
@@ -123,32 +141,12 @@ export class OthersComponent implements OnInit {
      this.materials[index].units = +target.value; 
   }
 
-  async loadMaterials(materialtype: number, position: number, str?: string) {
-    try {
-      let data: IMaterials;
-      if (str && str.length > 0) {
-        const resultArray: string[] = [str];
-
-        data = await this.appService.query('get', `http://localhost:3000/${this.nameController}/getMaterial/${materialtype}/${position}`, resultArray);
-      } else {
-        data = await this.appService.query('get', `http://localhost:3000/${this.nameController}/getMaterial/${materialtype}/${position}`);
-      }
-      this.materials!.length = 0;
-      if ((data.materials as []).length !== 0) {
-        this.materials = data.materials;
-        for (const item of this.materials) {
-          item.isEdited = false;
-        }
-      }
-    } catch (error) {
-      alert(error);
-    }
-  }
+  
 
   async updateMaterial(event: Event) {
     try {
       // 
-      const percentPattern: RegExp =  /^\d{0,3}(?:\.\d{1,2})?$/ ;
+      const percentPattern: RegExp = /^\d{1,3}(\.\d{1,2})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.tblNavigator!.findRowInsertedButton(event.target as HTMLButtonElement,8,0);
       const name_material = this.materials[index].name_material;
@@ -165,7 +163,7 @@ export class OthersComponent implements OnInit {
       }
       if (percent !== null) {
         if (percentPattern.test(String(percent)) === false) {
-          alert('Введите правильно массу! Допускается 4 цифры до точки и три цифры после точки!');
+          alert('Недопустимое значение "%". Допускается 3 цифры до точки и две цифры после точки!');
           return;
         }
 
@@ -190,7 +188,7 @@ export class OthersComponent implements OnInit {
         percent:percent,
         id_material: id_material
       }
-      const data = await this.appService.query('put', `http://localhost:3000/${this.nameController}/updateMaterial`, dataServer);
+      const data = await this.appService.query('put', `http://localhost:3000/materials/updateMaterial`, dataServer);
       if (data.response === 'ok') {
         this.materials[index].isEdited = false;
         alert('Данные сохранены!');
@@ -208,19 +206,24 @@ export class OthersComponent implements OnInit {
       const idmaterial_type = +(document.getElementById('selectMaterials') as HTMLSelectElement).value;
       const name_material = (document.getElementById('newMaterial') as HTMLInputElement).value;
       const x1 = (document.getElementById('x1') as HTMLInputElement).value;
-      const weight = (document.getElementById('weight') as HTMLInputElement).value;
       const x2 = (document.getElementById('x2') as HTMLInputElement).value;
-      const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
+      const units=(document.getElementById('units') as HTMLSelectElement).value;
+      const specific_units=(document.getElementById('specific_units') as HTMLSelectElement).value;
+      const percent = (document.getElementById('percent') as HTMLInputElement).value;
+      const percentPttern: RegExp = /^\d{1,3}(?:\.\d{1,2})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      if (idmaterial_type === 1) {
+      if (idmaterial_type === -1) {
         alert('Выберите тип материала!');
+        return;
+      }else if(+specific_units===-1 || +units===-1){
+        alert('Выберите единицы измерения и "% от" !');
         return;
       } else if (name_material === '') {
         alert('Не введено название материала!');
         return;
-      } else if (weight !== '') {
-        if (weightPttern.test(weight) === false) {
-          alert('Введите правильно массу! Допускается 4 цифры до точки и три цифры после точки!');
+      } else if (percent !== '') {
+        if (percentPttern.test(percent) === false) {
+          alert('Недопустимое значение "%". Допускается 3 цифры до точки и две цифры после точки!!');
           return;
         }
       } else if (x1 !== '' && numberPattern.test(x1) === false) {
@@ -235,9 +238,11 @@ export class OthersComponent implements OnInit {
         name_material: name_material,
         x1: +x1 || null,
         x2: +x2 || null,
-        weight: +weight
+        units:units,
+        specific_units:specific_units,
+        percent: +percent
       }
-      const data = await this.appService.query('post',`'http://localhost:3000/${this.nameController}/addMaterial`, dataServer);
+      const data = await this.appService.query('post',`http://localhost:3000/materials/addMaterial`, dataServer);
       if (data.response === 'ok') {
         alert('Позиция добавлена!');
       } else {
@@ -257,25 +262,8 @@ export class OthersComponent implements OnInit {
         return;
       }
       const id = this.materials[i].idmaterial;
-      let data = await this.appService.query('get', `http://localhost:3000/${this.nameController}/isUsedMaterial/${id}`);
-      if ((data as []).length > 0) {
-        let answer = confirm(`Этот материал используется в базе чертежей. Его удаление приведет к остутсвию этого материала в использующих его чертежах и заказах. Вы ействительно хотите удалить даную позицию?`);
-        if (answer !== true) {
-          return;
-        }
-      } else if ((data as []).length === 0) {
-        if (confirm("Вы действительно хотите удалить данную позицию?") === false) {
-          return;
-        }
-      } else {
-        alert('Что-то пошло не так...');
-        return;
-      }
-      data = await this.appService.query('delete', `http://localhost:3000/${this.nameController}/deleteMaterial`, [id]);
-      if (data.response === 'ok') {
-        this.findMaterials();
-      }
-
+      await this.appService.query('delete', `http://localhost:3000/materials/deleteMaterial`, [id]);
+     this.materials.splice(i,1);
     } catch (error: any) {
       alert(error);
     }
@@ -283,7 +271,7 @@ export class OthersComponent implements OnInit {
 
   async onLoad() {
     try {
-      const data: IMaterials = await this.appService.query('get', `http://localhost:3000/${this.nameController}/onLoad`);
+      const data: IMaterials = await this.appService.query('get', `http://localhost:3000/materials/onLoad`);
       if ((data.material_type as []).length !== 0) {
         this.materialType = data.material_type;
       }

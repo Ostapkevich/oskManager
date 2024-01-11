@@ -96,7 +96,22 @@ export class RolledComponent implements OnInit {
     }
     const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
     this.rolleds[index].isEdited = true;
+    this.rolleds[index].initial_name_rolled = this.rolleds[index].name_rolled;
+    this.rolleds[index].initial_d= this.rolleds[index].d;
+    this.rolleds[index].initial_t= this.rolleds[index].t;
+    this.rolleds[index].initial_weight= this.rolleds[index].weight;
+   
   }
+
+  escape(target: any) {
+    const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 7,1);
+      this.rolleds[index].isEdited = false;
+      this.rolleds[index].name_rolled=this.rolleds[index].initial_name_rolled;
+      this.rolleds[index].d=this.rolleds[index].initial_d;
+      this.rolleds[index].t=this.rolleds[index].initial_t;
+      this.rolleds[index].weight=this.rolleds[index].initial_weight;
+  
+     } 
 
   async loadRolleds(rolledtype: number, steel: number, position: number, str?: string) {
     try {
@@ -122,7 +137,7 @@ export class RolledComponent implements OnInit {
 
   async updateRolled(event: Event) {
     try {
-      const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
+      const weightPttern: RegExp = /^\d{1,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
       const name_rolled = this.rolleds[index].name_rolled;
@@ -197,6 +212,7 @@ export class RolledComponent implements OnInit {
 
   async saveNewRolled() {
     try {
+    console.log('a')
       const idrolled_type = +(document.getElementById('selectRolled') as HTMLSelectElement).value;
       const idsteel = +(document.getElementById('selectSteel') as HTMLSelectElement).value;
       const name_rolled = (document.getElementById('newMaterial') as HTMLInputElement).value;
@@ -205,7 +221,7 @@ export class RolledComponent implements OnInit {
       const t = (document.getElementById('width') as HTMLInputElement).value;
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
-      if (idrolled_type === 1 || idsteel === 1) {
+      if (idrolled_type === -1 || idsteel === -1) {
         alert('Выберите тип проката и материал!');
         return;
       } else if (name_rolled === '') {

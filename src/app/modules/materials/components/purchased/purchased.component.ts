@@ -83,7 +83,7 @@ export class PurchasedComponent {
         }
         const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 6);
         this.materials[index].isEdited = true;
-        this.materials[index].initial_name_material = this.materials[index].name_material;
+        this.materials[index].initial_name_item = this.materials[index].name_item;
         this.materials[index].initial_x1 = this.materials[index].x1;
         this.materials[index].initial_x2 = this.materials[index].x2;
         this.materials[index].initial_percent = this.materials[index].percent;
@@ -93,7 +93,7 @@ export class PurchasedComponent {
     escape(target: any) {
         const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 6, 1);
         this.materials[index].isEdited = false;
-        this.materials[index].name_material = this.materials[index].initial_name_material;
+        this.materials[index].name_item = this.materials[index].initial_name_item;
         this.materials[index].x1 = this.materials[index].initial_x1;
         this.materials[index].x2 = this.materials[index].initial_x2;
         this.materials[index].percent = this.materials[index].initial_percent;
@@ -128,11 +128,11 @@ export class PurchasedComponent {
             const percentPattern: RegExp = /^\d{1,4}(\.\d{1,2})?$/;
             const numberPattern: RegExp = /^\d+$/;
             const index = this.tblNavigator!.findRowInsertedButton(event.target as HTMLButtonElement, 6, 0);
-            const name_material = this.materials[index].name_material;
+            const name_material = this.materials[index].name_item;
             const x1 = this.materials[index].x1;
             const x2 = this.materials[index].x2;
             const percent = this.materials[index].percent;
-            const id_material = this.materials[index].idmaterial
+            const id_material = this.materials[index].id_item
 
             if (name_material === '') {
                 alert('Не введено название материала!');
@@ -229,7 +229,7 @@ export class PurchasedComponent {
             if (i == null) {
                 return;
             }
-            const id = this.materials[i].idmaterial;
+            const id = this.materials[i].id_item;
             await this.appService.query('delete', `http://localhost:3000/purchased/deleteMaterial`, [id]);
             this.materials.splice(i, 1);
         } catch (error: any) {

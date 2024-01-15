@@ -25,7 +25,7 @@ export class RolledComponent implements OnInit {
   @Input() showAddRolled: Boolean = true;
   rolledType: IrolledType[] | undefined;
   steels: Isteel[] | undefined;
-  rolleds: Irolled[] = [];
+  materials: Irolled[] = [];
   index: number = 1;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
@@ -46,7 +46,7 @@ export class RolledComponent implements OnInit {
   }
 
   nextPage() {
-    if (this.rolleds.length < 20) {
+    if (this.materials.length < 20) {
       return;
     }
     this.page++;
@@ -68,7 +68,7 @@ export class RolledComponent implements OnInit {
   }
 
   findRolleds() {
-    this.rolleds.length = 0;
+    this.materials.length = 0;
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectRolled') as HTMLSelectElement).value;
     const steel = (document.getElementById('selectSteel') as HTMLSelectElement).value;
@@ -88,28 +88,28 @@ export class RolledComponent implements OnInit {
   }
 
   tableEditRow(event: Event) {
-    for (const item of this.rolleds) {
+    for (const item of this.materials) {
       if (item.isEdited === true) {
         alert('Редактирование допускается по одной строке!');
         return;
       }
     }
     const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
-    this.rolleds[index].isEdited = true;
-    this.rolleds[index].initial_name_rolled = this.rolleds[index].name_rolled;
-    this.rolleds[index].initial_d= this.rolleds[index].d;
-    this.rolleds[index].initial_t= this.rolleds[index].t;
-    this.rolleds[index].initial_weight= this.rolleds[index].weight;
+    this.materials[index].isEdited = true;
+    this.materials[index].initial_name_item = this.materials[index].name_item;
+    this.materials[index].initial_d= this.materials[index].d;
+    this.materials[index].initial_t= this.materials[index].t;
+    this.materials[index].initial_weight= this.materials[index].weight;
    
   }
 
   escape(target: any) {
     const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 7,1);
-      this.rolleds[index].isEdited = false;
-      this.rolleds[index].name_rolled=this.rolleds[index].initial_name_rolled;
-      this.rolleds[index].d=this.rolleds[index].initial_d;
-      this.rolleds[index].t=this.rolleds[index].initial_t;
-      this.rolleds[index].weight=this.rolleds[index].initial_weight;
+      this.materials[index].isEdited = false;
+      this.materials[index].name_item=this.materials[index].initial_name_item;
+      this.materials[index].d=this.materials[index].initial_d;
+      this.materials[index].t=this.materials[index].initial_t;
+      this.materials[index].weight=this.materials[index].initial_weight;
   
      } 
 
@@ -123,10 +123,10 @@ export class RolledComponent implements OnInit {
       } else {
         data = await this.appService.query('get', `http://localhost:3000/rolled/getRolled/${rolledtype}/${steel}/${position}`);
       }
-      this.rolleds!.length = 0;
+      this.materials!.length = 0;
       if ((data.rolleds as []).length !== 0) {
-        this.rolleds = data.rolleds;
-        for (const item of this.rolleds) {
+        this.materials = data.rolleds;
+        for (const item of this.materials) {
           item.isEdited = false;
         }
       }
@@ -140,11 +140,11 @@ export class RolledComponent implements OnInit {
       const weightPttern: RegExp = /^\d{1,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
-      const name_rolled = this.rolleds[index].name_rolled;
-      const d = this.rolleds[index].d;
-      const weight = this.rolleds[index].weight;
-      const t = this.rolleds[index].t;
-      const id_rolled = this.rolleds[index].id_rolled;
+      const name_rolled = this.materials[index].name_item;
+      const d = this.materials[index].d;
+      const weight = this.materials[index].weight;
+      const t = this.materials[index].t;
+      const id_rolled = this.materials[index].id_item;
 
       if (name_rolled === '') {
         alert('Не введено название проката!');
@@ -177,7 +177,7 @@ export class RolledComponent implements OnInit {
       }
       const data = await this.appService.query('put', 'http://localhost:3000/rolled/updateRolled', dataServer);
       if (data.response === 'ok') {
-        this.rolleds[index].isEdited = false;
+        this.materials[index].isEdited = false;
         alert('Данные сохранены!');
         this.findRolleds();
       } else {
@@ -199,8 +199,8 @@ export class RolledComponent implements OnInit {
         this.steels = data.steels;
       }
       if ((data.rolleds as []).length !== 0) {
-        this.rolleds = data.rolleds;
-        for (const item of this.rolleds) {
+        this.materials = data.rolleds;
+        for (const item of this.materials) {
           item.isEdited = false;
         }
 
@@ -267,8 +267,8 @@ export class RolledComponent implements OnInit {
       if (i == null) {
         return;
       }
-      await this.appService.query('delete', `http://localhost:3000/rolled/deleteRolled`, [this.rolleds[i].id_rolled]);
-      this.rolleds.splice(i,1);
+      await this.appService.query('delete', `http://localhost:3000/rolled/deleteRolled`, [this.materials[i].id_item]);
+      this.materials.splice(i,1);
     } catch (error: any) {
       alert(error);
     }

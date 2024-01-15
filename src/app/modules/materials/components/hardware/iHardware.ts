@@ -7,9 +7,9 @@ interface IhardwareType {
 }
 
 interface Ihardware {
-  idhardware?: number;
-  name_hardware: string;
-  initial_name_hardware: string;
+  id_item?: number;
+  name_item: string;
+  initial_name_item: string;
   d?: number;
   initial_d?: number;
   L?: number;
@@ -21,9 +21,9 @@ interface Ihardware {
 }
 
 interface IaddHardware {
-  name_hardware: string,
+  name_item: string,
   idsteel: number,
-  idhardware_type: number,
+  id_type: number,
   d?: number,
   weight: number,
   L?: number

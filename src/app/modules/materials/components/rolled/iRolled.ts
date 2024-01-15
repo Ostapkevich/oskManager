@@ -10,9 +10,9 @@ interface IrolledType {
 
 
 interface Irolled {
-  id_rolled?: number;
-  name_rolled: string;
-  initial_name_rolled: string;
+  id_item?: number;
+  name_item: string;
+  initial_name_item: string;
   d?: number;
   initial_d?: number;
   t?: number;
@@ -24,9 +24,9 @@ interface Irolled {
 }
 
 interface IaddRolled {
-  name_rolled: string,
+  name_item: string,
   idsteel: number,
-  idrolled_type: number,
+  id_type: number,
   d?: number,
   weight: number,
   t?: number

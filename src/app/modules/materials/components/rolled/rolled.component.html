@@ -68,7 +68,7 @@
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblRolled" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of rolleds">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of materials">
                     <ng-template [ngTemplateOutlet]="loadTemplate(rolled)"
                         [ngTemplateOutletContext]="{ $implicit: rolled}">
                     </ng-template>
@@ -103,18 +103,18 @@
 <ng-template #readOnlyTemplate let-rolled>
     <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id={{rolled.id_rolled}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id={{rolled.id_ite}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{rolled.id_item}}
     </td>
     <td  *ngIf="showAddRolled===true" class=" py-1 w-5/12">
-        {{rolled.name_rolled}}
+        {{rolled.name_item}}
     </td>
     <td  *ngIf="showAddRolled===false" class=" py-1 w-6/12">
-        {{rolled.name_rolled}}
+        {{rolled.name_item}}
     </td>
     <td class=" py-1 w-1/12 text-center">
         {{rolled.d}}
@@ -138,16 +138,16 @@
 <ng-template #editTemplate let-rolled>
     <td class="py-1 w-0.5/12">
         <div class="flex justify-center">
-            <input id={{rolled.id_rolled}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id={{rolled.id_item}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{rolled.id_rolled}}
+        {{rolled.id_item}}
     </td>
     <td class=" py-1 w-5/12">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"
-            [(ngModel)]="rolled.name_rolled" />
+            [(ngModel)]="rolled.name_item" />
     </td>
     <td class=" py-1 w-1/12 text-center">
         <input class="border   block w-full  bg-gray-700 border-gray-600  text-white" type="text" autocomplete="off"

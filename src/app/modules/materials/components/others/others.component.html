@@ -105,16 +105,16 @@
         </div>
     </td>
     <td  *ngIf="showAddmaterial===true" class=" py-1 w-0.5/12 text-center ">
-        {{item.idmaterial}}
+        {{item.id_item}}
     </td>
     <td  *ngIf="showAddmaterial===false" class=" py-1 w-1/12 text-center ">
-        {{item.idmaterial}}
+        {{item.id_item}}
     </td>
     <td *ngIf="showAddmaterial===true" class=" py-1 w-6/12">
-        {{item.name_material}}
+        {{item.name_item}}
     </td>
     <td *ngIf="showAddmaterial===false" class=" py-1 w-7/12">
-        {{item.name_material}}
+        {{item.name_item}}
     </td>
     <td class=" py-1 w-0.5/12 text-center">
         {{item.x1}}
@@ -170,11 +170,11 @@
         </div>
     </td>
     <td class=" py-1 w-0.5/12 text-center ">
-        {{item.idmaterial}}
+        {{item.id_item}}
     </td>
     <td class="  w-5/12">
         <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
-            [(ngModel)]="item.name_material" />
+            [(ngModel)]="item.name_item" />
     </td>
     <td class="  w-0.5/12">
         <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
@@ -183,6 +183,20 @@
     <td class="  w-0.5/12">
         <input class="border   block w-full   text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.x2" />
+    </td>
+  
+    <td class=" w-1/12 text-center">
+        <select id="selectSpesificUnits" (change)="specificUnitsChange($event.target)"
+            class="border p-0.5  text-sm   block   bg-gray-50 border-gray-900 placeholder-gray-400 text-black focus:ring-blue-500 focus:border-blue-500">
+            <option value=0>% от m, кг</option>
+            <option value=1>% от S, м.кв</option>
+            <option value=2>Lдет+, мм</option>
+            <option value=3>Ввод данных</option>
+        </select>
+    </td>
+    <td class=" w-0.5/12">
+        <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
+            [(ngModel)]="item.percent" />
     </td>
     <td class="  w-1/12 text-center">
         <select id="selectUnits" (change)="unitsChange($event.target)"
@@ -195,19 +209,7 @@
             <option value=5>V, м.куб</option>
         </select>
     </td>
-    <td class=" w-1/12 text-center">
-        <select id="selectSpesificUnits" (change)="specificUnitsChange($event.target)"
-            class="border p-0.5  text-sm   block   bg-gray-50 border-gray-900 placeholder-gray-400 text-black focus:ring-blue-500 focus:border-blue-500">
-            <option value=0>m, кг</option>
-            <option value=1>S, м.кв</option>
-            <option value=2>L+, мм</option>
-            <option value=3>Ввод данных</option>
-        </select>
-    </td>
-    <td class=" w-0.5/12">
-        <input class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
-            [(ngModel)]="item.percent" />
-    </td>
+   
     <td class=" w-1.5/12 text-center">
         <div class="flex justify-center gap-2">
             <button class="font-medium  text-blue-500 hover:underline"

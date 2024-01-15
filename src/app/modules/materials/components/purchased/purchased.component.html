@@ -97,18 +97,18 @@
 <ng-template #readOnlyTemplate let-item>
     <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id= {{item.idmaterial}}  type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id= {{item.id_item}}  type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{item.idmaterial}}
+        {{item.id_item}}
     </td>
     <td *ngIf="showAddPurshaced===true" class=" py-1 w-4/12">
-        {{item.name_material}}
+        {{item.name_item}}
     </td>
     <td *ngIf="showAddPurshaced===false" class=" py-1 w-5/12">
-        {{item.name_material}}
+        {{item.name_item}}
     </td>
     <td class=" py-1 w-1/12 text-center">
         {{item.x1}}
@@ -129,16 +129,16 @@
 <ng-template #editTemplate let-item>
     <td class="py-1 w-1/12">
         <div class="flex justify-center">
-            <input id= {{item.idmaterial}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input id= {{item.id_item}} type="checkbox" (change)="tblNavigator?.boxChange($event)"
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
     <td class=" py-1 w-1/12 text-center ">
-        {{item.idmaterial}}
+        {{item.id_item}}
     </td>
     <td class="  w-4/12">
         <input id="1f" class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"
-            [(ngModel)]="item.name_material" />
+            [(ngModel)]="item.name_item" />
     </td>
     <td class="  w-1/12">
         <input id="2d" class="border   block w-full  text-black  bg-gray-50" type="text" autocomplete="off"

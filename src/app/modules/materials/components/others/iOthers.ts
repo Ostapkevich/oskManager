@@ -6,9 +6,9 @@ interface ImaterialType {
 }
 
 interface Imaterial {
-  idmaterial?: number;
-  name_material: string;
-  initial_name_material:string
+  id_item?: number;
+  name_item: string;
+  initial_name_item:string
   x1: number;
   initial_x1:number
   x2: number;
@@ -24,8 +24,8 @@ interface Imaterial {
 }
 
 interface IaddMaterial {
-  name_material: string,
-  idhardware_type: number,
+  name_item: string,
+  id_type: number,
   x1?: number;
   x2?: number;
   weight: number

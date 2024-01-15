@@ -320,7 +320,7 @@
         </table>
     </div>
 
-    <div *ngIf="materials.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
+    <div *ngIf="specificatios.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
         <table class="w-full" id="tblMaterial">
             <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
@@ -345,7 +345,7 @@
         </table>
 
 <!-- Спецификация -->
-        <table id="tblSpecification" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+        <table *ngIf="specificatios.length>0" id="tblSpecification" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodySpecification">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
                     <td class="py-1 w-0.5/12">

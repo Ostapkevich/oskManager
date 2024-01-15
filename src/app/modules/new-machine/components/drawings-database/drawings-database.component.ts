@@ -51,7 +51,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   @ViewChild(PurchasedComponent, { static: false })
   purchasedComponent: PurchasedComponent | undefined;
 
-  specificatios:string[]=[];
+  specificatios:Ispecification[]=[];
   materials: IaddMaterial[] = []; //материалы для данного чертежа
   tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
   typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
@@ -73,7 +73,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   units!: number;
   percentMaterialBlank!: number | null;
   valueMaterialBlank!: number | null;
-  specificUnitsMaterialBlank!: number | null;
+  specificUnitsMaterialBlank!: number ;
   unitsMaterialBlank!: number;
   savePath: string[] = [];
 
@@ -122,6 +122,8 @@ export class DrawingsDatabaseComponent implements OnInit {
     if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
       (document.getElementById('sb') as HTMLInputElement).checked = false;
       this.isDetail=true;
+      this.specificatios.length=0;
+      this.materials.length=0
     } 
   }
 
@@ -133,6 +135,9 @@ export class DrawingsDatabaseComponent implements OnInit {
     if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
       (document.getElementById('detail') as HTMLInputElement).checked = false;
       this.isDetail=false;
+      this.materials.length=0;
+      this.typeBlank=undefined;
+      
     }
   }
 
@@ -178,10 +183,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
     this.selectMaterial(index!);
   }
-
-
- 
-
 
   selectMaterial(index: number) {
     this.nameMaterial = this.otherComponent?.materials[index].name_item!;

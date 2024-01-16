@@ -18,8 +18,8 @@ interface Irolled {
   t?: number;
   initial_t?: number;
   steel?: string;
-  weight: string;
-  initial_weight: string;
+  weight: number;
+  initial_weight: number;
   isEdited?: boolean;
 }
 

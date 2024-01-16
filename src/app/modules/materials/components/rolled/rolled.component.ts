@@ -150,7 +150,7 @@ export class RolledComponent implements OnInit {
         alert('Не введено название проката!');
         return;
       }
-      if (String(weight) === '' || weightPttern.test(weight) === false) {
+      if (String(weight) === '' || weightPttern.test(String(weight)) === false) {
         alert('Введите правильно массу! Допускается 4 цифры до точки и три цифры после точки!');
         return;
       }

@@ -17,7 +17,7 @@
         </div>
     </form>
 
-
+    <!-- Номер чертежа -->
     <div class="grid grid-cols-12 gap-4 items-end mt-8">
         <div class="col-span-2">
             <label for="numberDrawing" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
@@ -42,7 +42,6 @@
                 class="block  text-sm p-2 w-full border cursor-pointer  text-gray-400 focus:outline-none bg-gray-700 border-gray-600 placeholder-gray-400"
                 id="selectFiles" type="file" multiple>
         </div>
-
         <select id="selectPath"
             class="col-span-2 border text-sm  block px-1  py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             <option value=-1>Расположение</option>
@@ -54,47 +53,22 @@
             class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить
             чертеж</button>
     </div>
-
+    <!-- Параметры чертежа -->
     <div class="grid gap-4 grid-cols-12 items-end mt-6">
         <div class=" col-span-2">
-            <div *ngIf="isDetail===true" class="flex ">
-                <label for="blank" class="block mb-2 text-sm font-medium  text-white">Заготовка</label>
-                <div *ngIf="typeMaterial===1" class=" ml-1 flex justify-between ">
-                    <div class="flex">
-                        <input #blankInDwaw (change)="checkBoxBlankChange(blankInDwaw,manualBlank)" type="checkbox"
-                            id="blankInDwaw" name="blankInDwaw">
-                        <label for="blankInDwaw" class="block ml-1   text-sm font-medium  text-white">в р-р</label>
-                    </div>
-                    <div class="flex">
-                        <input #manualBlank (change)="checkBoxBlankChange(manualBlank, blankInDwaw)" type="checkbox"
-                            id="manualBlank" name="manualBlank">
-                        <label for="manualBlank" class="block ml-1   text-sm font-medium  text-white">ввод</label>
-                    </div>
-
+            <div class=" ml-1 flex justify-between ">
+                <div class="basis-1/2 flex items-end mb-4">
+                    <input (change)="checkBoxIspChange($event.target)" id="checkboxIsp" type="checkbox"
+                        class=" w-4 h-4 text-blue-600   ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                    <label for="checkboxIsp"
+                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Испол.</label>
+                </div>
+                <div class="basis-1/2">
+                    <label for="inpIsp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">№ испол.</label>
+                    <input type="number" id="inpIsp" disabled
+                        class=" border text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
                 </div>
             </div>
-
-            <div *ngIf="isDetail===false" class="flex  rounded-md shadow-sm" role="group">
-                <button *ngIf="isSpecification" type="button" (click)="isSpecification=true"
-                    class="basis-1/2 px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-                    Состав
-                </button>
-                <button *ngIf="!isSpecification" type="button" (click)="isSpecification=true"
-                    class=" basis-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-                    Состав
-                </button>
-                <button *ngIf="isSpecification" type="button" (click)="isSpecification=false"
-                    class="basis-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-                    Материалы
-                </button>
-                <button *ngIf="!isSpecification" type="button" (click)="isSpecification=false"
-                class="basis-1/2 px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-                Материалы
-            </button>
-            </div>
-
-            <input *ngIf="isDetail===true" disabled type="text" id="blank" [value]="nameBlank"
-                class="border  text-sm w-full block py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label for="lenghtBlank" class="block mb-2 text-sm font-medium  text-white">L черт.,мм</label>
@@ -117,6 +91,7 @@
             <input required type="text" id="square" [(ngModel)]="s"
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
+        <!-- Выбор заготовки м материало радио -->
         <div class="col-start-7 col-span-4 mb-3">
             <div class="flex gap-1 justify-around">
                 <div class="flex items-center ">
@@ -151,69 +126,74 @@
         </button>
     </div>
 
-    <!--  Если заготовка -материал -->
 
-    <div *ngIf="typeBlank===3" class="mt-4  w-1/2 relative overflow-x-auto shadow-md ">
-        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Дполнительные данные по заготовке</label>
+    <!--  Данные по заготовке из материала -->
+
+    <div *ngIf="idBlank && typeBlank===3" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
+        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
         <table class="w-full" id="tblBlank">
             <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
                 <tr>
-                    <td class="w-1/4 text-center">Расчет</td>
-                    <td class="w-1/4 text-center">Коэфф.</td>
-                    <td class="w-1/4 text-center">Значение</td>
-                    <td class="w-1/4 text-center">Ед.изм.</td>
+                    <td class="w-1/12 text-center">id</td>
+                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-6/12">Наименование</td>
+                    <td *ngIf="specificUnitsMaterialBlank===3" class="w-5/12">Наименование</td>
+                    <td class="w-2/12">Расчет</td>
+                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-1/12 text-center">Коэфф.</td>
+                    <td class="w-1/12 text-center">Значение</td>
+                    <td class="w-1/12 text-center">Ед.изм.</td>
                 </tr>
             </tbody>
         </table>
-
-
         <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
-                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-1/4 text-center">
+                    <td class=" py-1 w-1/12 text-center">
+                        {{idBlank}}
+                    </td>
+                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-6/12 ">
+                        {{nameBlank}}
+                    </td>
+                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-5/12 ">
+                        {{nameBlank}}
+                    </td>
+                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-2/12 ">
                         % от m, кг
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-24/12 ">
                         % от S, м.кв
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-2/12 ">
                         Lдет+, мм
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-2/12 ">
                         Ввод данных
                     </td>
-                    <td class=" py-1 w-1/4 text-center">
-                        {{percentMaterialBlank}}
+                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-1/12 text-center">
+                        {{percentBlank}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-1/4 text-center">
-                        {{percentMaterialBlank! * m}}
+                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
+                       
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-1/4 text-center">
-                        {{percentMaterialBlank! * s!}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-1/4 text-center">
-                        {{percentMaterialBlank!!+ +len!}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/4 text-center">
-                        {{value}}
+                    <td class=" py-1 w-1/12 text-center">
+                        {{valueBlank}}
                     </td>
 
-                    <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
                         m,кг
                     </td>
-                    <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
                         S,м.кв
                     </td>
-                    <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
                         L,м
                     </td>
-                    <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/12 text-center">
                         шт.
                     </td>
-                    <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/12 text-center">
                         V,л
                     </td>
-                    <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/4 text-center">
+                    <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/12 text-center">
                         V,м.куб
                     </td>
                 </tr>
@@ -222,7 +202,83 @@
     </div>
     <!--  -->
 
+  <!--  Данные по заготовке из проката -->
 
+  <div *ngIf="idBlank && typeBlank===1" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
+    <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+    <table class="w-full" id="tblBlank">
+        <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+            <tr>
+                <td class="w-1/12 text-center">id</td>
+                <td *ngIf="specificUnitsMaterialBlank!==3" class="w-6/12">Наименование</td>
+                <td *ngIf="specificUnitsMaterialBlank===3" class="w-5/12">Наименование</td>
+                <td class="w-2/12">Расчет</td>
+                <td *ngIf="specificUnitsMaterialBlank!==3" class="w-1/12 text-center">Коэфф.</td>
+                <td class="w-1/12 text-center">Значение</td>
+                <td class="w-1/12 text-center">Ед.изм.</td>
+            </tr>
+        </tbody>
+    </table>
+    <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+        <tbody id="tbodyUnits">
+            <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
+                <td class=" py-1 w-1/12 text-center">
+                    {{idBlank}}
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-6/12 ">
+                    {{nameBlank}}
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-5/12 ">
+                    {{nameBlank}}
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-2/12 ">
+                    % от m, кг
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-24/12 ">
+                    % от S, м.кв
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-2/12 ">
+                    Lдет+, мм
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-2/12 ">
+                    Ввод данных
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-1/12 text-center">
+                    {{percentBlank}}
+                </td>
+                <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
+                   
+                </td>
+                <td class=" py-1 w-1/12 text-center">
+                    {{valueBlank}}
+                </td>
+
+                <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
+                    m,кг
+                </td>
+                <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
+                    S,м.кв
+                </td>
+                <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
+                    L,м
+                </td>
+                <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/12 text-center">
+                    шт.
+                </td>
+                <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/12 text-center">
+                    V,л
+                </td>
+                <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/12 text-center">
+                    V,м.куб
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!--  -->
+
+
+    <!-- Таблица материалов -->
     <div *ngIf="materials.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
         <table class="w-full" id="tblMaterial">
@@ -294,7 +350,7 @@
                         {{item.percent!+ +len!}}
                     </td>
                     <td *ngIf="item.specific_units===3" class=" py-1 w-1/12 text-center">
-                        {{value}}
+                        {{item.value}}
                     </td>
 
                     <td *ngIf="item.units===0" class=" py-1 w-1/12 text-center">
@@ -320,6 +376,27 @@
         </table>
     </div>
 
+    <!-- Спецификация или материалы -->
+    <div *ngIf="isDetail===false" class="flex  rounded-md shadow-sm" role="group">
+        <button *ngIf="isSpecification" type="button" (click)="isSpecification=true"
+            class="basis-1/2 px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
+            Состав
+        </button>
+        <button *ngIf="!isSpecification" type="button" (click)="isSpecification=true"
+            class=" basis-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
+            Состав
+        </button>
+        <button *ngIf="isSpecification" type="button" (click)="isSpecification=false"
+            class="basis-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
+            Материалы
+        </button>
+        <button *ngIf="!isSpecification" type="button" (click)="isSpecification=false"
+            class="basis-1/2 px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
+            Материалы
+        </button>
+    </div>
+
+    <!-- Таблица спецификации -->
     <div *ngIf="specificatios.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
         <table class="w-full" id="tblMaterial">
@@ -344,8 +421,9 @@
             </tbody>
         </table>
 
-<!-- Спецификация -->
-        <table *ngIf="specificatios.length>0" id="tblSpecification" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+        <!-- Спецификация -->
+        <table *ngIf="specificatios.length>0" id="tblSpecification"
+            class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodySpecification">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
                     <td class="py-1 w-0.5/12">
@@ -391,7 +469,7 @@
                         {{item.percent!+ +len!}}
                     </td>
                     <td *ngIf="item.specific_units===3" class=" py-1 w-1/12 text-center">
-                        {{value}}
+                        {{valueBlank}}
                     </td>
 
                     <td *ngIf="item.units===0" class=" py-1 w-1/12 text-center">
@@ -416,14 +494,20 @@
             </tbody>
         </table>
     </div>
-
-
 </div>
 
-<app-rolled *ngIf="(isDetail===true && typeMaterial===1) || (isDetail===false &&  isSpecification===false && typeMaterial===1)" [showAddRolled]="false"></app-rolled>
-<app-hardware *ngIf="(isDetail===true && typeMaterial===2) || (isDetail===false &&  isSpecification===false && typeMaterial===2)" [showAddHardware]="false"></app-hardware>
-<app-others *ngIf="(isDetail===true && typeMaterial===3) || (isDetail===false &&  isSpecification===false && typeMaterial===3)" [showAddmaterial]="false"></app-others>
-<app-purchased *ngIf="(isDetail===true && typeMaterial===4) || (isDetail===false &&  isSpecification===false && typeMaterial===4)" [showAddPurshaced]="false"></app-purchased>
+<app-rolled
+    *ngIf="(isDetail===true && typeMaterial===1) || (isDetail===false &&  isSpecification===false && typeMaterial===1)"
+    [showAddRolled]="false"></app-rolled>
+<app-hardware
+    *ngIf="(isDetail===true && typeMaterial===2) || (isDetail===false &&  isSpecification===false && typeMaterial===2)"
+    [showAddHardware]="false"></app-hardware>
+<app-others
+    *ngIf="(isDetail===true && typeMaterial===3) || (isDetail===false &&  isSpecification===false && typeMaterial===3)"
+    [showAddmaterial]="false"></app-others>
+<app-purchased
+    *ngIf="(isDetail===true && typeMaterial===4) || (isDetail===false &&  isSpecification===false && typeMaterial===4)"
+    [showAddPurshaced]="false"></app-purchased>
 
 
 
@@ -439,7 +523,6 @@
                 <h3 class="text-lg font-semibold  text-white">
                     Добавление материала
                 </h3>
-
                 <button type="button" (click)="closeModalMaterial()"
                     class="text-gray-400 bg-transparent hover:bg-gray-200   text-sm w-8 h-8 ms-auto inline-flex justify-center items-center bg-gray-600 hover:text-white">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -518,19 +601,19 @@
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             V,м.куб</label>
                         <input *ngIf="specific_units===0" type="number" name="amountMaterial" id="amountMaterial"
-                            [value]="percent!*m!" [(ngModel)]="value" disabled="true"
+                            [value]="percent!*m!" [(ngModel)]="valueBlank" disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                         <input *ngIf="specific_units===1" type="number" name="amountMaterial" id="amountMaterial"
-                            [value]="percent!*s!" [(ngModel)]="value" disabled="true"
+                            [value]="percent!*s!" [(ngModel)]="valueBlank" disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                         <input *ngIf="specific_units===2" type="number" name="amountMaterial" id="amountMaterial"
-                            [value]="percent!+len!" [(ngModel)]="value" disabled="true"
+                            [value]="percent!+len!" [(ngModel)]="valueBlank" disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                         <input *ngIf="specific_units===3" type="number" name="amountMaterial" id="amountMaterial"
-                            [(ngModel)]="value"
+                            [(ngModel)]="valueBlank"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
@@ -547,7 +630,7 @@
 <!--  -->
 
 
-<!-- blankMaterialModal -->
+<!-- blankModal -->
 <div id="blank-modal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -559,7 +642,7 @@
                     Добавление заготовки
                 </h3>
 
-                <button type="button" (click)="closeModalBlank(true)"
+                <button type="button" (click)="closeModalBlank()"
                     class="text-gray-400 bg-transparent hover:bg-gray-200   text-sm w-8 h-8 ms-auto inline-flex justify-center items-center bg-gray-600 hover:text-white">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
@@ -575,7 +658,7 @@
                     <div class="col-span-2">
                         <label for="nameMaterial" class="block mb-2 text-sm font-medium  text-white">Матераил</label>
                         <input type="text" name="nameMaterial" id="nameBlank" value={{nameBlank}} disabled
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Type product name" required="">
                     </div>
 
@@ -591,73 +674,72 @@
                         </select>
                     </div>
                     <div *ngIf="specificUnitsMaterialBlank===0">
-                        <label id="lblDetailCharBlank" for="inpDetailChar"
+                        <label id="lblDetailCharBlank" for="inpDetailCharBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь m,кг</label>
                         <input type="number" name="inpDetailChar" id="inpDetailCharBlank" [(ngModel)]="m"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
                     <div *ngIf="specificUnitsMaterialBlank===1">
-                        <label id="lblDetailCharBlank" for="inpDetailChar"
+                        <label id="lblDetailCharBlank" for="inpDetailCharBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь S,м.кв</label>
                         <input type="number" name="inpDetailCharBlank" id="inpDetailCharBlank" [(ngModel)]="s"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
                     <div *ngIf="specificUnitsMaterialBlank===2">
-                        <label id="lblDetailCharBlank" for="inpDetailChar"
+                        <label id="lblDetailCharBlank" for="inpDetailCharBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь L, мм</label>
                         <input type="number" name="inpDetailChar" id="inpDetailCharBlank" [(ngModel)]="len"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
 
                     <div *ngIf="specificUnitsMaterialBlank!==3">
                         <label for="inpPercent" class="block mb-2 text-sm font-medium  text-white">Коэфф.</label>
-                        <input type="number" name="inpPercent" id="inpPercentBlank" [(ngModel)]="percentMaterialBlank"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                        <input type="number" name="inpPercent" id="inpPercentBlank" [(ngModel)]="percentBlank"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
                     <div class="col-start-2">
-                        <label *ngIf="unitsMaterialBlank===0" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===0" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             m,кг</label>
-                        <label *ngIf="unitsMaterialBlank===1" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===1" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             S,м.кв</label>
-                        <label *ngIf="unitsMaterialBlank===2" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===2" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             L,м</label>
-                        <label *ngIf="unitsMaterialBlank===3" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===3" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             шт.</label>
-                        <label *ngIf="unitsMaterialBlank===4" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===4" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             V,л</label>
-                        <label *ngIf="unitsMaterialBlank===5" for="amountMaterial"
+                        <label *ngIf="unitsMaterialBlank===5" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             V,м.куб</label>
-                        <input *ngIf="specificUnitsMaterialBlank===0" type="number" name="amountMaterial"
-                            id="amountBlank" [value]="percentMaterialBlank!*m!" [(ngModel)]="value" disabled="true"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                        <input *ngIf="specificUnitsMaterialBlank===0" type="number" name="amountBlank"
+                            id="amountBlank" [value]="percentBlank!*m!" [(ngModel)]="valueBlank" disabled="true"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
-                        <input *ngIf="specificUnitsMaterialBlank===1" type="number" name="amountMaterial"
-                            id="amountBlan" [value]="percentMaterialBlank!*s!" [(ngModel)]="value" disabled="true"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                        <input *ngIf="specificUnitsMaterialBlank===1" type="number" name="amountBlank"
+                            id="amountBlank" [value]="percentBlank!*s!" [(ngModel)]="valueBlank" disabled="true"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
-                        <input *ngIf="specificUnitsMaterialBlank===2" type="number" name="amountMaterial"
-                            id="amountBlan" [value]="percentMaterialBlank!+len!" [(ngModel)]="value" disabled="true"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                        <input *ngIf="specificUnitsMaterialBlank===2" type="number" name="amountBlank"
+                            id="amountBlank" [value]="percentBlank!+len!" [(ngModel)]="valueBlank" disabled="true"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
-                        <input *ngIf="specificUnitsMaterialBlank===3" type="number" name="amountMaterial"
-                            id="amountBlan" [(ngModel)]="valueMaterialBlank"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                        <input *ngIf="specificUnitsMaterialBlank===3" type="number" name="amountBlank"
+                            id="amountBlank" [(ngModel)]="valueBlank"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
                 </div>
-                <button type="button" (click)="closeModalBlank(false)"
+                <button type="button" (click)="addBlank()"
                     class="text-white inline-flex items-center  focus:ring-4 focus:outline-none  font-medium  text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
-
                     Добавить
                 </button>
             </form>

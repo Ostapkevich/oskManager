@@ -20,11 +20,11 @@ interface IaddMaterial {
   value: number | null;
   units: number;
 }
-interface Ispecification{
-  idDrawing:number,
-  numberDrawing:string,
-  nameDrawing:string,
-  weight:number,
+interface Ispecification {
+  idDrawing: number,
+  numberDrawing: string,
+  nameDrawing: string,
+  weight: number,
 }
 
 @Component({
@@ -38,9 +38,9 @@ export class DrawingsDatabaseComponent implements OnInit {
   constructor(private appService: AppService) { }
 
   isDetail: boolean = true;
-  isSpecification:boolean=true;
+  isSpecification: boolean = true;
   typeMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
- 
+
 
   @ViewChild(OthersComponent, { static: false })
   otherComponent: OthersComponent | undefined;
@@ -51,7 +51,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   @ViewChild(PurchasedComponent, { static: false })
   purchasedComponent: PurchasedComponent | undefined;
 
-  specificatios:Ispecification[]=[];
+  specificatios: Ispecification[] = [];
   materials: IaddMaterial[] = []; //материалы для данного чертежа
   tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
   typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
@@ -68,17 +68,17 @@ export class DrawingsDatabaseComponent implements OnInit {
   s: number | undefined;
   m: number = 0;
   percent!: number | null;
-  value!: number | null;
   specific_units!: number | null;
   units!: number;
-  percentMaterialBlank!: number | null;
-  valueMaterialBlank!: number | null;
-  specificUnitsMaterialBlank!: number ;
+  percentBlank!: number | null;
+  valueBlank!: number | null;
+  specificUnitsMaterialBlank!: number;
   unitsMaterialBlank!: number;
   savePath: string[] = [];
+  rolledWeight!: number;
+  useLenth!: boolean;
 
-
-  selectBlank(component: any, typeBlank: number) {
+  async selectBlank(component: any) {
     const index = component.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
@@ -90,12 +90,12 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       }
     }
-    if (typeBlank === 3) {
+    if (this.typeBlank === 3) {
       this.typeBlank = 3;
       this.nameBlank = this.otherComponent?.materials[index!].name_item!;
       this.idBlank = this.otherComponent?.materials[index!].id_item;
       this.specificUnitsMaterialBlank = this.otherComponent?.materials[index].specific_units!;
-      this.percentMaterialBlank = this.otherComponent?.materials[index].percent!;
+      this.percentBlank = this.otherComponent?.materials[index].percent!;
       this.unitsMaterialBlank = this.otherComponent?.materials[index].units!;
       (document.getElementById('selectCalculationBlank') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
       const modalElement: HTMLElement = document.querySelector('#blank-modal')!;
@@ -107,220 +107,267 @@ export class DrawingsDatabaseComponent implements OnInit {
       const modal = new Modal(modalElement, modalOptions)
       modal.show();
 
+    } else if (this.typeBlank === 1) {
+      this.nameBlank = component?.materials[index!].name_item!;
+      this.idBlank = component?.materials[index!].id_item;
+      this.rolledWeight = component.materials[index!].weight;
+      //this.typeBlank = typeBlank;
+      const data = await this.appService.query('get', `http://localhost:3000/materials/getUseLenth/:${this.idBlank}`);
+      if (data?.response === 0) {
+        this.useLenth = false;
+        (document.getElementById('')as HTMLInputElement).innerText='Sзаг x Mпог.';
+      } else if (data?.response === 1) {
+        this.useLenth = true;
+        (document.getElementById('')as HTMLInputElement).innerText='Lзаг x Mпог.';
+      }
+      else {
+        alert("Что-то пошло не так... ");
+      }
+      this.specificUnitsMaterialBlank = this.otherComponent?.materials[index].specific_units!;
+      this.percentBlank = this.otherComponent?.materials[index].percent!;
+      this.unitsMaterialBlank = this.otherComponent?.materials[index].units!;
+      (document.getElementById('selectCalculationBlank') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
+      const modalElement: HTMLElement = document.querySelector('#blank-modal')!;
+      const modalOptions: ModalOptions = {
+        closable: true,
+        backdrop: 'static',
+      };
+      this.calculateBlank();
+      this.nameBlank = component?.materials[index!].name_item!;
+      this.idBlank = component?.materials[index!].id_item;
+      
+
     } else {
       this.nameBlank = component?.materials[index!].name_item!;
       this.idBlank = component?.materials[index!].id_item;
-      this.typeBlank = typeBlank;
-    }
-
-  }
-
-  changRadioDraw() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?")===false) {
-      return;
-    }
-    if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
-      (document.getElementById('sb') as HTMLInputElement).checked = false;
-      this.isDetail=true;
-      this.specificatios.length=0;
-      this.materials.length=0
-    } 
-  }
-
-
-  changRadioSb() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?")===false) {
-      return;
-    }
-    if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
-      (document.getElementById('detail') as HTMLInputElement).checked = false;
-      this.isDetail=false;
-      this.materials.length=0;
-      this.typeBlank=undefined;
-      
-    }
-  }
-
-
-  btnBlanklClick() {
-    if (this.isDetail === false) {
-      return;
-    }
-    let index: number;
-    switch (this.typeMaterial) {
-      case 1:
-        this.selectBlank(this.rolledComponent, 1);
-        break;
-      case 2:
-        this.selectBlank(this.hardwareComponent, 2);
-        break;
-      case 3:
-        this.selectBlank(this.otherComponent, 3);
-        break;
-      case 4:
-        this.selectBlank(this.purchasedComponent, 4);
-        break;
-    }
-  }
-
-
-  btnMaterialClick() {
-    if ( this.typeMaterial !== 3) {
-      return;
-    }
-    let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
-    if (index === null) {
-      if (!this.tblNavigator) {
-        this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
-      }
-      index = this.tblNavigator!.findCheckedRowNumber();
-      if (index === null) {
-        return;
-      } else {
-         this.materials.splice(index,1);
-         return;
-      }
-    }
-    this.selectMaterial(index!);
-  }
-
-  selectMaterial(index: number) {
-    this.nameMaterial = this.otherComponent?.materials[index].name_item!;
-    this.specific_units = this.otherComponent?.materials[index].specific_units!;
-    this.percent = this.otherComponent?.materials[index].percent!;
-    this.idMaterial = this.otherComponent?.materials[index].id_item;
-    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_units);
-    this.units = this.otherComponent?.materials[index].units!;
-    const modalElement: HTMLElement = document.querySelector('#material-modal')!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    this.calculateMaterial();
-    const modal = new Modal(modalElement, modalOptions)
-    modal.show();
-  }
-
-
-  addMaterail() {
-    this.materials.push({
-      id: this.idMaterial!,
-      name_material: this.nameMaterial!,
-      specific_units: this.specific_units!,
-      x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
-      x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
-      percent: this.percent || null,
-      value: this.specific_units === 3 ? this.value : null,
-      units: this.units
-    })
-   
-    this.closeModalMaterial();
-  }
-
-  closeModalBlank(toClose: boolean) {
-    if (toClose === true) {
-      this.nameBlank = '';
-      this.idBlank = undefined;
-    }
-
-    var keyboardEvent = new KeyboardEvent('keydown', {
-      key: 'Escape',
-      bubbles: true
-    });
-    (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
-  }
-
-  closeModalMaterial() {
-    var keyboardEvent = new KeyboardEvent('keydown', {
-      key: 'Escape',
-      bubbles: true
-    });
-    (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
-  }
-
-  calculateMaterial() {
-    switch (this.specific_units) {
-      case 0:
-        this.value = this.percent! * this.m!;
-        return;
-      case 1:
-        this.value = this.percent! * this.s!;
-        return;
-      case 2:
-        this.value = +this.percent! + +this.len!;
-        return;
+      // this.typeBlank = typeBlank;
     }
   }
 
   calculateBlank() {
-    switch (this.specificUnitsMaterialBlank) {
-      case 0:
-        this.valueMaterialBlank = this.percentMaterialBlank! * this.m!;
-        return;
-      case 1:
-        this.valueMaterialBlank = this.percentMaterialBlank! * this.s!;
-        return;
-      case 2:
-        this.valueMaterialBlank = +this.percentMaterialBlank! + +this.len!;
-        return;
-    }
-  }
-
-  selectFiles() {
-    const files = (document.getElementById('selectFiles') as HTMLInputElement).value;
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        // this.filePath.push(files[i].path);
+    if (this.typeBlank === 3) {
+      switch (this.specificUnitsMaterialBlank) {
+        case 0:
+          this.valueBlank = this.percentBlank! * this.m!;
+          return;
+        case 1:
+          this.valueBlank = this.percentBlank! * this.s!;
+          return;
+        case 2:
+          this.valueBlank = +this.percentBlank! + +this.len!;
+          return;
       }
-    }
-    console.log(this.filePath);
-  }
-
-  checkBoxBlankChange(targetElem: HTMLInputElement, element: HTMLInputElement) {
-    switch (targetElem.name) {
-      case 'blankInDwaw':
-        if (targetElem.checked === true) {
-          element.checked = false;
+    } else if (this.typeBlank === 1) {
+      if (this.useLenth===false) {
+        if (Boolean(this.h) == true) {
+          this.valueBlank = this.rolledWeight * this.dw! * this.h! / 1000000;
+        } else {
+          this.valueBlank = this.rolledWeight * this.dw! * this.dw! / 1000000;
         }
-        break;
-      default:
-        if (targetElem.checked === true) {
-          element.checked = false;
-        }
-        break;
-    }
-  }
-
-  changeSpecificMaterial() {
-    this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
-    this.calculateMaterial();
-  }
-
-  changeSpecificBlank() {
-    this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
-    this.calculateBlank();
-  }
-
-  radioRolledComponent() {
-    this.typeMaterial = 1;
-  }
-
-  radioHardwareComponent() {
-    this.typeMaterial = 2;
-  }
-
-  radioMaterialComponent() {
-    this.typeMaterial = 3;
-  }
-
-  radioPurshacedComponent() {
-    this.typeMaterial = 4
-  }
-
-  ngOnInit(): void {
-    let event = new Event("click");
-    document.getElementById('numberDrawing')!.dispatchEvent(event);
-
+      } else {
+        this.valueBlank = this.rolledWeight * this.len! / 1000000;
+      }
+     
    
   }
+
+}
+
+
+changRadioDraw() {
+  if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
+    return;
+  }
+  if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
+    (document.getElementById('sb') as HTMLInputElement).checked = false;
+    this.isDetail = true;
+    this.specificatios.length = 0;
+    this.materials.length = 0
+  }
+}
+
+
+changRadioSb() {
+  if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
+    return;
+  }
+  if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
+    (document.getElementById('detail') as HTMLInputElement).checked = false;
+    this.isDetail = false;
+    this.materials.length = 0;
+    this.typeBlank = undefined;
+
+  }
+}
+
+
+btnBlanklClick() {
+  if (this.isDetail === false) {
+    return;
+  }
+  let index: number;
+  switch (this.typeMaterial) {
+    case 1:
+      this.selectBlank(this.rolledComponent);
+      break;
+    case 2:
+      this.selectBlank(this.hardwareComponent);
+      break;
+    case 3:
+      this.selectBlank(this.otherComponent);
+      break;
+    case 4:
+      this.selectBlank(this.purchasedComponent);
+      break;
+  }
+}
+
+
+btnMaterialClick() {
+  if (this.typeMaterial !== 3) {
+    return;
+  }
+  let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
+  if (index === null) {
+    if (!this.tblNavigator) {
+      this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
+    }
+    index = this.tblNavigator!.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    } else {
+      this.materials.splice(index, 1);
+      return;
+    }
+  }
+  this.selectMaterial(index!);
+}
+
+selectMaterial(index: number) {
+  this.nameMaterial = this.otherComponent?.materials[index].name_item!;
+  this.specific_units = this.otherComponent?.materials[index].specific_units!;
+  this.percent = this.otherComponent?.materials[index].percent!;
+  this.idMaterial = this.otherComponent?.materials[index].id_item;
+  (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_units);
+  this.units = this.otherComponent?.materials[index].units!;
+  const modalElement: HTMLElement = document.querySelector('#material-modal')!;
+  const modalOptions: ModalOptions = {
+    closable: true,
+    backdrop: 'static',
+  };
+  this.calculateMaterial();
+  const modal = new Modal(modalElement, modalOptions)
+  modal.show();
+}
+
+addBlank() {
+  this.valueBlank = +(document.getElementById('amountBlank') as HTMLInputElement).value;
+  var keyboardEvent = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    bubbles: true
+  });
+  (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
+}
+
+addMaterail() {
+  this.materials.push({
+    id: this.idMaterial!,
+    name_material: this.nameMaterial!,
+    specific_units: this.specific_units!,
+    x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
+    x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
+    percent: this.percent || null,
+    value: this.specific_units === 3 ? this.valueBlank : null,
+    units: this.units
+  })
+
+  this.closeModalMaterial();
+}
+
+closeModalBlank() {
+  this.nameBlank = '';
+  this.idBlank = undefined;
+  var keyboardEvent = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    bubbles: true
+  });
+  (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
+}
+
+closeModalMaterial() {
+  var keyboardEvent = new KeyboardEvent('keydown', {
+    key: 'Escape',
+    bubbles: true
+  });
+  (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
+}
+
+calculateMaterial() {
+  switch (this.specific_units) {
+    case 0:
+      this.valueBlank = this.percent! * this.m!;
+      return;
+    case 1:
+      this.valueBlank = this.percent! * this.s!;
+      return;
+    case 2:
+      this.valueBlank = +this.percent! + +this.len!;
+      return;
+  }
+}
+
+
+
+selectFiles() {
+  const files = (document.getElementById('selectFiles') as HTMLInputElement).value;
+  if (files) {
+    for (let i = 0; i < files.length; i++) {
+      // this.filePath.push(files[i].path);
+    }
+  }
+  console.log(this.filePath);
+}
+
+checkBoxIspChange(element: any) {
+  if ((element as HTMLInputElement).checked) {
+    (document.getElementById('inpIsp') as HTMLInputElement).disabled = false;
+  } else {
+    const inp: any = document.getElementById('inpIsp');
+    inp.disabled = true;
+    inp.value = '';
+  }
+}
+
+changeSpecificMaterial() {
+  this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+  this.calculateMaterial();
+}
+
+changeSpecificBlank() {
+  this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
+  this.calculateBlank();
+}
+
+radioRolledComponent() {
+  this.typeMaterial = 1;
+}
+
+radioHardwareComponent() {
+  this.typeMaterial = 2;
+}
+
+radioMaterialComponent() {
+  this.typeMaterial = 3;
+}
+
+radioPurshacedComponent() {
+  this.typeMaterial = 4
+}
+
+ngOnInit(): void {
+  let event = new Event("click");
+  document.getElementById('numberDrawing')!.dispatchEvent(event);
+
+
+}
 }

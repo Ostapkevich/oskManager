@@ -54,7 +54,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   specificatios: Ispecification[] = [];
   materials: IaddMaterial[] = []; //материалы для данного чертежа
   tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
- // typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
+  // typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
   nameMaterial: string | undefined; // имя добавленного материалы для чертежа
@@ -67,18 +67,21 @@ export class DrawingsDatabaseComponent implements OnInit {
   h: number | undefined;
   s: number | undefined;
   m: number = 0;
-  percent!: number | null;
+  percent!: number | null;//коэф для материалов
   specific_units!: number | null;
-  units!: number;
-  percentBlank!: number | null;
+  units!: number |null;
+  percentBlank!: number | null;//коэф для заготовки
   valueBlank!: number | null;
   specificUnitsMaterialBlank!: number;
   unitsMaterialBlank!: number;
   savePath: string[] = [];
   rolledWeight!: number;
-  useLenth!: boolean;
+  useLenth!: number;
+  plasma: boolean = true;
+  addBlankNotMaterial: boolean | undefined;
 
-  selectPurchasedBlank(){}
+
+  selectPurchasedBlank() { }
 
   selectHardwareBlank() { }
 
@@ -86,7 +89,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     const index = this.otherComponent?.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
-       // this.typeBlank = undefined;
         this.idBlank != undefined;
         this.nameBlank = '';
         return;
@@ -95,14 +97,13 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
     }
     if (this.typeMaterial === 3) {
-     // this.typeBlank = 3;
       this.nameBlank = this.otherComponent?.materials[index!].name_item!;
       this.idBlank = this.otherComponent?.materials[index!].id_item;
       this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
       this.percentBlank = this.otherComponent?.materials[index!].percent!;
       this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
-      (document.getElementById('selectCalculationBlank') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
-      const modalElement: HTMLElement = document.querySelector('#blank-modal')!;
+      (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
+      const modalElement: HTMLElement = document.querySelector('#material-modal')!;
       const modalOptions: ModalOptions = {
         closable: true,
         backdrop: 'static',
@@ -114,12 +115,10 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
-  
-  async selectRolledBlank() {
+  selectRolledBlank() {
     const index = this.rolledComponent!.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
-      //  this.typeBlank = undefined;
         this.idBlank != undefined;
         this.nameBlank = '';
         return;
@@ -130,34 +129,20 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.nameBlank = this.rolledComponent?.materials[index!].name_item!;
     this.idBlank = this.rolledComponent!.materials[index!].id_item;
     this.rolledWeight = this.rolledComponent!.materials[index!].weight;
-    //this.typeBlank = typeBlank;
-    const data = await this.appService.query('get', `http://localhost:3000/materials/getUseLenth/:${this.idBlank}`);
-    if (data?.response === 0) {
-      this.useLenth = false;
-      (document.getElementById('') as HTMLInputElement).innerText = 'Sзаг x Mпог.';
-    } else if (data?.response === 1) {
-      this.useLenth = true;
-      (document.getElementById('') as HTMLInputElement).innerText = 'Lзаг x Mпог.';
-    }
-    else {
-      alert("Что-то пошло не так... ");
-    }
-    this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
-    this.percentBlank = this.otherComponent?.materials[index!].percent!;
-    this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
-    (document.getElementById('selectCalculationBlank') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
-    const modalElement: HTMLElement = document.querySelector('#blank-modal')!;
+    this.useLenth = this.rolledComponent!.materials[index!].uselength;
+    const modalElement: HTMLElement = document.querySelector('#rolled-modal')!;
     const modalOptions: ModalOptions = {
       closable: true,
       backdrop: 'static',
     };
-    this.calculateBlank();
-    this.nameBlank = this.rolledComponent?.materials[index!].name_item!;
-    this.idBlank = this.rolledComponent?.materials[index!].id_item;
+    this.calculateBlank(index);
+    const modal = new Modal(modalElement, modalOptions)
+    modal.show();
+
   }
 
 
-  calculateBlank() {
+  calculateBlank(index?: number) {
     if (this.typeMaterial === 3) {
       switch (this.specificUnitsMaterialBlank) {
         case 0:
@@ -171,17 +156,30 @@ export class DrawingsDatabaseComponent implements OnInit {
           return;
       }
     } else if (this.typeMaterial === 1) {
-      if (this.useLenth === false) {
-        if (Boolean(this.h) == true) {
-          this.valueBlank = this.rolledWeight * this.dw! * this.h! / 1000000;
+      if (this.useLenth === 0) {
+        const t = this.rolledComponent!.materials[index!].t;
+        if (t! < 9) {
+          this.plasma = false;
+          this.percentBlank = 10;
+        } else if (t! < 20) {
+          this.percentBlank = 15;
+        } else if (t! < 30) {
+          this.percentBlank = 20;
+        } else if (t! < 40) {
+          this.percentBlank = 25;
         } else {
-          this.valueBlank = this.rolledWeight * this.dw! * this.dw! / 1000000;
+          this.percentBlank = 30;
         }
-      } else {
-        this.valueBlank = this.rolledWeight * this.len! / 1000000;
       }
 
-
+    } else {
+      this.valueBlank = this.rolledWeight * this.len! / 1000000;
+      const d = this.rolledComponent!.materials[index!].d;
+      if (d! < 150) {
+        this.percentBlank = 10;
+      } else {
+        this.percentBlank = 15;
+      }
     }
 
   }
@@ -218,6 +216,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (this.isDetail === false) {
       return;
     }
+    this.addBlankNotMaterial = true;
     let index: number;
     switch (this.typeMaterial) {
       case 1:
@@ -253,6 +252,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       }
     }
+    this.addBlankNotMaterial = false;
     this.selectMaterial(index!);
   }
 
@@ -274,7 +274,12 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addBlank() {
-    this.valueBlank = +(document.getElementById('amountBlank') as HTMLInputElement).value;
+    if (this.typeMaterial===3) {
+      this.valueBlank = +(document.getElementById('amountMaterial') as HTMLInputElement).value;
+    } else {
+      this.valueBlank = +(document.getElementById('amountBlank') as HTMLInputElement).value;
+    }
+    
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -291,13 +296,15 @@ export class DrawingsDatabaseComponent implements OnInit {
       x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
       percent: this.percent || null,
       value: this.specific_units === 3 ? this.valueBlank : null,
-      units: this.units
+      units: this.units!
     })
-
+    this.specific_units = null;
+    this.percent=null;
+    this.units=null;
     this.closeModalMaterial();
   }
 
-  closeModalBlank() {
+  closeModalRolled() {
     this.nameBlank = '';
     this.idBlank = undefined;
     var keyboardEvent = new KeyboardEvent('keydown', {
@@ -351,12 +358,12 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
-  changeSpecificMaterial() {
+  changeMethodMaterial() {
     this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
     this.calculateMaterial();
   }
 
-  changeSpecificBlank() {
+  changeMethodRolled() {
     this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
     this.calculateBlank();
   }

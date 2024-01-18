@@ -100,7 +100,7 @@
 <ng-template #readOnlyTemplate let-item>
     <td class="py-1 w-0.5/12">
         <div class="flex justify-center">
-            <input  type="checkbox" (change)="tblNavigator?.boxChange($event)"
+            <input  type="checkbox" (change)="tblNavigator?.boxChange($event)" id={{item.id_item}}
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>

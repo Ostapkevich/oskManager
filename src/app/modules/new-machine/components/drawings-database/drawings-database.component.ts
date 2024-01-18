@@ -16,7 +16,7 @@ interface IaddMaterial {
   specific_units: number;
   x1: number | null;
   x2: number | null;
-  percent: number | null;
+  percentMaterial: number | null;
   value: number | null;
   units: number;
 }
@@ -67,13 +67,14 @@ export class DrawingsDatabaseComponent implements OnInit {
   h: number | undefined;
   s: number | undefined;
   m: number = 0;
-  percent!: number | null;//коэф для материалов
-  specific_units!: number | null;
-  units!: number |null;
-  percentBlank!: number | null;//коэф для заготовки
-  valueBlank!: number | null;
+  percentMaterial!: number | undefined;//коэф для материалов
+  specific_units!: number | undefined;
+  units!: number | undefined;
+  percentBlank!: number | undefined;//коэф для заготовки
+  valueBlank!: number;
+  valueMaterial!:number|undefined;
   specificUnitsMaterialBlank!: number;
-  unitsMaterialBlank!: number;
+  unitsMaterialBlank!: number | undefined;
   savePath: string[] = [];
   rolledWeight!: number;
   useLenth!: number;
@@ -100,8 +101,8 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.nameBlank = this.otherComponent?.materials[index!].name_item!;
       this.idBlank = this.otherComponent?.materials[index!].id_item;
       this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
-      this.percentBlank = this.otherComponent?.materials[index!].percent!;
       this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
+      this.percentBlank = this.otherComponent?.materials[index!].percent!;
       (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
       const modalElement: HTMLElement = document.querySelector('#material-modal')!;
       const modalOptions: ModalOptions = {
@@ -111,7 +112,11 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.calculateBlank();
       const modal = new Modal(modalElement, modalOptions)
       modal.show();
+      console.log('select Material specific_units ', this.specific_units)
+      console.log('select Material units ', this.units)
+      console.log('select Material percent ', this.percentMaterial)
     }
+
   }
 
 
@@ -185,31 +190,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
-  changRadioDraw() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
-      return;
-    }
-    if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
-      (document.getElementById('sb') as HTMLInputElement).checked = false;
-      this.isDetail = true;
-      this.specificatios.length = 0;
-      this.materials.length = 0
-    }
-  }
-
-
-  changRadioSb() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
-      return;
-    }
-    if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
-      (document.getElementById('detail') as HTMLInputElement).checked = false;
-      this.isDetail = false;
-      this.materials.length = 0;
-      //this.typeBlank = undefined;
-
-    }
-  }
 
 
   btnBlanklClick() {
@@ -241,16 +221,16 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
     let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
-      if (!this.tblNavigator) {
-        this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
+      if (this.materials.length > 0) {
+        if (!this.tblNavigator) {
+          this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
+        }
+        index = this.tblNavigator!.findCheckedRowNumber();
+        if (index) {
+          this.materials.splice(index, 1);
+        }
       }
-      index = this.tblNavigator!.findCheckedRowNumber();
-      if (index === null) {
-        return;
-      } else {
-        this.materials.splice(index, 1);
-        return;
-      }
+      return;
     }
     this.addBlankNotMaterial = false;
     this.selectMaterial(index!);
@@ -258,11 +238,11 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   selectMaterial(index: number) {
     this.nameMaterial = this.otherComponent?.materials[index].name_item!;
-    this.specific_units = this.otherComponent?.materials[index].specific_units!;
-    this.percent = this.otherComponent?.materials[index].percent!;
     this.idMaterial = this.otherComponent?.materials[index].id_item;
-    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_units);
+    this.specific_units = this.otherComponent?.materials[index].specific_units!;
     this.units = this.otherComponent?.materials[index].units!;
+    this.percentMaterial = this.otherComponent?.materials[index].percent!;
+    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_units);
     const modalElement: HTMLElement = document.querySelector('#material-modal')!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -271,15 +251,33 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateMaterial();
     const modal = new Modal(modalElement, modalOptions)
     modal.show();
+    console.log('select Material specific_units ', this.specific_units)
+    console.log('select Material units ', this.units)
+    console.log('select Material percent ', this.percentMaterial)
+
+  }
+
+  calculateMaterial() {
+    switch (this.specific_units) {
+      case 0:
+        this.valueMaterial = this.percentMaterial! * this.m!;
+        return;
+      case 1:
+        this.valueMaterial = this.percentMaterial! * this.s!;
+        return;
+      case 2:
+        this.valueMaterial = +this.percentMaterial! + +this.len!;
+        return;
+    }
   }
 
   addBlank() {
-    if (this.typeMaterial===3) {
+    if (this.typeMaterial === 3) {
       this.valueBlank = +(document.getElementById('amountMaterial') as HTMLInputElement).value;
     } else {
       this.valueBlank = +(document.getElementById('amountBlank') as HTMLInputElement).value;
     }
-    
+
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -294,13 +292,11 @@ export class DrawingsDatabaseComponent implements OnInit {
       specific_units: this.specific_units!,
       x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
       x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
-      percent: this.percent || null,
+      percentMaterial: this.percentMaterial || null,
       value: this.specific_units === 3 ? this.valueBlank : null,
       units: this.units!
     })
-    this.specific_units = null;
-    this.percent=null;
-    this.units=null;
+   
     this.closeModalMaterial();
   }
 
@@ -320,22 +316,38 @@ export class DrawingsDatabaseComponent implements OnInit {
       bubbles: true
     });
     (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.specific_units = undefined;
+    this.percentMaterial = undefined;
+    this.units = undefined;
+    this.valueMaterial=undefined;
   }
 
-  calculateMaterial() {
-    switch (this.specific_units) {
-      case 0:
-        this.valueBlank = this.percent! * this.m!;
-        return;
-      case 1:
-        this.valueBlank = this.percent! * this.s!;
-        return;
-      case 2:
-        this.valueBlank = +this.percent! + +this.len!;
-        return;
+  
+  changRadioDraw() {
+    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
+      return;
+    }
+    if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
+      (document.getElementById('sb') as HTMLInputElement).checked = false;
+      this.isDetail = true;
+      this.specificatios.length = 0;
+      this.materials.length = 0
     }
   }
 
+
+  changRadioSb() {
+    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
+      return;
+    }
+    if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
+      (document.getElementById('detail') as HTMLInputElement).checked = false;
+      this.isDetail = false;
+      this.materials.length = 0;
+      //this.typeBlank = undefined;
+
+    }
+  }
 
 
   selectFiles() {

@@ -72,7 +72,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   units!: number | undefined;
   percentBlank!: number | undefined;//коэф для заготовки
   valueBlank!: number;
-  valueMaterial!:number|undefined;
+  valueMaterial!: number | undefined;
   specificUnitsMaterialBlank!: number;
   unitsMaterialBlank!: number | undefined;
   savePath: string[] = [];
@@ -175,16 +175,18 @@ export class DrawingsDatabaseComponent implements OnInit {
         } else {
           this.percentBlank = 30;
         }
+      } else {
+        // this.valueBlank = this.rolledWeight * this.len! / 1000000;
+        const d = this.rolledComponent!.materials[index!].d;
+        if (d! < 150) {
+          this.percentBlank = 10;
+        } else {
+          this.percentBlank = 15;
+        }
       }
 
     } else {
-      this.valueBlank = this.rolledWeight * this.len! / 1000000;
-      const d = this.rolledComponent!.materials[index!].d;
-      if (d! < 150) {
-        this.percentBlank = 10;
-      } else {
-        this.percentBlank = 15;
-      }
+
     }
 
   }
@@ -272,12 +274,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addBlank() {
-    if (this.typeMaterial === 3) {
-      this.valueBlank = +(document.getElementById('amountMaterial') as HTMLInputElement).value;
-    } else {
-      this.valueBlank = +(document.getElementById('amountBlank') as HTMLInputElement).value;
-    }
-
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -296,7 +292,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       value: this.specific_units === 3 ? this.valueBlank : null,
       units: this.units!
     })
-   
+
     this.closeModalMaterial();
   }
 
@@ -319,10 +315,10 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.specific_units = undefined;
     this.percentMaterial = undefined;
     this.units = undefined;
-    this.valueMaterial=undefined;
+    this.valueMaterial = undefined;
   }
 
-  
+
   changRadioDraw() {
     if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
       return;

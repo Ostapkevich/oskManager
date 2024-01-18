@@ -208,15 +208,16 @@
     <div *ngIf="idBlank && typeMaterial===1" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
         <table class="w-full" id="tblBlank">
-            <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+            <tbody class="text-sm  bg-gray-700 text-gray-400 ">
                 <tr>
                     <td class="w-1/12 text-center">id</td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-6/12">Наименование</td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class="w-5/12">Наименование</td>
-                    <td class="w-2/12">Расчет</td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-1/12 text-center">Коэфф.</td>
-                    <td class="w-1/12 text-center">Значение</td>
-                    <td class="w-1/12 text-center">Ед.изм.</td>
+                    <td *ngIf="useLenth===1" class="w-6/12">Наименование</td>
+                    <td *ngIf="useLenth===0" class="w-4/12">Наименование</td>
+                    <td class="w-2/12 text-center">Припуск</td>
+                    <td *ngIf="useLenth===1" class="w-1/12 text-center">L заг,мм</td>
+                    <td *ngIf="useLenth===0" class="w-2/12 text-center">D(B) заг,мм</td>
+                    <td *ngIf="useLenth===0" class="w-1/12 text-center">H заг,мм</td>
+                    <td class="w-2/12 text-center">Масса, кг</td>
                 </tr>
             </tbody>
         </table>
@@ -226,51 +227,28 @@
                     <td class=" py-1 w-1/12 text-center">
                         {{idBlank}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-6/12 ">
+                    <td *ngIf="useLenth===1" class=" py-1 w-6/12 ">
                         {{nameBlank}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-5/12 ">
+                    <td *ngIf="useLenth===0" class=" py-1 w-4/12 ">
                         {{nameBlank}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-2/12 ">
-                        % от m, кг
+                    <td  class=" py-1 w-2/12 text-center">
+                        {{percentBlank!}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-24/12 ">
-                        % от S, м.кв
+                    <td *ngIf="useLenth===1" class=" py-1 w-1/12 text-center">
+                        {{+percentBlank!+ +len!}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-2/12 ">
-                        Lдет+, мм
+                    <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
+                    <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
+                    <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
+                        {{rolledWeight*(+percentBlank!+ +len!)/1000}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-2/12 ">
-                        Ввод данных
+                    <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
+                        {{(rolledWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
                     </td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-1/12 text-center">
-                        {{percentBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
-
-                    </td>
-                    <td class=" py-1 w-1/12 text-center">
-                        {{valueBlank}}
-                    </td>
-
-                    <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
-                        m,кг
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
-                        S,м.кв
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
-                        L,м
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/12 text-center">
-                        шт.
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/12 text-center">
-                        V,л
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/12 text-center">
-                        V,м.куб
+                    <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
+                        {{(rolledWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
                     </td>
                 </tr>
             </tbody>
@@ -669,7 +647,7 @@
         <div class="relative   shadow bg-gray-700">
             <div class="flex items-center justify-between p-4 md:p-5 border-b  border-gray-600">
                 <h3 class="text-lg font-semibold  text-white">
-                    Добавление заготовки
+                    Добавить заготовку
                 </h3>
                 <button type="button" (click)="closeModalRolled()"
                     class="text-gray-400 bg-transparent hover:bg-gray-200   text-sm w-8 h-8 ms-auto inline-flex justify-center items-center bg-gray-600 hover:text-white">
@@ -690,7 +668,6 @@
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Type product name" required="">
                     </div>
-
                     <div *ngIf="useLenth===1">
                         <label id="lblDetailCharBlank" for="inpDetailBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь L,мм</label>

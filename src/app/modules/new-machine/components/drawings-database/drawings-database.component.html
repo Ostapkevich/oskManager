@@ -31,7 +31,7 @@
         </div>
         <div>
             <label for="weightDrawing" class="  block mb-2 text-sm font-medium  text-white">Масса</label>
-            <input required="\d{1,6}\.\d{1,3}" type="text" id="weightDrawing" [(ngModel)]="m"
+            <input required="\d{1,6}\.\d{1,3}" type="number" id="weightDrawing" [(ngModel)]="m"
                 class=" border  text-sm  block w-full py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="col-span-3">
@@ -49,16 +49,15 @@
             <option *ngFor="let item of savePath" value={{item}}>
                 {{item}} </option>
         </select>
-        <button type="button"
-            class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Добавить
-            чертеж</button>
+        <button type="button" (click)="save()"
+            class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить</button>
     </div>
     <!-- Параметры чертежа -->
     <div class="grid gap-4 grid-cols-12 items-end mt-6">
         <div class=" col-span-2">
             <div class=" ml-1 flex justify-between ">
                 <div class="basis-1/2 flex items-end mb-4">
-                    <input (change)="checkBoxIspChange($event.target)" id="checkboxIsp" type="checkbox"
+                    <input (change)="checkBoxIspChange($event.target)" id="checkboxIsp" type="checkbox" [(ngModel)]="isp"
                         class=" w-4 h-4 text-blue-600   ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                     <label for="checkboxIsp"
                         class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Испол.</label>
@@ -73,23 +72,23 @@
         </div>
         <div>
             <label for="lenghtBlank" class="block mb-2 text-sm font-medium  text-white">L черт.,мм</label>
-            <input required type="text" id="lenghtBlank" [(ngModel)]="len"
+            <input required type="number" id="lenghtBlank" [(ngModel)]="len"
                 class="border  text-sm w-full block  p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label for="diameterBlank" class="block mb-2 text-sm font-medium  text-white">D/B
                 черт.,мм</label>
-            <input required type="text" id="diameterBlank" [(ngModel)]="dw"
+            <input required type="number" id="diameterBlank" [(ngModel)]="dw"
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label for="heightBlank" class="block mb-2 text-sm font-medium  text-white">H черт.,мм</label>
-            <input required type="text" id="heightBlank" [(ngModel)]="h"
+            <input required type="number" id="heightBlank" [(ngModel)]="h"
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
             <label id="lblSquare" for="square" class="block mb-2 text-sm font-medium  text-white">S,м.кв.</label>
-            <input required type="text" id="square" [(ngModel)]="s"
+            <input required type="number" id="square" [(ngModel)]="s"
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <!-- Выбор заготовки м материало радио -->
@@ -130,7 +129,7 @@
 
     <!--  Данные по заготовке из материала -->
 
-    <div *ngIf="idBlank && typeMaterial===3" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
+    <div *ngIf="idBlank && typeBlank===3" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
         <table class="w-full" id="tblBlank">
             <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
@@ -173,10 +172,16 @@
                         {{percentBlank}}
                     </td>
                     <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
-
-                    </td>
-                    <td class=" py-1 w-1/12 text-center">
                         {{valueBlank}}
+                    </td>
+                    <td  *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
+                        {{percentBlank!*m!}}
+                    </td>
+                    <td  *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
+                        {{percentBlank!*s!}}
+                    </td>
+                    <td  *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
+                        {{percentBlank!*len!}}
                     </td>
 
                     <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
@@ -205,7 +210,7 @@
 
     <!--  Данные по заготовке из проката -->
 
-    <div *ngIf="idBlank && typeMaterial===1" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
+    <div *ngIf="idBlank && typeBlank===1" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
         <table class="w-full" id="tblBlank">
             <tbody class="text-sm  bg-gray-700 text-gray-400 ">
@@ -233,7 +238,7 @@
                     <td *ngIf="useLenth===0" class=" py-1 w-4/12 ">
                         {{nameBlank}}
                     </td>
-                    <td  class=" py-1 w-2/12 text-center">
+                    <td class=" py-1 w-2/12 text-center">
                         {{percentBlank!}}
                     </td>
                     <td *ngIf="useLenth===1" class=" py-1 w-1/12 text-center">
@@ -242,14 +247,47 @@
                     <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
                     <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
                     <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
-                        {{rolledWeight*(+percentBlank!+ +len!)/1000}}
+                        {{blankWeight*(+percentBlank!+ +len!)/1000}}
                     </td>
                     <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
-                        {{(rolledWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
+                        {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
                     </td>
                     <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
-                        {{(rolledWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
+                        {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
                     </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!--  -->
+
+
+    <!--  Данные по заготовке из метизов и покупных -->
+
+    <div *ngIf="idBlank && (typeBlank===2 ||typeBlank===4 )" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
+        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+        <table class="w-full" id="tblBlank">
+            <tbody class="text-sm  bg-gray-700 text-gray-400 ">
+                <tr>
+                    <td class="w-2/12 text-center">id</td>
+                    <td class="w-8/12">Наименование</td>
+                    <td class="w-2/12 text-center">Масса, кг</td>
+                </tr>
+            </tbody>
+        </table>
+        <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+            <tbody id="tbodyUnits">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
+                    <td class=" py-1 w-2/12 text-center">
+                        {{idBlank}}
+                    </td>
+                    <td class=" py-1 w-8/12 ">
+                        {{nameBlank}}
+                    </td>
+                    <td class=" py-1 w-2/12 text-center">
+                        {{blankWeight}}
+                    </td>
+
                 </tr>
             </tbody>
         </table>

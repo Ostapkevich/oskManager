@@ -144,7 +144,7 @@ export class HardwareComponent implements OnInit {
         alert('Не введено название!');
         return;
       }
-      if (String(weight) === '' || weightPttern.test(weight) === false) {
+      if (String(weight) === '' || weightPttern.test(String(weight)) === false) {
         alert('Заполните поле с массой! Допускается 4 цифры до точки и три цифры после точки!');
         return;
       }

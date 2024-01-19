@@ -15,8 +15,8 @@ interface Ihardware {
   L?: number;
   initial_L?: number;
   steel?: string;
-  weight: string;
-  initial_weight: string;
+  weight: number;
+  initial_weight: number;
   isEdited?: boolean;
 }
 

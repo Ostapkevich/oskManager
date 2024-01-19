@@ -57,6 +57,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   // typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
+  typeBlank: number | undefined; // для отрисовки шаблона заготовки в зависимости от выбранного типа заготовки
   nameMaterial: string | undefined; // имя добавленного материалы для чертежа
   idMaterial: number | undefined; // id добавленного материалы для чертежа
   drawingNamber = '';
@@ -76,64 +77,177 @@ export class DrawingsDatabaseComponent implements OnInit {
   specificUnitsMaterialBlank!: number;
   unitsMaterialBlank!: number | undefined;
   savePath: string[] = [];
-  rolledWeight!: number;
+  blankWeight!: number;
   useLenth!: number;
   plasma: boolean = true;
   addBlankNotMaterial: boolean | undefined;
+  id_drawing!: number | null;
+  isp!: number | null;
+
+  async save() {
+    try {
+
+      /*  if (idmaterial_type === -1) {
+         alert('Выберите тип материала!');
+         return;
+       }else if(+specific_units===-1 || +units===-1){
+         alert('Выберите единицы измерения и "% от" !');
+         return;
+       } else if (name_material === '') {
+         alert('Не введено название материала!');
+         return;
+       } else if (percent !== '') {
+         if (percentPttern.test(percent) === false) {
+           alert('Недопустимое значение "%". Допускается 3 цифры до точки и две цифры после точки!!');
+           return;
+         }
+       } else if (x1 !== '' && numberPattern.test(x1) === false) {
+         alert('Введите корректно значения характеристик! Допускаются только цифры!');
+         return;
+       } else if (x2 !== '' && numberPattern.test(x2) === false) {
+         alert('Введите корректно значения характеристик! Допускаются только цифры!');
+         return;
+       } */
+      const drawing = {
+        idDrawing: this.id_drawing || null,
+        numberDrawing: this.drawingNamber,
+        isp: this.isp || null,
+        nameDrawing: this.drawingName,
+        weight: this.m,
+        type_blank: this.typeBlank,
+        has_material: Boolean(this.materials),
+        L: this.len,
+        d_b: this.dw,
+        h: this.h,
+        s: this.s
+      }
+      let blank: any;
+      switch (this.typeBlank) {
+        case 1:
+          blank = {
+            idDrawing: this.id_drawing,
+            id_item: this.idBlank,
+            value: this.percentBlank
+          }
+          break;
+        case 2 || 4:
+          blank = {
+            idDrawing: this.id_drawing,
+            id_item: this.idBlank
+          }
+          break;
+
+        case 3:
+          blank = {
+            idDrawing: this.id_drawing,
+            id_item: this.idBlank,
+            percent: this.specificUnitsMaterialBlank === 3 ? null : this.percentBlank,
+            value: this.specificUnitsMaterialBlank === 3 ? this.valueBlank : null,
+            specific_units: this.specificUnitsMaterialBlank
+          }
+          break;
+      }
+
+      /*   const dataServer = {
+          idmaterial_type: idmaterial_type,
+          name_material: name_material,
+          x1: +x1 || null,
+          x2: +x2 || null,
+          units: units,
+          specific_units: specific_units,
+          percent: +percent
+        } */
+      //const data = await this.appService.query('post', `http://localhost:3000/materials/addMaterial`, dataServer);
+      /*   if (data.response === 'ok') {
+          alert('Позиция добавлена!');
+        } else {
+          alert("Что-то пошло не так... Данные не сохранены!");
+        } */
+      //this.findMaterials();
+    } catch (error) {
+      alert(error);
+    }
+  }
 
 
-  selectPurchasedBlank() { }
+  selectPurchasedBlank() {
+    const index = this.purchasedComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
+        this.idBlank = undefined;
+        this.nameBlank = '';
+        return;
+      } else {
+        return;
+      }
+    }
+    this.typeBlank = 4;
+    this.nameBlank = this.purchasedComponent?.materials[index!].name_item!;
+    this.idBlank = this.purchasedComponent!.materials[index!].id_item;
+    this.blankWeight = this.purchasedComponent!.materials[index!].percent;
+  }
 
-  selectHardwareBlank() { }
+  selectHardwareBlank() {
+    const index = this.hardwareComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
+        this.idBlank = undefined;
+        this.nameBlank = '';
+        return;
+      } else {
+        return;
+      }
+    }
+    this.typeBlank = 2;
+    this.nameBlank = this.hardwareComponent?.materials[index!].name_item!;
+    this.idBlank = this.hardwareComponent!.materials[index!].id_item;
+    this.blankWeight = this.hardwareComponent!.materials[index!].weight;
+
+  }
 
   selectMaterialBlank() {
     const index = this.otherComponent?.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
-        this.idBlank != undefined;
+        this.idBlank = undefined;
         this.nameBlank = '';
         return;
       } else {
         return;
       }
     }
-    if (this.typeMaterial === 3) {
-      this.nameBlank = this.otherComponent?.materials[index!].name_item!;
-      this.idBlank = this.otherComponent?.materials[index!].id_item;
-      this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
-      this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
-      this.percentBlank = this.otherComponent?.materials[index!].percent!;
-      (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
-      const modalElement: HTMLElement = document.querySelector('#material-modal')!;
-      const modalOptions: ModalOptions = {
-        closable: true,
-        backdrop: 'static',
-      };
-      this.calculateBlank();
-      const modal = new Modal(modalElement, modalOptions)
-      modal.show();
-      console.log('select Material specific_units ', this.specific_units)
-      console.log('select Material units ', this.units)
-      console.log('select Material percent ', this.percentMaterial)
-    }
-
+    this.typeBlank = 3;
+    this.nameBlank = this.otherComponent?.materials[index!].name_item!;
+    this.idBlank = this.otherComponent?.materials[index!].id_item;
+    this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
+    this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
+    this.percentBlank = this.otherComponent?.materials[index!].percent!;
+    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
+    const modalElement: HTMLElement = document.querySelector('#material-modal')!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    this.calculateBlank();
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
   }
-
 
   selectRolledBlank() {
     const index = this.rolledComponent!.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
-        this.idBlank != undefined;
+        this.idBlank = undefined;
         this.nameBlank = '';
         return;
       } else {
         return;
       }
     }
+    this.typeBlank = 1;
     this.nameBlank = this.rolledComponent?.materials[index!].name_item!;
     this.idBlank = this.rolledComponent!.materials[index!].id_item;
-    this.rolledWeight = this.rolledComponent!.materials[index!].weight;
+    this.blankWeight = this.rolledComponent!.materials[index!].weight;
     this.useLenth = this.rolledComponent!.materials[index!].uselength;
     const modalElement: HTMLElement = document.querySelector('#rolled-modal')!;
     const modalOptions: ModalOptions = {
@@ -141,11 +255,10 @@ export class DrawingsDatabaseComponent implements OnInit {
       backdrop: 'static',
     };
     this.calculateBlank(index);
-    const modal = new Modal(modalElement, modalOptions)
+    const modal = new Modal(modalElement, modalOptions);
     modal.show();
 
   }
-
 
   calculateBlank(index?: number) {
     if (this.typeMaterial === 3) {
@@ -190,9 +303,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
 
   }
-
-
-
 
   btnBlanklClick() {
     if (this.isDetail === false) {
@@ -367,8 +477,16 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   changeMethodMaterial() {
+
     this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
-    this.calculateMaterial();
+    if (this.addBlankNotMaterial === true) {
+      this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+      this.calculateBlank();
+    } else {
+      this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+      this.calculateMaterial();
+    }
+
   }
 
   changeMethodRolled() {

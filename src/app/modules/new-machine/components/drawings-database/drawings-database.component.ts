@@ -11,14 +11,16 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 
 interface IaddMaterial {
-  id: number;
-  name_material: string;
-  specific_units: number;
-  x1: number | null;
-  x2: number | null;
-  percentMaterial: number | null;
-  value: number | null;
-  units: number;
+  id: number | null,
+  idDrawing: number | null,
+  idItem: number | null,
+  name_material: string,
+  specific_units: number,
+  x1: number | null,
+  x2: number | null,
+  percentMaterial: number | null,
+  value: number | null,
+  units: number
 }
 interface Ispecification {
   idDrawing: number,
@@ -60,6 +62,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   typeBlank: number | undefined; // для отрисовки шаблона заготовки в зависимости от выбранного типа заготовки
   nameMaterial: string | undefined; // имя добавленного материалы для чертежа
   idMaterial: number | undefined; // id добавленного материалы для чертежа
+  id: number | undefined; // id  - уникальный ключ записи в таблице заготовки чертежа в ьазе данных
   drawingNamber = '';
   drawingName = '';
   filePath: string[] = [];
@@ -81,7 +84,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   useLenth!: number;
   plasma: boolean = true;
   addBlankNotMaterial: boolean | undefined;
-  id_drawing!: number | null;
+  idDrawing!: number | null;
   isp!: number | null;
 
   async save() {
@@ -108,62 +111,62 @@ export class DrawingsDatabaseComponent implements OnInit {
          alert('Введите корректно значения характеристик! Допускаются только цифры!');
          return;
        } */
-      const drawing = {
-        idDrawing: this.id_drawing || null,
-        numberDrawing: this.drawingNamber,
-        isp: this.isp || null,
-        nameDrawing: this.drawingName,
-        weight: this.m,
-        type_blank: this.typeBlank,
-        has_material: Boolean(this.materials),
-        L: this.len,
-        d_b: this.dw,
-        h: this.h,
-        s: this.s
-      }
-      let blank: any;
+      const drawing: any[] = [];
+      drawing.push(this.idDrawing || null);
+      drawing.push(this.drawingNamber);
+      drawing.push(this.isp || 0);
+      drawing.push(this.drawingName);
+      drawing.push(this.m || null);
+      drawing.push(this.typeBlank);
+      drawing.push(Boolean(this.materials));
+      drawing.push(this.len || null, this.dw || null, this.h || null, this.s || null);
+
+      let blank: any[] = [];
       switch (this.typeBlank) {
         case 1:
-          blank = {
-            idDrawing: this.id_drawing,
-            id_item: this.idBlank,
-            value: this.percentBlank
-          }
+          blank.push(this.id || null);
+          blank.push(this.idDrawing || null);
+          blank.push(this.idBlank);
+          blank.push(this.percentBlank);
           break;
         case 2 || 4:
-          blank = {
-            idDrawing: this.id_drawing,
-            id_item: this.idBlank
-          }
+          blank.push(this.id || null);
+          blank.push(this.idDrawing || null);
+          blank.push(this.idBlank);
           break;
-
         case 3:
-          blank = {
-            idDrawing: this.id_drawing,
-            id_item: this.idBlank,
-            percent: this.specificUnitsMaterialBlank === 3 ? null : this.percentBlank,
-            value: this.specificUnitsMaterialBlank === 3 ? this.valueBlank : null,
-            specific_units: this.specificUnitsMaterialBlank
-          }
+          blank.push(this.id || null);
+          blank.push(this.idDrawing || null);
+          blank.push(this.idBlank);
+          blank.push(this.specificUnitsMaterialBlank === 3 ? null : this.percentBlank);
+          blank.push(this.specificUnitsMaterialBlank === 3 ? this.valueBlank : null);
+          blank.push(this.specificUnitsMaterialBlank);
           break;
       }
+      let materialsServer: any[] = [];
+    
+      for (const material of this.materials) {
+        materialsServer.push(
+          material.id||null,
+          this.idDrawing || null,
+          material.idItem,
+          material.percentMaterial || null,
+          material.value || null,
+          material.specific_units);
+          }
 
-      /*   const dataServer = {
-          idmaterial_type: idmaterial_type,
-          name_material: name_material,
-          x1: +x1 || null,
-          x2: +x2 || null,
-          units: units,
-          specific_units: specific_units,
-          percent: +percent
-        } */
-      //const data = await this.appService.query('post', `http://localhost:3000/materials/addMaterial`, dataServer);
-      /*   if (data.response === 'ok') {
-          alert('Позиция добавлена!');
-        } else {
-          alert("Что-то пошло не так... Данные не сохранены!");
-        } */
-      //this.findMaterials();
+      const dataServer = {
+        drawing: drawing,
+        blank: blank,
+        materials: materialsServer.length > 0 ? materialsServer : null
+      }
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/saveDrawing/${this.typeBlank}`, dataServer);
+      if (data.response === 'ok') {
+        alert('Данные сохранены!');
+      } else {
+        alert("Что-то пошло не так... Данные не сохранены!");
+      }
+
     } catch (error) {
       alert(error);
     }
@@ -393,7 +396,9 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   addMaterail() {
     this.materials.push({
-      id: this.idMaterial!,
+      id: null,
+      idDrawing: this.idDrawing || null,
+      idItem: this.idMaterial!,
       name_material: this.nameMaterial!,
       specific_units: this.specific_units!,
       x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,

@@ -89,28 +89,72 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   async save() {
     try {
+      if (this.drawingNamber === '') {
+        alert("Введите номер чертежа!");
+        return;
+      }
+      if (this.drawingName === '') {
+        alert("Введите номер чертежа!");
+        return;
+      }
+      if (this.m <= 0) {
+        alert("Введите массу детали!");
+        return;
+      }
+      if (!this.idBlank) {
+        alert('Выберите вид заготовки!');
+        return;
+      }
+      const files = (document.getElementById('selectFiles') as HTMLInputElement).files;
+      if (!files || files.length === 0) {
+        alert("Выберите файлы чертежей для сохранения!");
+        return;
+      }
+      let path = (document.getElementById('selectPath') as HTMLSelectElement).value;
+      if (path === '-1') {
+        alert("Выберите путь для сохранения из выпадающего списка!");
+        return;
+      }
 
-      /*  if (idmaterial_type === -1) {
-         alert('Выберите тип материала!');
-         return;
-       }else if(+specific_units===-1 || +units===-1){
-         alert('Выберите единицы измерения и "% от" !');
-         return;
-       } else if (name_material === '') {
-         alert('Не введено название материала!');
-         return;
-       } else if (percent !== '') {
-         if (percentPttern.test(percent) === false) {
-           alert('Недопустимое значение "%". Допускается 3 цифры до точки и две цифры после точки!!');
-           return;
-         }
-       } else if (x1 !== '' && numberPattern.test(x1) === false) {
-         alert('Введите корректно значения характеристик! Допускаются только цифры!');
-         return;
-       } else if (x2 !== '' && numberPattern.test(x2) === false) {
-         alert('Введите корректно значения характеристик! Допускаются только цифры!');
-         return;
-       } */
+      if (this.typeBlank === 1) {
+        if (this.useLenth === 1) {
+          if (!this.len || this.len <= 0) {
+            alert('Введите длину детали!');
+            return;
+          }
+
+        } else {
+          if (!this.dw || this.dw <= 0) {
+            alert('Введите размер детали D/B!');
+            return;
+          }
+          if (this.h && this.dw <= 0) {
+            alert('Размер Н должен быть больше нуля!');
+            return;
+          }
+          if (!this.h) {
+            if (confirm('Ввести размер "Н" ?') === true) {
+              return;
+            }
+          }
+        }
+      }
+      if (this.typeBlank === 3) {
+        if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
+          alert('Введите площадь поверхности "S" !');
+        }
+      }
+      if (this.typeBlank === 3) {
+        if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
+          alert('Введите размер "L" !');
+        }
+      }
+
+
+      for (let i = 0; i < files.length; i++) {
+        this.filePath.push(path + files[i].name);
+      }
+
       const drawing: any[] = [];
       drawing.push(this.idDrawing || null);
       drawing.push(this.drawingNamber);
@@ -120,7 +164,8 @@ export class DrawingsDatabaseComponent implements OnInit {
       drawing.push(this.typeBlank);
       drawing.push(Boolean(this.materials));
       drawing.push(this.len || null, this.dw || null, this.h || null, this.s || null);
-
+      drawing.push(JSON.stringify(this.filePath));
+      console.log(drawing)
       let blank: any[] = [];
       switch (this.typeBlank) {
         case 1:
@@ -144,16 +189,16 @@ export class DrawingsDatabaseComponent implements OnInit {
           break;
       }
       let materialsServer: any[] = [];
-    
+
       for (const material of this.materials) {
         materialsServer.push(
-          material.id||null,
+          material.id || null,
           this.idDrawing || null,
           material.idItem,
           material.percentMaterial || null,
           material.value || null,
           material.specific_units);
-          }
+      }
 
       const dataServer = {
         drawing: drawing,
@@ -387,6 +432,47 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addBlank() {
+    if (this.typeBlank === 3) {
+      if (this.specificUnitsMaterialBlank === 0 && (!this.m || this.m <= 0)) {
+        alert('Введите массу детали "m" !');
+        return;
+      }
+      if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
+        alert('Введите размер "L" !');
+        return;
+      }
+      if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
+        alert('Введите площадь поверхности "S" !');
+        return;
+      }
+    } else if (this.typeBlank === 1) {
+      if (this.useLenth === 1) {
+        if (!this.len || this.len <= 0) {
+          alert('Введите размер "L" !');
+          return;
+        }
+
+      } else {
+        if (!this.dw || this.dw <= 0) {
+          alert('Введите размер детали D/B!');
+          return;
+        }
+        if (this.h && this.dw <= 0) {
+          alert('Размер Н должен быть больше нуля!');
+          return;
+        }
+        if (!this.h) {
+          if (confirm('Ввести размер "Н" ?') === true) {
+            return;
+          }
+        }
+      }
+      
+      if (!this.percentBlank || this.percentBlank <= 0) {
+        alert('Введите припуск!');
+        return;
+      }
+    }
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -395,6 +481,19 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addMaterail() {
+    if (this.specific_units === 0 && (!this.m || this.m <= 0)) {
+      alert('Введите массу детали "m" !');
+      return;
+    }
+    if (this.specific_units === 2 && (!this.len || this.len <= 0)) {
+      alert('Введите размер "L" !');
+      return;
+    }
+    if (this.specific_units === 1 && (!this.s || this.s <= 0)) {
+      alert('Введите площадь поверхности "S" !');
+      return;
+    }
+
     this.materials.push({
       id: null,
       idDrawing: this.idDrawing || null,
@@ -403,8 +502,8 @@ export class DrawingsDatabaseComponent implements OnInit {
       specific_units: this.specific_units!,
       x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
       x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
-      percentMaterial: this.percentMaterial || null,
-      value: this.specific_units === 3 ? this.valueBlank : null,
+      percentMaterial: this.specific_units === 3 ? null : this.percentMaterial || null,
+      value: this.specific_units === 3 ? +(document.getElementById('amountMaterial') as HTMLInputElement).value : this.valueBlank,
       units: this.units!
     })
 
@@ -461,16 +560,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
-  selectFiles() {
-    const files = (document.getElementById('selectFiles') as HTMLInputElement).value;
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        // this.filePath.push(files[i].path);
-      }
-    }
-    console.log(this.filePath);
-  }
-
   checkBoxIspChange(element: any) {
     if ((element as HTMLInputElement).checked) {
       (document.getElementById('inpIsp') as HTMLInputElement).disabled = false;
@@ -515,10 +604,21 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.typeMaterial = 4
   }
 
+  async scan() {
+    try {
+
+      const data = await this.appService.query('get', `http://localhost:3000/drawings/scan`);
+      this.savePath = data.scan;
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
   ngOnInit(): void {
     let event = new Event("click");
     document.getElementById('numberDrawing')!.dispatchEvent(event);
-
+    this.scan();
 
   }
 }

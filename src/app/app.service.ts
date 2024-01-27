@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 
 
 @Injectable({
@@ -14,17 +14,24 @@ export class AppService {
       let callBack;
       switch (method) {
         case 'get':
-          let param = new HttpParams();
           if (body) {
-            let j = 0;
-            for (const i of body ) {
-              param = param.append(String('sql' + j), i);
-              j++;
+            if (Array.isArray(body)) {
+              let param = new HttpParams();
+              let j = 0;
+              for (const i of body) {
+                param = param.append(String('sql' + j), i);
+                j++;
+              }
+              callBack = this.httpAppClient.get(url, { params: param });
+            } else {
+
+              const param = new HttpParams({ fromObject: body });
+              callBack = this.httpAppClient.get(url, { params: param });
             }
-            callBack = this.httpAppClient.get(url, { params: param });
-            break;
+          } else {
+            callBack = this.httpAppClient.get(url);
           }
-          callBack = this.httpAppClient.get(url);
+            
           break;
         case 'post':
           callBack = this.httpAppClient.post(url, body);
@@ -36,7 +43,7 @@ export class AppService {
           let par = new HttpParams();
           if (body) {
             let j = 0;
-            for (const i of body ) {
+            for (const i of body) {
               par = par.append(String('q' + j), i);
               j++;
             }
@@ -52,7 +59,7 @@ export class AppService {
             if ((data as Object).hasOwnProperty('serverError')) {
               reject(new Error(data.serverError));
             }
-          
+
             resolve(data);
           }
           ,

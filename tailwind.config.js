@@ -14,6 +14,7 @@ module.exports = {
       },
       flexBasis: {
         '0.5/12': '4.165%',
+       
       
       }
     },

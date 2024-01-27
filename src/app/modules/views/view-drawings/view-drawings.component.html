@@ -1,0 +1,116 @@
+<div class="w-1/2 mx-auto " id="idmaterial">
+    <p *ngIf="showElement" class="text-4xl mt-4  text-white">Поиск чертежа</p>
+    <form #orderform="ngForm" id="orderform" name="orderform" (ngSubmit)="onSubmit()">
+        <div class="mt-4 flex gap-4">
+            <div class="basis-24">
+                <label for="idSearchID" class="block mb-2 text-sm font-medium  text-white">id чертежа</label>
+                <input required type="number" id="idSearchID" name="searchID" [(ngModel)]="idDrawing" ngModel
+                    class="border  text-sm w-full block   py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="">
+                <label for="idSearchNumber" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
+                <input required type="search" id="idSearchNumber" name="searchNumber" [(ngModel)]="numberDrawing"
+                    class="border  text-sm w-full block   py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="">
+                <label for="idSearchName" class="block mb-2 text-sm font-medium  text-white">Название чертежа</label>
+                <input required type="search" id="idSearchName" name="searchName" [(ngModel)]="nameDrawing"
+                    class="border w-full text-sm  block  py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="basis-24">
+                <label for="idWeightMin" class="  block mb-2 text-sm font-medium  text-white">Масса min, кг</label>
+                <input required type="number" id="idWeightMin" name="weightMin" [(ngModel)]="min"
+                    class=" border  text-sm  block w-full py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="basis-24">
+                <label for="idWeightMax" class="  block mb-2 text-sm font-medium  text-white">Масса max, кг</label>
+                <input required type="number" id="idWeightMax" name="weightMax" [(ngModel)]="max"
+                    class=" border  text-sm  block w-full py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <input value="Поиск"
+                class="block  self-end text-white focus:ring-4 focus:outline-none font-medium  text-sm px-14 py-2 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+                type="submit" />
+
+            >
+        </div>
+    </form>
+
+    <!--  <div class=" mt-8 flex rounded-md shadow-sm" role="group">
+        <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=false"
+            class=" px-2 py-2 text-sm font-medium  bg-transparent border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900 focus:bg-gray-700">
+            Чертежи
+        </button>
+        <button *ngIf="isDrawingInfo" type="button" (click)="isDrawingInfo=false"
+            class=" px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900 focus:bg-gray-700">
+            Чертежи
+        </button>
+        <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+            class=" px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900 focus:bg-gray-700">
+            Данные чертежа
+        </button>
+        <button *ngIf="isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+            class=" px-2 py-2 text-sm font-medium bg-transparent border  rounded-se-xl  focus:z-10    border-white text-white  hover:bg-gray-900 focus:bg-gray-700">
+            Данные чертежа
+        </button>
+    </div> -->
+    <div class="grid grid-cols-2">
+
+        <div>
+            <table class="w-full mt-6" id="tblMaterial ">
+                <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+                    <tr>
+                        <td class="w-1/12  py-2">
+                            <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                        </td>
+                        <td class="w-1/12 py-1 text-center">id</td>
+                        <td class="w-4/12">Номер чертежа</td>
+                        <td class="w-3/12">Название чертежа</td>
+                        <td class="w-2/12 ">Масса, кг</td>
+                        <td class="w-1/12 text-center">Инфо</td>
+
+                    </tr>
+                </tbody>
+            </table>
+            <table id="tblDrawings" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+                <tbody id="tbodyDrawings">
+                    <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
+                        *ngFor="let item of searchedDrawings">
+                        <td class="py-1 w-1/12">
+                            <div class="flex justify-center">
+                                <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
+                                    class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                            </div>
+                        </td>
+                        <td class=" py-1 w-1/12 text-center ">
+                            {{item.idDrawing}}
+                        </td>
+                        <td class=" py-1 w-4/12">
+                            <a class="font-medium  text-blue-500 hover:underline cursor-pointer">
+                                {{item.numberDrawing}}
+                            </a>
+                        </td>
+                        <td class=" py-1 w-3/12">
+                            {{item.nameDrawing}}
+                        </td>
+                        <td class=" py-1 w-2/12">
+                            {{item.weight}}
+                        </td>
+                        <td class=" py-1 w-1/12 text-center">
+                            <button class="font-medium  text-blue-500 hover:underline"
+                                (click)="showDrawing($event.target)">Инфо</button>
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+
+</div>

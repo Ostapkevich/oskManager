@@ -2,11 +2,16 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Icategorycastomer, Iorder, IProperties, Icategories, Icustomers } from './iNewOrderInterfase';
 import { AppService } from 'src/app/app.service';
+//import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
+  standalone:true,
   selector: 'app-new-machine',
   templateUrl: './new-order.component.html',
   styleUrls: ['./new-order.component.css'],
+  imports:[FormsModule,CommonModule],
   providers: [],
 
 })

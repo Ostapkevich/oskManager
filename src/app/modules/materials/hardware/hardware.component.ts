@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, TemplateRef, Input } from '@angular/core'
 import { AppService } from 'src/app/app.service';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { IhardwareType, Ihardware, IHardwareMaterial } from './iHardware';
-import { Isteel } from '../../iSteel';
+import { Isteel } from '../iSteel';
 import { AddHardwareComponent } from '../add-hardware/add-hardware.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';

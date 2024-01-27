@@ -1,36 +1,19 @@
 <div class="w-1/2 mx-auto mt-4 " id="idmaterial">
-    <form>
-        <div class="flex gap-16">
-            <p class="text-4xl  text-white">Новый чертеж</p>
-            <div class="flex gap-5 border-2 border-gray-600 p-3">
-                <div class="flex items-center ">
-                    <input id="detail" type="radio" value="" checked name="detail-radio" (change)="changRadioDraw()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="detail" class="ms-2 text-sm font-medium  text-white">Деталь</label>
-                </div>
-                <div class="flex items-center ">
-                    <input id="sb" type="radio" value="" name="sb-radio" (change)="changRadioSb()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Сборочный чертеж</label>
-                </div>
-            </div>
-        </div>
-    </form>
-
+    <p class="text-4xl  text-white">Новый чертеж</p>
     <!-- Номер чертежа -->
     <div class="grid grid-cols-12 gap-4 items-end mt-8">
         <div class="col-span-2">
-            <label for="numberDrawing" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
+            <label for="numberDrawing" class="block mb-2 text-sm font-medium  text-white">Номер</label>
             <input required type="text" id="numberDrawing" [(ngModel)]="drawingNamber"
                 class="border  text-sm w-full block   py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div class="col-span-2">
-            <label for="nameDrawing" class="block mb-2 text-sm font-medium  text-white">Название чертежа</label>
+            <label for="nameDrawing" class="block mb-2 text-sm font-medium  text-white">Название</label>
             <input required type="text" id="nameDrawing" [(ngModel)]="drawingName"
                 class="border w-full text-sm  block  py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <div>
-            <label for="weightDrawing" class="  block mb-2 text-sm font-medium  text-white">Масса</label>
+            <label for="weightDrawing" class="  block mb-2 text-sm font-medium  text-white">Масса, кг</label>
             <input required type="number" id="weightDrawing" [(ngModel)]="m"
                 class=" border  text-sm  block w-full py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
@@ -58,11 +41,10 @@
                     <input (change)="checkBoxIspChange($event.target)" id="checkboxIsp" type="checkbox"
                         [(ngModel)]="isp"
                         class=" w-4 h-4 text-blue-600   ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
-                    <label for="checkboxIsp"
-                        class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Испол.</label>
+                    <label for="checkboxIsp" class="ms-2 text-sm font-medium  text-gray-300">Испол.</label>
                 </div>
                 <div class="basis-1/2">
-                    <label for="inpIsp" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">№
+                    <label for="inpIsp" class="block mb-2 text-sm font-medium  text-white">№
                         испол.</label>
                     <input type="number" id="inpIsp" disabled
                         class=" border text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
@@ -90,212 +72,341 @@
             <input required type="number" id="square" [(ngModel)]="s"
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
-        <!-- Выбор заготовки м материало радио -->
-        <div class="col-start-7 col-span-4 mb-3">
-            <div class="flex gap-1 justify-around">
-                <div class="flex items-center ">
-                    <input id="roll" type="radio" value="" checked name="disabled-radio"
-                        (click)=" radioRolledComponent()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="detail" class="ms-2 text-sm font-medium  text-white">Прокат</label>
-                </div>
-                <div class="flex items-center ">
-                    <input id="hard" type="radio" value="" name="disabled-radio" (click)=" radioHardwareComponent()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Метизы</label>
-                </div>
-                <div class="flex items-center ">
-                    <input id="mat" type="radio" value="" name="disabled-radio" (click)=" radioMaterialComponent()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Материалы</label>
-                </div>
-                <div class="flex items-center ">
-                    <input id="pursh" type="radio" value="" name="disabled-radio" (click)=" radioPurshacedComponent()"
-                        class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                    <label for="sb" class="ms-2 text-sm font-medium  text-white">Покупные</label>
-                </div>
+        <!-- Радио детальный чертеж -->
+        <div class="col-start-7 col-span-2 mb-3">
+            <div class="basis-1/2 flex ">
+                <input id="chboxDetail" type="checkbox" checked
+                    class=" w-4 h-4 text-blue-600   ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                <label for="cboxDetail" class="ms-2 text-sm font-medium  text-gray-300">Детальный чертеж</label>
             </div>
         </div>
         <button type="button" (click)="btnBlanklClick()"
-            class="col-start-11 col-span-1  px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Заготовка</button>
+            class="col-start-9   px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Заготовка</button>
         <button (click)="btnMaterialClick()"
             class="block text-white focus:ring-4 focus:outline-none font-medium  text-sm px-2 py-3 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
             type="button">
             Материал
         </button>
+        <button type="button" (click)="btnSpecificationClick()"
+            class="col-span-2 px-2 py-3 text-sm font-medium text-white  focus:ring-4 focus:outline-none  text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Позиция
+            СБ</button>
+    </div>
+
+    <!-- Данные чертежа и добавить данные -->
+    <div class="flex justify-between mt-6">
+        <!-- Данные чертежа или добавить данныеё -->
+        <div class="flex rounded-md shadow-sm" role="group">
+            <button *ngIf="isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+                class=" px-2 py-2 text-sm font-medium  bg-transparent border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
+                Чертеж
+            </button>
+            <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+                class=" px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
+                Чертеж
+            </button>
+            <button *ngIf="isDrawingInfo" type="button" (click)="isDrawingInfo=false"
+                class=" px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
+                Добавить данные
+            </button>
+            <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=false"
+                class=" px-2 py-2 text-sm font-medium bg-transparent border  rounded-se-xl  focus:z-10    border-white text-white  hover:bg-gray-900">
+                Добавить данные
+            </button>
+        </div>
+
+        <!-- Радио варианты -->
+        <div *ngIf="!isDrawingInfo" class="flex gap-4 ">
+            <div class="flex items-center ">
+                <input id="roll" type="radio" value="" checked name="disabled-radio" (click)=" radioRolledComponent()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="detail" class="ms-2 text-sm font-medium  text-white">Прокат</label>
+            </div>
+            <div class="flex items-center ">
+                <input id="hard" type="radio" value="" name="disabled-radio" (click)=" radioHardwareComponent()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="sb" class="ms-2 text-sm font-medium  text-white">Метизы</label>
+            </div>
+            <div class="flex items-center ">
+                <input id="mat" type="radio" value="" name="disabled-radio" (click)=" radioMaterialComponent()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="sb" class="ms-2 text-sm font-medium  text-white">Материалы</label>
+            </div>
+            <div class="flex items-center ">
+                <input id="pursh" type="radio" value="" name="disabled-radio" (click)=" radioPurshacedComponent()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="sb" class="ms-2 text-sm font-medium  text-white">Покупные</label>
+            </div>
+            <div class="flex items-center ">
+                <input id="radioDrawings" type="radio" value="" name="disabled-radio"
+                    (click)=" radioDrawingsComponent()"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="sb" class="ms-2 text-sm font-medium  text-white">Чертежи</label>
+            </div>
+        </div>
+
+    </div>
+    <hr class="h-px   border-0 bg-gray-600">
+    <div class="flex gap-2">
+        <div class="basis-1/2">
+            <!--  Добавленная заготовкае из материала -->
+            <div *ngIf="isDrawingInfo && idBlank && typeBlank===3"
+                class="mt-4 w-full relative overflow-x-auto shadow-md ">
+                <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+                <table class="w-full" id="tblBlank">
+                    <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+                        <tr>
+                            <td class="w-1/12 text-center">id</td>
+                            <td *ngIf="specificUnitsMaterialBlank!==3" class="w-6/12">Наименование</td>
+                            <td *ngIf="specificUnitsMaterialBlank===3" class="w-5/12">Наименование</td>
+                            <td class="w-2/12">Расчет</td>
+                            <td *ngIf="specificUnitsMaterialBlank!==3" class="w-1/12 text-center">Коэфф.</td>
+                            <td class="w-1/12 text-center">Знач.</td>
+                            <td class="w-1/12 text-center">Ед.изм.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+                    <tbody id="tbodyUnits">
+                        <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
+                            <td class=" py-1 w-1/12 text-center">
+                                {{idBlank}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-6/12 ">
+                                {{nameBlank}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-5/12 ">
+                                {{nameBlank}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-2/12 ">
+                                % от m, кг
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-24/12 ">
+                                % от S, м.кв
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-2/12 ">
+                                Lдет+, мм
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-2/12 ">
+                                Ввод данных
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-1/12 text-center">
+                                {{percentBlank}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
+                                {{valueBlank}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
+                                {{percentBlank!*m!}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
+                                {{percentBlank!*s!}}
+                            </td>
+                            <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
+                                {{percentBlank!*len!}}
+                            </td>
+
+                            <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
+                                m,кг
+                            </td>
+                            <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
+                                S,м.кв
+                            </td>
+                            <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
+                                L,м
+                            </td>
+                            <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/12 text-center">
+                                шт.
+                            </td>
+                            <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/12 text-center">
+                                V,л
+                            </td>
+                            <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/12 text-center">
+                                V,м.куб
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!--  Добавленная заготовка из проката -->
+            <div *ngIf="isDrawingInfo && idBlank && typeBlank===1"
+                class="mt-4 w-full relative overflow-x-auto shadow-md ">
+                <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+                <table class="w-full" id="tblBlank">
+                    <tbody class="text-sm  bg-gray-700 text-gray-400 ">
+                        <tr>
+                            <td class="w-1/12 text-center">id</td>
+                            <td *ngIf="useLenth===1" class="w-6/12">Наименование</td>
+                            <td *ngIf="useLenth===0" class="w-4/12">Наименование</td>
+                            <td class="w-2/12 text-center">Припуск</td>
+                            <td *ngIf="useLenth===1" class="w-1/12 text-center">L, мм</td>
+                            <td *ngIf="useLenth===0" class="w-2/12 text-center">D(B) ,мм</td>
+                            <td *ngIf="useLenth===0" class="w-1/12 text-center">H, мм</td>
+                            <td class="w-2/12 text-center">Масса, кг</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+                    <tbody id="tbodyUnits">
+                        <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
+                            <td class=" py-1 w-1/12 text-center">
+                                {{idBlank}}
+                            </td>
+                            <td *ngIf="useLenth===1" class=" py-1 w-6/12 ">
+                                {{nameBlank}}
+                            </td>
+                            <td *ngIf="useLenth===0" class=" py-1 w-4/12 ">
+                                {{nameBlank}}
+                            </td>
+                            <td class=" py-1 w-2/12 text-center">
+                                {{percentBlank!}}
+                            </td>
+                            <td *ngIf="useLenth===1" class=" py-1 w-1/12 text-center">
+                                {{+percentBlank!+ +len!}}
+                            </td>
+                            <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
+                            <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
+                            <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
+                                {{blankWeight*(+percentBlank!+ +len!)/1000}}
+                            </td>
+                            <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
+                                {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
+                            </td>
+                            <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
+                                {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!--  Добавленная заготовка из метизов и покупных -->
+            <div *ngIf="isDrawingInfo && idBlank && (typeBlank===2 ||typeBlank===4 )"
+                class="mt-4w-full relative overflow-x-auto shadow-md ">
+                <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+                <table class="w-full" id="tblBlank">
+                    <tbody class="text-sm  bg-gray-700 text-gray-400 ">
+                        <tr>
+                            <td class="w-2/12 text-center">id</td>
+                            <td class="w-8/12">Наименование</td>
+                            <td class="w-2/12 text-center">Масса, кг</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+                    <tbody id="tbodyUnits">
+                        <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
+                            <td class=" py-1 w-2/12 text-center">
+                                {{idBlank}}
+                            </td>
+                            <td class=" py-1 w-8/12 ">
+                                {{nameBlank}}
+                            </td>
+                            <td class=" py-1 w-2/12 text-center">
+                                {{blankWeight}}
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Добавленные материалы -->
+        <div *ngIf="isDrawingInfo && materials.length>0"
+            class="basis-1/2 mt-4  max-h-181 relative overflow-x-auto shadow-md ">
+            <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
+            <table class="w-full" id="tblMaterial">
+                <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
+                    <tr>
+                        <td class="w-0.5/12  py-2">
+                            <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
+                            </svg>
+                        </td>
+                        <td class="w-1/12 text-center">id</td>
+                        <td class="w-6/12">Наименование</td>
+                        <td class="w-2/12 text-center">Расчет</td>
+                        <td class="w-0.5/12 text-center">Коэфф.</td>
+                        <td class="w-1/12 text-center">Знач.</td>
+                        <td class="w-1/12 text-center">Ед.изм.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table id="tblDrawingMaterials" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+                <tbody id="tbodyUnits">
+                    <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
+                        <td class="py-1 w-0.5/12">
+                            <div class="flex justify-center">
+                                <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
+                                    class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                            </div>
+                        </td>
+                        <td class=" py-1 w-1/12 text-center ">
+                            {{item.idItem}}
+                        </td>
+                        <td class=" py-1 w-6/12">
+                            {{item.name_material}}
+                        </td>
+                        <td *ngIf="item.specific_units===0" class=" py-1 w-2/12 text-center">
+                            % от m, кг
+                        </td>
+                        <td *ngIf="item.specific_units===1" class=" py-1 w-2/12 text-center">
+                            % от S, м.кв
+                        </td>
+                        <td *ngIf="item.specific_units===2" class=" py-1 w-2/12 text-center">
+                            Lдет+, мм
+                        </td>
+                        <td *ngIf="item.specific_units===3" class=" py-1 w-2/12 text-center">
+                            Ввод данных
+                        </td>
+                        <td class=" py-1 w-0.5/12 text-center">
+                            {{item.percentMaterial}}
+                        </td>
+                        <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center">
+                            {{item.percentMaterial! * m}}
+                        </td>
+                        <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center">
+                            {{item.percentMaterial! * s!}}
+                        </td>
+                        <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center">
+                            {{item.percentMaterial!+ +len!}}
+                        </td>
+                        <td *ngIf="item.specific_units===3" class=" py-1 w-1/12 text-center">
+                            {{item.value}}
+                        </td>
+
+                        <td *ngIf="item.units===0" class=" py-1 w-1/12 text-center">
+                            m,кг
+                        </td>
+                        <td *ngIf="item.units===1" class=" py-1 w-1/12 text-center">
+                            S,м.кв
+                        </td>
+                        <td *ngIf="item.units===2" class=" py-1 w-1/12 text-center">
+                            L,м
+                        </td>
+                        <td *ngIf="item.units===3" class=" py-1 w-1/12 text-center">
+                            шт.
+                        </td>
+                        <td *ngIf="item.units===4" class=" py-1 w-1/12 text-center">
+                            V,л
+                        </td>
+                        <td *ngIf="item.units===5" class=" py-1 w-1/12 text-center">
+                            V,м.куб
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
 
-    <!--  Данные по заготовке из материала -->
 
-    <div *ngIf="idBlank && typeBlank===3" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
-        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
-        <table class="w-full" id="tblBlank">
-            <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
-                <tr>
-                    <td class="w-1/12 text-center">id</td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-6/12">Наименование</td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class="w-5/12">Наименование</td>
-                    <td class="w-2/12">Расчет</td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class="w-1/12 text-center">Коэфф.</td>
-                    <td class="w-1/12 text-center">Значение</td>
-                    <td class="w-1/12 text-center">Ед.изм.</td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
-                    <td class=" py-1 w-1/12 text-center">
-                        {{idBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-6/12 ">
-                        {{nameBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-5/12 ">
-                        {{nameBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-2/12 ">
-                        % от m, кг
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-24/12 ">
-                        % от S, м.кв
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-2/12 ">
-                        Lдет+, мм
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-2/12 ">
-                        Ввод данных
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank!==3" class=" py-1 w-1/12 text-center">
-                        {{percentBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===3" class=" py-1 w-1/12 ">
-                        {{valueBlank}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
-                        {{percentBlank!*m!}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
-                        {{percentBlank!*s!}}
-                    </td>
-                    <td *ngIf="specificUnitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
-                        {{percentBlank!*len!}}
-                    </td>
-
-                    <td *ngIf="unitsMaterialBlank===0" class=" py-1 w-1/12 text-center">
-                        m,кг
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===1" class=" py-1 w-1/12 text-center">
-                        S,м.кв
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===2" class=" py-1 w-1/12 text-center">
-                        L,м
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===3" class=" py-1 w-1/12 text-center">
-                        шт.
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===4" class=" py-1 w-1/12 text-center">
-                        V,л
-                    </td>
-                    <td *ngIf="unitsMaterialBlank===5" class=" py-1 w-1/12 text-center">
-                        V,м.куб
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <!--  -->
-
-    <!--  Данные по заготовке из проката -->
-
-    <div *ngIf="idBlank && typeBlank===1" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
-        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
-        <table class="w-full" id="tblBlank">
-            <tbody class="text-sm  bg-gray-700 text-gray-400 ">
-                <tr>
-                    <td class="w-1/12 text-center">id</td>
-                    <td *ngIf="useLenth===1" class="w-6/12">Наименование</td>
-                    <td *ngIf="useLenth===0" class="w-4/12">Наименование</td>
-                    <td class="w-2/12 text-center">Припуск</td>
-                    <td *ngIf="useLenth===1" class="w-1/12 text-center">L заг,мм</td>
-                    <td *ngIf="useLenth===0" class="w-2/12 text-center">D(B) заг,мм</td>
-                    <td *ngIf="useLenth===0" class="w-1/12 text-center">H заг,мм</td>
-                    <td class="w-2/12 text-center">Масса, кг</td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
-                    <td class=" py-1 w-1/12 text-center">
-                        {{idBlank}}
-                    </td>
-                    <td *ngIf="useLenth===1" class=" py-1 w-6/12 ">
-                        {{nameBlank}}
-                    </td>
-                    <td *ngIf="useLenth===0" class=" py-1 w-4/12 ">
-                        {{nameBlank}}
-                    </td>
-                    <td class=" py-1 w-2/12 text-center">
-                        {{percentBlank!}}
-                    </td>
-                    <td *ngIf="useLenth===1" class=" py-1 w-1/12 text-center">
-                        {{+percentBlank!+ +len!}}
-                    </td>
-                    <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
-                    <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
-                    <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
-                        {{blankWeight*(+percentBlank!+ +len!)/1000}}
-                    </td>
-                    <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
-                        {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
-                    </td>
-                    <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
-                        {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <!--  -->
-
-
-    <!--  Данные по заготовке из метизов и покупных -->
-
-    <div *ngIf="idBlank && (typeBlank===2 ||typeBlank===4 )" class="mt-4 w-2/3 relative overflow-x-auto shadow-md ">
-        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
-        <table class="w-full" id="tblBlank">
-            <tbody class="text-sm  bg-gray-700 text-gray-400 ">
-                <tr>
-                    <td class="w-2/12 text-center">id</td>
-                    <td class="w-8/12">Наименование</td>
-                    <td class="w-2/12 text-center">Масса, кг</td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="tblDrawingBlank" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600">
-                    <td class=" py-1 w-2/12 text-center">
-                        {{idBlank}}
-                    </td>
-                    <td class=" py-1 w-8/12 ">
-                        {{nameBlank}}
-                    </td>
-                    <td class=" py-1 w-2/12 text-center">
-                        {{blankWeight}}
-                    </td>
-
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    <!--  -->
-
-
-    <!-- Таблица материалов -->
-    <div *ngIf="materials.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
+    <!-- Добавленные входящие -->
+    <div *ngIf="isDrawingInfo && specificatios.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
         <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
         <table class="w-full" id="tblMaterial">
             <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
@@ -307,202 +418,101 @@
                                 d="M1 5.917 5.724 10.5 15 1.5" />
                         </svg>
                     </td>
-                    <td class="w-1/12 text-center">id</td>
-                    <td class="w-5/12">Наименование</td>
-                    <td class="w-0,5/12 text-center"> X1</td>
-                    <td class="w-0,5/12 text-center">X2</td>
-                    <td class="w-2/12 text-center">Расчет</td>
+                    <td class="w-0.5/12 text-center">№ п/п</td>
+                    <td class="w-3/12">Номер</td>
+                    <td class="w-4/12">Наименование</td>
+                    <td class="w-1/12">Масса</td>
+                    <td class="w-1/12">Кол-во</td>
+                    <td class="w-0.5/12 text-center">Расчет</td>
                     <td class="w-0.5/12 text-center">Коэфф.</td>
-                    <td class="w-1/12 text-center">Значение</td>
-                    <td class="w-1/12 text-center">Ед.изм.</td>
-                </tr>
-            </tbody>
-        </table>
-        <table id="tblDrawingMaterials" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
-            <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
-                    <td class="py-1 w-0.5/12">
-                        <div class="flex justify-center">
-                            <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
-                                class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
-                        </div>
-                    </td>
-                    <td class=" py-1 w-1/12 text-center ">
-                        {{item.id}}
-                    </td>
-                    <td class=" py-1 w-5/12">
-                        {{item.name_material}}
-                    </td>
-                    <td class=" py-1 w-0.5/12 text-center">
-                        {{item.x1}}
-                    </td>
-                    <td class=" py-1 w-0.5/12 text-center">
-                        {{item.x2}}
-                    </td>
-                    <td *ngIf="item.specific_units===0" class=" py-1 w-2/12 text-center">
-                        % от m, кг
-                    </td>
-                    <td *ngIf="item.specific_units===1" class=" py-1 w-2/12 text-center">
-                        % от S, м.кв
-                    </td>
-                    <td *ngIf="item.specific_units===2" class=" py-1 w-2/12 text-center">
-                        Lдет+, мм
-                    </td>
-                    <td *ngIf="item.specific_units===3" class=" py-1 w-2/12 text-center">
-                        Ввод данных
-                    </td>
-                    <td class=" py-1 w-0.5/12 text-center">
-                        {{item.percentMaterial}}
-                    </td>
-                    <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center">
-                        {{item.percentMaterial! * m}}
-                    </td>
-                    <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center">
-                        {{item.percentMaterial! * s!}}
-                    </td>
-                    <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center">
-                        {{item.percentMaterial!+ +len!}}
-                    </td>
-                    <td *ngIf="item.specific_units===3" class=" py-1 w-1/12 text-center">
-                        {{item.value}}
-                    </td>
-
-                    <td *ngIf="item.units===0" class=" py-1 w-1/12 text-center">
-                        m,кг
-                    </td>
-                    <td *ngIf="item.units===1" class=" py-1 w-1/12 text-center">
-                        S,м.кв
-                    </td>
-                    <td *ngIf="item.units===2" class=" py-1 w-1/12 text-center">
-                        L,м
-                    </td>
-                    <td *ngIf="item.units===3" class=" py-1 w-1/12 text-center">
-                        шт.
-                    </td>
-                    <td *ngIf="item.units===4" class=" py-1 w-1/12 text-center">
-                        V,л
-                    </td>
-                    <td *ngIf="item.units===5" class=" py-1 w-1/12 text-center">
-                        V,м.куб
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Спецификация или материалы -->
-    <div *ngIf="isDetail===false" class="flex  rounded-md shadow-sm" role="group">
-        <button *ngIf="isSpecification" type="button" (click)="isSpecification=true"
-            class="basis-1/2 px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-            Состав
-        </button>
-        <button *ngIf="!isSpecification" type="button" (click)="isSpecification=true"
-            class=" basis-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-s-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-            Состав
-        </button>
-        <button *ngIf="isSpecification" type="button" (click)="isSpecification=false"
-            class="basis-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-            Материалы
-        </button>
-        <button *ngIf="!isSpecification" type="button" (click)="isSpecification=false"
-            class="basis-1/2 px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-e-lg  focus:z-10 focus:ring-2 focus:ring-gray-500  focus:text-white border-white text-white hover:text-white hover:bg-gray-700 focus:bg-gray-700">
-            Материалы
-        </button>
-    </div>
-
-    <!-- Таблица спецификации -->
-    <div *ngIf="specificatios.length>0" class="mt-4  max-h-181 relative overflow-x-auto shadow-md ">
-        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
-        <table class="w-full" id="tblMaterial">
-            <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
-                <tr>
-                    <td class="w-0.5/12  py-2">
-                        <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 16 12">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 5.917 5.724 10.5 15 1.5" />
-                        </svg>
-                    </td>
-                    <td class="w-1/12 text-center">id</td>
-                    <td class="w-5/12">Наименование</td>
-                    <td class="w-0,5/12 text-center"> X1</td>
-                    <td class="w-0,5/12 text-center">X2</td>
-                    <td class="w-2/12 text-center">Расчет</td>
-                    <td class="w-0.5/12 text-center">Коэфф.</td>
-                    <td class="w-1/12 text-center">Значение</td>
-                    <td class="w-1/12 text-center">Ед.изм.</td>
+                    <td class="w-0.5/12 text-center">Знач</td>
+                    <td class="w-0.5/12 text-center">Ед.изм.</td>
                 </tr>
             </tbody>
         </table>
 
-        <!-- Спецификация -->
         <table *ngIf="specificatios.length>0" id="tblSpecification"
             class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodySpecification">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
+                    *ngFor="let item of specificatios; let i = index">
                     <td class="py-1 w-0.5/12">
                         <div class="flex justify-center">
                             <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
                                 class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                         </div>
                     </td>
+                    <td>
+                        {{ i + 1 }}
+                    </td>
                     <td class=" py-1 w-1/12 text-center ">
-                        {{item.id}}
+                        {{item.numberDrawing}}
                     </td>
                     <td class=" py-1 w-5/12">
-                        {{item.name_material}}
+                        {{item.name_item}}
                     </td>
-                    <td class=" py-1 w-0.5/12 text-center">
-                        {{item.x1}}
+                    <td class=" py-1 w-5/12">
+                        {{item.weight}}
                     </td>
-                    <td class=" py-1 w-0.5/12 text-center">
-                        {{item.x2}}
+                    <td class=" py-1 w-5/12">
+                        {{item.quantity}}
                     </td>
-                    <td *ngIf="item.specific_units===0" class=" py-1 w-2/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===0" class=" py-1 w-2/12 text-center">
                         % от m, кг
                     </td>
-                    <td *ngIf="item.specific_units===1" class=" py-1 w-2/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===1" class=" py-1 w-2/12 text-center">
                         % от S, м.кв
                     </td>
-                    <td *ngIf="item.specific_units===2" class=" py-1 w-2/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===2" class=" py-1 w-2/12 text-center">
                         Lдет+, мм
                     </td>
-                    <td *ngIf="item.specific_units===3" class=" py-1 w-2/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===3" class=" py-1 w-2/12 text-center">
                         Ввод данных
                     </td>
-                    <td class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="!item.specific_units" class=" py-1 w-2/12 text-center">
+
+                    </td>
+                    <td *ngIf="item.specific_units" class=" py-1 w-0.5/12 text-center">
                         {{item.percentMaterial}}
                     </td>
-                    <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="!item.specific_units" class=" py-1 w-0.5/12 text-center">
+                        {{item.percentMaterial}}
+                    </td>
+                    <td *ngIf="item.specific_units && item.specific_units===0" class=" py-1 w-1/12 text-center">
                         {{item.percentMaterial! * m}}
                     </td>
-                    <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===1" class=" py-1 w-1/12 text-center">
                         {{item.percentMaterial! * s!}}
                     </td>
-                    <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===2" class=" py-1 w-1/12 text-center">
                         {{item.percentMaterial!+ +len!}}
                     </td>
-                    <td *ngIf="item.specific_units===3" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.specific_units && item.specific_units===3" class=" py-1 w-1/12 text-center">
                         {{valueBlank}}
                     </td>
+                    <td *ngIf="!item.specific_units" class=" py-1 w-1/12 text-center">
 
-                    <td *ngIf="item.units===0" class=" py-1 w-1/12 text-center">
+                    </td>
+                    <td *ngIf="item.units && item.units===0" class=" py-1 w-1/12 text-center">
                         m,кг
                     </td>
-                    <td *ngIf="item.units===1" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.units && item.units===1" class=" py-1 w-1/12 text-center">
                         S,м.кв
                     </td>
-                    <td *ngIf="item.units===2" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.units && item.units===2" class=" py-1 w-1/12 text-center">
                         L,м
                     </td>
-                    <td *ngIf="item.units===3" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.units && item.units===3" class=" py-1 w-1/12 text-center">
                         шт.
                     </td>
-                    <td *ngIf="item.units===4" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.units && item.units===4" class=" py-1 w-1/12 text-center">
                         V,л
                     </td>
-                    <td *ngIf="item.units===5" class=" py-1 w-1/12 text-center">
+                    <td *ngIf="item.units && item.units===5" class=" py-1 w-1/12 text-center">
                         V,м.куб
+                    </td>
+                    <td *ngIf="!item.units" class=" py-1 w-1/12 text-center">
+
                     </td>
                 </tr>
             </tbody>
@@ -510,19 +520,11 @@
     </div>
 </div>
 
-<app-rolled
-    *ngIf="(isDetail===true && typeMaterial===1) || (isDetail===false &&  isSpecification===false && typeMaterial===1)"
-    [showAddRolled]="false"></app-rolled>
-<app-hardware
-    *ngIf="(isDetail===true && typeMaterial===2) || (isDetail===false &&  isSpecification===false && typeMaterial===2)"
-    [showAddHardware]="false"></app-hardware>
-<app-others
-    *ngIf="(isDetail===true && typeMaterial===3) || (isDetail===false &&  isSpecification===false && typeMaterial===3)"
-    [showAddmaterial]="false"></app-others>
-<app-purchased
-    *ngIf="(isDetail===true && typeMaterial===4) || (isDetail===false &&  isSpecification===false && typeMaterial===4)"
-    [showAddPurshaced]="false"></app-purchased>
-
+<app-rolled *ngIf="!isDrawingInfo &&  typeMaterial===1" [showAddRolled]="false"></app-rolled>
+<app-hardware *ngIf="!isDrawingInfo &&  typeMaterial===2" [showAddHardware]="false"></app-hardware>
+<app-others *ngIf="!isDrawingInfo &&  typeMaterial===3" [showAddmaterial]="false"></app-others>
+<app-purchased *ngIf="!isDrawingInfo && typeMaterial===4" [showAddPurshaced]="false"></app-purchased>
+<app-viewDrawings *ngIf="!isDrawingInfo && typeMaterial===5" [showElement]="false"></app-viewDrawings>
 
 
 

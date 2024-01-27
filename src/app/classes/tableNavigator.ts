@@ -29,6 +29,13 @@ export class TableNavigator {
         return i;
     }
 
+   /**
+   * Поиск строки, содержащей колонку внутри которой есть кнопки, одна из которой вызвала событие click.
+   * @param {HTMLButtonElement} target кнопка типа HTMLButtonElement, вызывающая событие.
+   * @param {number} indexCellParent индекс колонки в таблице, в которой находятся кнопки.
+   * @param {number} indexCellButton индекс кнопки внутри колонки.
+   * @returns {number} возвращаемый номер строки.
+   */
     public findRowInsertedButton(target: HTMLButtonElement, indexCellParent: number, indexCellButton: number): number {
         const rowsCollection = this.table.rows;
         let i = 0
@@ -41,7 +48,12 @@ export class TableNavigator {
         return i;
     }
 
-
+/**
+   * Поиск строки, содержащей колонку внутри которой есть элемент <select>.
+   * @param {HTMLSelectElement} target искомый элемент <select>.
+   * @param {number} indexCellSelect индекс колонки в таблице, в которой находится <select>.
+   * @returns {number} возвращаемый номер строки.
+   */
     public findRowSelect(target: HTMLSelectElement, indexCellSelect: number): number {
         const rowsCollection = this.table.rows;
         let i = 0

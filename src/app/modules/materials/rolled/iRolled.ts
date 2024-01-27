@@ -1,4 +1,4 @@
-import { Isteel } from "../../iSteel";
+import { Isteel } from "../iSteel";
 
 interface IrolledType {
   id_type: number,

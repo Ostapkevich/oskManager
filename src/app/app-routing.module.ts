@@ -6,8 +6,9 @@ import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
  {path:'', component:HomeComponent } ,
- {path:'instruments', loadChildren:()=>import('./modules/new-machine/new-order.module').then((m)=>m.NewOrderModule)},
- {path:'materials', loadChildren:()=>import('./modules/materials/materials.module').then((m)=>m.MaterialsModule)},
+ {path:'instruments', loadChildren:()=>import('./modules/new-machine/new-order-routing.module').then((m)=>m.NewOrderRoutingModule)},
+ {path:'materials', loadChildren:()=>import('./modules/materials/materials-routing.module').then((m)=>m.MaterialsRoutingModule)},
+ {path:'views', loadChildren:()=>import('./modules/views/views-routing.module').then((m)=>m.ViewsRoutingModule)},
  
 ];
 

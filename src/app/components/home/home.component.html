@@ -1,4 +1,13 @@
-<img src="assets/osk4.png"  class=" mx-auto  my-56"  alt="OSK Logo" />
+<img src="assets/osk140.png" class=" mx-auto  my-56  " alt="OSK Logo" />
 
+<div class="mt-96 flex flex-col gap-8">
+    <div class="flex justify-center gap-8">
+        <h1 class="flex  text-5xl font-extrabold text-blue-200">{{data|date:"dd.MM.yyyy" }}
+        </h1>
+        <h1 class="flex text-2xl font-semibold me-2 px-2.5 items-center rounded bg-blue-200 text-blue-800  ">{{dayToday}}
+        </h1>
 
-  
+    </div>
+    <h1 class="mx-auto border-2 border-blue-200 rounded-lg p-2 text-5xl font-extrabold text-blue-200">{{data|date:"HH : mm "}}
+    </h1>
+</div>

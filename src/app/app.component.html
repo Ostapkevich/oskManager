@@ -119,8 +119,69 @@
         </li>
        
         <li>
-          <a href="#"
-            class="block py-2 pl-3 pr-4  rounded   md:border-0  md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">Склад</a>
+          <button id="btnDropdownView" aria-expanded="true" data-dropdown-toggle="dropdownView"
+            class="flex items-center justify-between w-full py-2 pl-3 pr-4   border-b    md:border-0  md:p-0 md:w-auto text-white md:hover:text-blue-500 focus:text-white border-gray-700 hover:bg-gray-700 md:hover:bg-transparent">Просмотр
+            <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 4 4 4-4" />
+            </svg></button>
+          <!-- dropdownNavbar -->
+          <div id="dropdownView" #dropDown
+            class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
+            <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
+              <li>
+                <a routerLink="views/drawings" class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Чертежей</a>
+              </li>
+            
+              <li aria-labelledby="libraryLink1">
+                <button id="btnLibrary" data-dropdown-toggle="idLibrary1"
+                  data-dropdown-placement="right-start" type="button"
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">База материалов
+                  <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="m1 1 4 4 4-4" />
+                  </svg></button>
+                <!--library -->
+                <div id="idLibrary1"
+                  class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow  bg-gray-700">
+                  <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
+                    <li>
+                      <a routerLink="materials/rolled"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Прокат</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/hardware"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Метизы</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/others"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Материалы</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/purchased"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Покупные изделия</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/types"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Категории материалов</a>
+                    </li>
+                   
+                    
+                  </ul>
+                </div>
+              </li>
+              <li>
+                <a class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Пусто</a>
+              </li>
+            </ul>
+            <div class="py-1">
+              <a class="block px-4 py-2 text-sm  hover:bg-gray-600 text-gray-400 hover:text-white">Sign
+                out</a>
+            </div>
+          </div>
+
         </li>
         <li>
           <a href="#"

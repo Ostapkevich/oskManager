@@ -2,10 +2,13 @@ import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Iunits, IUnitOrder } from './IUnits';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { AppService } from 'src/app/app.service';
-
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
+  standalone:true,
   selector: 'app-new-unit',
+  imports:[CommonModule,FormsModule],
   templateUrl: './edit-units.component.html',
   styleUrls: ['./edit-units.component.css']
 

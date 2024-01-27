@@ -1,14 +1,14 @@
 import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
-import { RolledComponent } from 'src/app/modules/materials/components/rolled/rolled.component';
+import { RolledComponent } from 'src/app/modules/materials/rolled/rolled.component';
 import { CommonModule } from '@angular/common';
-import { HardwareComponent } from 'src/app/modules/materials/components/hardware/hardware.component';
-import { OthersComponent } from 'src/app/modules/materials/components/others/others.component';
-import { PurchasedComponent } from 'src/app/modules/materials/components/purchased/purchased.component';
-import { Imaterial, ImaterialType, IMaterials } from 'src/app/modules/materials/components/others/iOthers';
+import { HardwareComponent } from 'src/app/modules/materials/hardware/hardware.component';
+import { OthersComponent } from 'src/app/modules/materials/others/others.component';
+import { PurchasedComponent } from 'src/app/modules/materials/purchased/purchased.component';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { FormsModule } from '@angular/forms';
 import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
+import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 
 interface IaddMaterial {
   id: number | null,
@@ -16,21 +16,26 @@ interface IaddMaterial {
   idItem: number | null,
   name_material: string,
   specific_units: number,
-  x1: number | null,
-  x2: number | null,
   percentMaterial: number | null,
   value: number | null,
   units: number
 }
 interface Ispecification {
-  idDrawing: number,
+  ind: number,
+  type_position: number,
+  idItem: number,
   numberDrawing: string,
-  nameDrawing: string,
+  name_item: string,
   weight: number,
+  quantity: string,
+  specific_units: number,
+  percentMaterial: number | null,
+  value: number | null,
+  units: number
 }
 
 @Component({
-  imports: [FormsModule, CommonModule, RolledComponent, HardwareComponent, OthersComponent, PurchasedComponent],
+  imports: [FormsModule, CommonModule, RolledComponent, HardwareComponent, OthersComponent, PurchasedComponent, ViewDrawingsComponent],
   standalone: true,
   selector: 'app-drawings-database',
   templateUrl: './drawings-database.component.html',
@@ -39,8 +44,7 @@ interface Ispecification {
 export class DrawingsDatabaseComponent implements OnInit {
   constructor(private appService: AppService) { }
 
-  isDetail: boolean = true;
-  isSpecification: boolean = true;
+  isDrawingInfo: boolean = true;
   typeMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
 
 
@@ -52,17 +56,18 @@ export class DrawingsDatabaseComponent implements OnInit {
   hardwareComponent: HardwareComponent | undefined;
   @ViewChild(PurchasedComponent, { static: false })
   purchasedComponent: PurchasedComponent | undefined;
+  @ViewChild(ViewDrawingsComponent, { static: false })
+  viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
   specificatios: Ispecification[] = [];
   materials: IaddMaterial[] = []; //материалы для данного чертежа
   tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
-  // typeBlank: number | undefined;//прокат| метизы | метариалы | покупные - определяет тип добавленной заготовки
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
   typeBlank: number | undefined; // для отрисовки шаблона заготовки в зависимости от выбранного типа заготовки
   nameMaterial: string | undefined; // имя добавленного материалы для чертежа
   idMaterial: number | undefined; // id добавленного материалы для чертежа
-  id: number | undefined; // id  - уникальный ключ записи в таблице заготовки чертежа в ьазе данных
+  id: number | undefined; // id  - уникальный ключ строки в таблице заготовки чертежа в базе данных
   drawingNamber = '';
   drawingName = '';
   filePath: string[] = [];
@@ -86,6 +91,8 @@ export class DrawingsDatabaseComponent implements OnInit {
   addBlankNotMaterial: boolean | undefined;
   idDrawing!: number | null;
   isp!: number | null;
+
+
 
   async save() {
     try {
@@ -161,11 +168,11 @@ export class DrawingsDatabaseComponent implements OnInit {
       drawing.push(this.isp || 0);
       drawing.push(this.drawingName);
       drawing.push(this.m || null);
-      drawing.push(this.typeBlank);
-      drawing.push(Boolean(this.materials));
+      drawing.push(this.idBlank === undefined ? null : this.typeBlank);
+      drawing.push(Boolean(this.materials.length > 0));
       drawing.push(this.len || null, this.dw || null, this.h || null, this.s || null);
       drawing.push(JSON.stringify(this.filePath));
-      console.log(drawing)
+      drawing.push((document.getElementById('chboxDetail') as HTMLInputElement).checked);
       let blank: any[] = [];
       switch (this.typeBlank) {
         case 1:
@@ -353,47 +360,84 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   btnBlanklClick() {
-    if (this.isDetail === false) {
+    if (this.isDrawingInfo) {
+      if (this.idBlank && confirm('Удалить заготовку?') === true) {
+        this.idBlank = undefined;
+      }
       return;
+    } else {
+      this.addBlankNotMaterial = true;
+      let index: number;
+      switch (this.typeMaterial) {
+        case 1:
+          this.selectRolledBlank();
+          break;
+        case 2:
+          this.selectHardwareBlank();
+          break;
+        case 3:
+          this.selectMaterialBlank();
+          break;
+        case 4:
+          this.selectPurchasedBlank();
+          break;
+      }
     }
-    this.addBlankNotMaterial = true;
-    let index: number;
-    switch (this.typeMaterial) {
-      case 1:
-        this.selectRolledBlank();
-        break;
-      case 2:
-        this.selectHardwareBlank();
-        break;
-      case 3:
-        this.selectMaterialBlank();
-        break;
-      case 4:
-        this.selectPurchasedBlank();
-        break;
-    }
+
   }
 
-
   btnMaterialClick() {
-    if (this.typeMaterial !== 3) {
-      return;
-    }
-    let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
-    if (index === null) {
+    if (this.isDrawingInfo) {
       if (this.materials.length > 0) {
         if (!this.tblNavigator) {
           this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
         }
-        index = this.tblNavigator!.findCheckedRowNumber();
-        if (index) {
+        const index = this.tblNavigator!.findCheckedRowNumber();
+        if (index !== null && confirm('Удалить выбранный материал?') === true) {
           this.materials.splice(index, 1);
         }
       }
       return;
+    } else {
+      if (this.typeMaterial !== 3) {
+        return;
+      }
+      let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
+      if (index === null) {
+        return;
+      }
+      this.addBlankNotMaterial = false;
+      this.selectMaterial(index!);
     }
-    this.addBlankNotMaterial = false;
-    this.selectMaterial(index!);
+
+  }
+
+  btnSpecificationClick() {
+    if (!this.isDrawingInfo) {
+
+      const  item: Partial< Ispecification> = {}
+      switch (this.typeMaterial) {
+        case 1:
+          const index = this.rolledComponent?.tblNavigator?.findCheckedRowNumber();
+          if (index === null) {
+            return;
+          }
+          item.idItem != this.rolledComponent?.materials[index!].id_item;
+          item.type_position=1;
+          break;
+        case 2:
+
+          break;
+        case 3:
+
+          break;
+
+        default:
+          break;
+      }
+    } else {
+
+    }
   }
 
   selectMaterial(index: number) {
@@ -411,10 +455,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateMaterial();
     const modal = new Modal(modalElement, modalOptions)
     modal.show();
-    console.log('select Material specific_units ', this.specific_units)
-    console.log('select Material units ', this.units)
-    console.log('select Material percent ', this.percentMaterial)
-
   }
 
   calculateMaterial() {
@@ -467,7 +507,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           }
         }
       }
-      
+
       if (!this.percentBlank || this.percentBlank <= 0) {
         alert('Введите припуск!');
         return;
@@ -500,13 +540,10 @@ export class DrawingsDatabaseComponent implements OnInit {
       idItem: this.idMaterial!,
       name_material: this.nameMaterial!,
       specific_units: this.specific_units!,
-      x1: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
-      x2: this.otherComponent?.materials[this.otherComponent!.tblNavigator?.findCheckedRowNumber()!].x1 || null,
       percentMaterial: this.specific_units === 3 ? null : this.percentMaterial || null,
       value: this.specific_units === 3 ? +(document.getElementById('amountMaterial') as HTMLInputElement).value : this.valueBlank,
       units: this.units!
     })
-
     this.closeModalMaterial();
   }
 
@@ -531,34 +568,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.units = undefined;
     this.valueMaterial = undefined;
   }
-
-
-  changRadioDraw() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
-      return;
-    }
-    if ((document.getElementById('detail') as HTMLInputElement).checked === true) {
-      (document.getElementById('sb') as HTMLInputElement).checked = false;
-      this.isDetail = true;
-      this.specificatios.length = 0;
-      this.materials.length = 0
-    }
-  }
-
-
-  changRadioSb() {
-    if (confirm("Внимание! При смене типа чертежа введенные данные будут потеряны! Продолжить ?") === false) {
-      return;
-    }
-    if ((document.getElementById('sb') as HTMLInputElement).checked === true) {
-      (document.getElementById('detail') as HTMLInputElement).checked = false;
-      this.isDetail = false;
-      this.materials.length = 0;
-      //this.typeBlank = undefined;
-
-    }
-  }
-
 
   checkBoxIspChange(element: any) {
     if ((element as HTMLInputElement).checked) {
@@ -601,8 +610,12 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   radioPurshacedComponent() {
-    this.typeMaterial = 4
+    this.typeMaterial = 4;
   }
+  radioDrawingsComponent() {
+    this.typeMaterial = 5;
+  }
+
 
   async scan() {
     try {

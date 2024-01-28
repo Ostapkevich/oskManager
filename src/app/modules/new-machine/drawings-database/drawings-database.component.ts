@@ -23,15 +23,20 @@ interface IaddMaterial {
 interface Ispecification {
   ind: number,
   type_position: number,
-  idItem: number,
+  id_item: number,
   numberDrawing: string,
   name_item: string,
   weight: number,
-  quantity: string,
+  quantity: number,
+  useLenth: number,
+  len: number,
+  dw: number,
+  h: number,
   specific_units: number,
   percentMaterial: number | null,
   value: number | null,
-  units: number
+  units: number,
+  plasma: boolean
 }
 
 @Component({
@@ -59,7 +64,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   @ViewChild(ViewDrawingsComponent, { static: false })
   viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
-  specificatios: Ispecification[] = [];
+  specificatios: Partial<Ispecification>[] = [];
   materials: IaddMaterial[] = []; //материалы для данного чертежа
   tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
   idBlank: number | undefined; // id добавленной заготовки
@@ -91,7 +96,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   addBlankNotMaterial: boolean | undefined;
   idDrawing!: number | null;
   isp!: number | null;
-
+  addSpesification: Partial<Ispecification> | undefined = {};
 
 
   async save() {
@@ -172,7 +177,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       drawing.push(Boolean(this.materials.length > 0));
       drawing.push(this.len || null, this.dw || null, this.h || null, this.s || null);
       drawing.push(JSON.stringify(this.filePath));
-      drawing.push((document.getElementById('chboxDetail') as HTMLInputElement).checked);
+      drawing.push(Boolean(this.specificatios.length > 0));
       let blank: any[] = [];
       switch (this.typeBlank) {
         case 1:
@@ -180,6 +185,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.idDrawing || null);
           blank.push(this.idBlank);
           blank.push(this.percentBlank);
+          blank.push(this.plasma);
           break;
         case 2 || 4:
           blank.push(this.id || null);
@@ -315,6 +321,72 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   }
 
+  selectRolledSpecification() {
+    const index = this.rolledComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+
+    this.addSpesification!.type_position = 1;
+    this.addSpesification!.name_item = this.rolledComponent?.materials[index!].name_item!;
+    this.addSpesification!.id_item = this.rolledComponent!.materials[index!].id_item;
+    this.addSpesification!.weight = this.rolledComponent!.materials[index!].weight;
+    this.addSpesification!.quantity = 1;
+    this.addSpesification!.useLenth = this.rolledComponent!.materials[index!].uselength;
+    this.addSpesification!.len = 0;
+    this.addSpesification!.dw = 0;
+    this.addSpesification!.h = 0;
+    if (this.addSpesification!.useLenth === 0) {
+      const t = this.rolledComponent!.materials[index!].t;
+      if (t! < 9) {
+        this.addSpesification!.plasma = false;
+      } else {
+        this.addSpesification!.plasma = true;
+      }
+    }
+    const modalElement: HTMLElement = document.querySelector('#modalRolledSP')!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+    //this.specificatios.push(this.addSpesification);
+  }
+
+  selectMaterialSpecification() {
+    const index = this.rolledComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+
+    this.addSpesification!.type_position = 1;
+    this.addSpesification!.name_item = this.rolledComponent?.materials[index!].name_item!;
+    this.addSpesification!.id_item = this.rolledComponent!.materials[index!].id_item;
+    this.addSpesification!.weight = this.rolledComponent!.materials[index!].weight;
+    this.addSpesification!.quantity = 1;
+    this.addSpesification!.useLenth = this.rolledComponent!.materials[index!].uselength;
+    this.addSpesification!.len = 0;
+    this.addSpesification!.dw = 0;
+    this.addSpesification!.h = 0;
+    if (this.addSpesification!.useLenth === 0) {
+      const t = this.rolledComponent!.materials[index!].t;
+      if (t! < 9) {
+        this.addSpesification!.plasma = false;
+      } else {
+        this.addSpesification!.plasma = true;
+      }
+    }
+    const modalElement: HTMLElement = document.querySelector('#modalRolledSP')!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+    //this.specificatios.push(this.addSpesification);
+  }
+
   calculateBlank(index?: number) {
     if (this.typeMaterial === 3) {
       switch (this.specificUnitsMaterialBlank) {
@@ -415,15 +487,10 @@ export class DrawingsDatabaseComponent implements OnInit {
   btnSpecificationClick() {
     if (!this.isDrawingInfo) {
 
-      const  item: Partial< Ispecification> = {}
+      const item: Partial<Ispecification> = {}
       switch (this.typeMaterial) {
         case 1:
-          const index = this.rolledComponent?.tblNavigator?.findCheckedRowNumber();
-          if (index === null) {
-            return;
-          }
-          item.idItem != this.rolledComponent?.materials[index!].id_item;
-          item.type_position=1;
+          this.selectRolledSpecification();
           break;
         case 2:
 
@@ -520,6 +587,56 @@ export class DrawingsDatabaseComponent implements OnInit {
     (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
   }
 
+  addBlankSP() {
+    if (this.addSpesification!.type_position === 3) {
+      if (this.specificUnitsMaterialBlank === 0 && (!this.m || this.m <= 0)) {
+        alert('Введите массу детали "m" !');
+        return;
+      }
+      if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
+        alert('Введите размер "L" !');
+        return;
+      }
+      if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
+        alert('Введите площадь поверхности "S" !');
+        return;
+      }
+    } else if (this.addSpesification!.type_position === 1) {
+      if (this.addSpesification!.useLenth === 1) {
+        if (!this.addSpesification!.len || this.addSpesification!.len <= 0) {
+          alert('Введите размер "L" !');
+          return;
+        }
+
+      } else {
+        if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
+          alert('Введите размер детали D/B!');
+          return;
+        }
+        if (this.addSpesification!.h && this.addSpesification!.dw <= 0) {
+          alert('Размер Н должен быть больше нуля!');
+          return;
+        }
+        if (!this.addSpesification!.h) {
+          if (confirm('Ввести размер "Н" ?') === true) {
+            return;
+          }
+        }
+
+
+      }
+     // const newPosition = Object.assign(new Object(), this.addSpesification!);
+      this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
+      this.closeModalRolledSP();
+    }
+
+    /*  var keyboardEvent = new KeyboardEvent('keydown', {
+       key: 'Escape',
+       bubbles: true
+     });
+     (document.querySelector('#modalFormRolledSP') as HTMLFormElement).dispatchEvent(keyboardEvent); */
+  }
+
   addMaterail() {
     if (this.specific_units === 0 && (!this.m || this.m <= 0)) {
       alert('Введите массу детали "m" !');
@@ -556,6 +673,16 @@ export class DrawingsDatabaseComponent implements OnInit {
     });
     (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
   }
+
+  closeModalRolledSP() {
+   
+    var keyboardEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true
+    });
+    (document.querySelector('#modalFormRolledSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+  }
+
 
   closeModalMaterial() {
     var keyboardEvent = new KeyboardEvent('keydown', {

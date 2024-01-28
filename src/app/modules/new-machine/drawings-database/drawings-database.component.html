@@ -73,7 +73,7 @@
                 class="border  text-sm  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
         </div>
         <!-- Радио детальный чертеж -->
-       <!--  <div class="col-start-7 col-span-2 mb-3">
+        <!--  <div class="col-start-7 col-span-2 mb-3">
             <div class="basis-1/2 flex ">
                 <input id="chboxDetail" type="checkbox" checked
                     class=" w-4 h-4 text-blue-600   ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
@@ -115,34 +115,55 @@
         </div>
 
         <!-- Радио варианты -->
+
         <div *ngIf="!isDrawingInfo" class="flex gap-4 ">
             <div class="flex items-center ">
-                <input id="roll" type="radio" value="" checked name="disabled-radio" (click)=" radioRolledComponent()"
+                <input *ngIf="radioMaterial===1" #roll id="roll" type="radio" checked name="roll"
+                    (change)="changeRadio(roll,1)"
                     class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                <label for="detail" class="ms-2 text-sm font-medium  text-white">Прокат</label>
+                <input *ngIf="radioMaterial!==1" #roll id="roll" type="radio" name="roll" (change)="changeRadio(roll,1)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="roll" class="ms-2 text-sm font-medium  text-white">Прокат</label>
             </div>
             <div class="flex items-center ">
-                <input id="hard" type="radio" value="" name="disabled-radio" (click)=" radioHardwareComponent()"
+                <input *ngIf="radioMaterial===2" #hard id="hard" type="radio" checked name="hard"
+                    (change)=" changeRadio(hard,2)"
                     class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                <label for="sb" class="ms-2 text-sm font-medium  text-white">Метизы</label>
+                <input *ngIf="radioMaterial!==2" #hard id="hard" type="radio" name="hard"
+                    (change)=" changeRadio(hard,2)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="hard" class="ms-2 text-sm font-medium  text-white">Метизы</label>
             </div>
             <div class="flex items-center ">
-                <input id="mat" type="radio" value="" name="disabled-radio" (click)=" radioMaterialComponent()"
+                <input *ngIf="radioMaterial===3" #mat id="mat" type="radio" checked name="mat"
+                    (change)=" changeRadio(mat,3)"
                     class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                <label for="sb" class="ms-2 text-sm font-medium  text-white">Материалы</label>
+                <input *ngIf="radioMaterial!==3" #mat id="mat" type="radio"  name="mat"
+                    (change)=" changeRadio(mat,3)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="mat" class="ms-2 text-sm font-medium  text-white">Материалы</label>
             </div>
             <div class="flex items-center ">
-                <input id="pursh" type="radio" value="" name="disabled-radio" (click)=" radioPurshacedComponent()"
+                <input *ngIf="radioMaterial===4" #pursh id="pursh" type="radio" checked name="pursh"
+                    (change)=" changeRadio(pursh,4)"
                     class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                <label for="sb" class="ms-2 text-sm font-medium  text-white">Покупные</label>
+                <input *ngIf="radioMaterial!==4" #pursh id="pursh" type="radio" name="pursh"
+                    (change)=" changeRadio(pursh,4)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="pursh" class="ms-2 text-sm font-medium  text-white">Покупные</label>
             </div>
             <div class="flex items-center ">
-                <input id="radioDrawings" type="radio" value="" name="disabled-radio"
-                    (click)=" radioDrawingsComponent()"
+                <input *ngIf="radioMaterial===5" #radioDrawings id="radioDrawings" type="radio" checked
+                    name="radioDrawings" (change)="changeRadio(radioDrawings,5)"
                     class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
-                <label for="sb" class="ms-2 text-sm font-medium  text-white">Чертежи</label>
+                <input *ngIf="radioMaterial!==5" #radioDrawings id="radioDrawings" type="radio" 
+                    name="radioDrawings" (change)="changeRadio(radioDrawings,5)"
+                    class="w-4 h-4 text-blue-600 bg-gray-100   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2bg-gray-700 border-gray-600">
+                <label for="radioDrawings" class="ms-2 text-sm font-medium  text-white">Чертежи</label>
             </div>
         </div>
+
+
 
     </div>
     <hr class="h-px   border-0 bg-gray-600">
@@ -423,9 +444,9 @@
                     <td class="w-3/12 ">Наименование</td>
                     <td class="w-1/12 text-center">Кол-во</td>
                     <td class="w-1/12 text-center">Масса, кг</td>
-                    <td  class="w-0.5/12 text-center">L, мм</td>
-                    <td  class="w-0.5/12 text-center">D(B),мм</td>
-                    <td  class="w-0.5/12 text-center">H, мм</td>
+                    <td class="w-0.5/12 text-center">L, мм</td>
+                    <td class="w-0.5/12 text-center">D(B),мм</td>
+                    <td class="w-0.5/12 text-center">H, мм</td>
                     <td class="w-1/12 text-center">Знач</td>
                     <td class="w-0.5/12 text-center">Ед.изм.</td>
                 </tr>
@@ -464,7 +485,7 @@
                     <td *ngIf="item.type_position===1 && item.useLenth===0" class=" py-1 w-1/12 text-center">
                         {{(item.h?item.dw!*item.h!:item.dw!*item.dw!)/1000000*item.weight!}}
                     </td>
-                    
+
                     <td class=" py-1 w-0.5/12 text-center ">
                         {{ item.len }}
                     </td>
@@ -474,47 +495,47 @@
                     <td class=" py-1 w-0.5/12 text-center ">
                         {{ item.h }}
                     </td>
-                   
-                   <!--  <td *ngif="item.type_position!==3" class=" py-1 w-1/12 text-center">
+
+                    <!--  <td *ngif="item.type_position!==3" class=" py-1 w-1/12 text-center">
                       
                     </td> -->
-                    <td  class=" py-1 w-1/12 text-center">
+                    <td class=" py-1 w-1/12 text-center">
                         {{item.value}}
                     </td>
                     <td *ngIf="item.type_position!==3" class=" py-1 w-0.5/12 text-center">
 
                     </td>
-                  
-                    <td *ngIf="item.type_position===3 && item.units===0" class=" py-1 w-0.5/12 text-center">
+
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===0" class=" py-1 w-0.5/12 text-center">
                         m,кг
                     </td>
-                    <td *ngIf="item.type_position===3 && item.units===1" class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===1" class=" py-1 w-0.5/12 text-center">
                         S,м.кв
                     </td>
-                    <td *ngIf="item.type_position===3 && item.units===2" class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===2" class=" py-1 w-0.5/12 text-center">
                         L,м
                     </td>
-                    <td *ngIf="item.type_position===3 && item.units===3" class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===3" class=" py-1 w-0.5/12 text-center">
                         шт.
                     </td>
-                    <td *ngIf="item.type_position===3 && item.units===4" class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===4" class=" py-1 w-0.5/12 text-center">
                         V,л
                     </td>
-                    <td *ngIf="item.type_position===3 && item.units===5" class=" py-1 w-0.5/12 text-center">
+                    <td *ngIf="item.type_position===3 && item.unitsMaterial===5" class=" py-1 w-0.5/12 text-center">
                         V,м.куб
                     </td>
-                   
+
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
 
-<app-rolled *ngIf="!isDrawingInfo &&  typeMaterial===1" [showAddRolled]="false"></app-rolled>
-<app-hardware *ngIf="!isDrawingInfo &&  typeMaterial===2" [showAddHardware]="false"></app-hardware>
-<app-others *ngIf="!isDrawingInfo &&  typeMaterial===3" [showAddmaterial]="false"></app-others>
-<app-purchased *ngIf="!isDrawingInfo && typeMaterial===4" [showAddPurshaced]="false"></app-purchased>
-<app-viewDrawings *ngIf="!isDrawingInfo && typeMaterial===5" [showElement]="false"></app-viewDrawings>
+<app-rolled *ngIf="!isDrawingInfo &&  radioMaterial===1" [showAddRolled]="false"></app-rolled>
+<app-hardware *ngIf="!isDrawingInfo &&  radioMaterial===2" [showAddHardware]="false"></app-hardware>
+<app-others *ngIf="!isDrawingInfo &&  radioMaterial===3" [showAddmaterial]="false"></app-others>
+<app-purchased *ngIf="!isDrawingInfo && radioMaterial===4" [showAddPurshaced]="false"></app-purchased>
+<app-viewDrawings *ngIf="!isDrawingInfo && radioMaterial===5" [showElement]="false"></app-viewDrawings>
 
 
 
@@ -784,49 +805,79 @@
             <form id="modalFormRolledSP" class="p-4 md:p-5">
                 <div class="grid gap-4 mb-4 grid-cols-3">
                     <div class="col-span-3">
-                        <label for="namePosition" class="block mb-2 text-sm font-medium  text-white">Новая позиция</label>
+                        <label for="namePosition" class="block mb-2 text-sm font-medium  text-white">Новая
+                            позиция</label>
                         <input type="text" name="namePosition" id="namePosition" [ngModel]="addSpesification!.name_item"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Type product name" required="">
                     </div>
+                    <div
+                        *ngIf=" addSpesification?.type_position===2 || addSpesification?.type_position===4 || addSpesification?.type_position===5 ">
+                        <label id="lblWeight" for="WeightPos" class="block mb-2 text-sm font-medium  text-white">Масса,
+                            кг</label>
+                        <input type="number" name="WeightPos" id="WeightPos" disabled="" [(ngModel)]="addSpesification!.weight"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            required="">
+                    </div>
                     <div class="">
-                        <label for="quantPos" class="block mb-2 text-sm font-medium  text-white">Количество</label>
-                        <input type="number" name="quantPos" id="quantPos" [ngModel]="addSpesification!.quantity"
+                        <label for="quantPos" class="block mb-2 text-sm font-medium  text-white">Кол-во, шт.</label>
+                        <input type="number" name="quantPos" id="quantPos" [(ngModel)]="addSpesification!.quantity"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Type product name" required="">
                     </div>
-                    <div *ngIf="addSpesification!.useLenth===1">
+                    <div *ngIf=" addSpesification?.type_position===1 && addSpesification!.useLenth===1">
                         <label id="lbllenPos" for="lenPos"
-                            class="block mb-2 text-sm font-medium  text-white">Длина L,мм</label>
-                        <input type="number" name="lenPos" id="lenPos"
-                            [(ngModel)]="addSpesification!.len"
+                            class="block mb-2 text-sm font-medium  text-white">L,мм</label>
+                        <input type="number" name="lenPos" id="lenPos" [(ngModel)]="addSpesification!.len"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="addSpesification!.useLenth===0">
-                        <label id="lblDpos" for="inpDpos"
-                            class="block mb-2 text-sm font-medium  text-white">Диаметр(ширина) D/B, мм</label>
-                        <input type="number" name="inpDpos" id="inpDpos"
-                            [(ngModel)]="addSpesification!.dw"
+                    <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0">
+                        <label id="lblDpos" for="inpDpos" class="block mb-2 text-sm font-medium  text-white">D/B,
+                            мм</label>
+                        <input type="number" name="inpDpos" id="inpDpos" [(ngModel)]="addSpesification!.dw"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="addSpesification!.useLenth===0">
-                        <label id="lblinpHpos" for="inpHpos"
-                            class="block mb-2 text-sm font-medium  text-white">Высота H, мм</label>
+                    <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0">
+                        <label id="lblinpHpos" for="inpHpos" class="block mb-2 text-sm font-medium  text-white">H,
+                            мм</label>
                         <input type="number" name="inpHpos" id="inpHpos" [(ngModel)]="addSpesification!.h"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
 
-
-                    <div *ngIf="addSpesification!.useLenth===0" class="flex items-center">
+                    <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0"
+                        class="flex items-center">
                         <input *ngIf="plasma===true" checked id="plasmaPos" type="checkbox" value=""
                             class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                         <input *ngIf="addSpesification!.plasma===false" id="plasmaPos" type="checkbox" value=""
                             class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                         <label for="plasmaPos" class="ms-2 text-sm font-medium  text-gray-300">Газоплазм.
                             вырезка</label>
+                    </div>
+                    <div *ngIf="addSpesification?.type_position===3">
+                        <label *ngIf="addSpesification!.unitsMaterial===0" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            m,кг</label>
+                        <label *ngIf="addSpesification!.unitsMaterial===1" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            S,м.кв</label>
+                        <label *ngIf="addSpesification!.unitsMaterial===2" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            L,м</label>
+                        <label *ngIf="addSpesification!.unitsMaterial===3" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            шт.</label>
+                        <label *ngIf="addSpesification!.unitsMaterial===4" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            V,л</label>
+                        <label *ngIf="addSpesification!.unitsMaterial===5" for="amountMaterial"
+                            class="block mb-2 text-sm font-medium  text-white">Материал
+                            V,м.куб</label>
+                        <input type="number" name="inpHpos" id="inpHpos" [(ngModel)]="addSpesification!.value"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
+                            required="">
                     </div>
                 </div>
                 <button type="button" (click)="addBlankSP()"

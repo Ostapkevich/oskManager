@@ -36,7 +36,8 @@ interface Ispecification {
   percentMaterial: number | null,
   value: number | null,
   units: number,
-  plasma: boolean
+  plasma: boolean,
+  unitsMaterial: number
 }
 
 @Component({
@@ -50,7 +51,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   constructor(private appService: AppService) { }
 
   isDrawingInfo: boolean = true;
-  typeMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
+  radioMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
 
 
   @ViewChild(OthersComponent, { static: false })
@@ -355,28 +356,16 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   selectMaterialSpecification() {
-    const index = this.rolledComponent!.tblNavigator?.findCheckedRowNumber();
+    const index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       return;
     }
-
-    this.addSpesification!.type_position = 1;
-    this.addSpesification!.name_item = this.rolledComponent?.materials[index!].name_item!;
-    this.addSpesification!.id_item = this.rolledComponent!.materials[index!].id_item;
-    this.addSpesification!.weight = this.rolledComponent!.materials[index!].weight;
+    this.addSpesification!.type_position = 3;
+    this.addSpesification!.name_item = this.otherComponent?.materials[index!].name_item!;
+    this.addSpesification!.id_item = this.otherComponent!.materials[index!].id_item;
+    this.addSpesification!.unitsMaterial = this.otherComponent?.materials[index!].units!;
+    this.addSpesification!.value = 0;
     this.addSpesification!.quantity = 1;
-    this.addSpesification!.useLenth = this.rolledComponent!.materials[index!].uselength;
-    this.addSpesification!.len = 0;
-    this.addSpesification!.dw = 0;
-    this.addSpesification!.h = 0;
-    if (this.addSpesification!.useLenth === 0) {
-      const t = this.rolledComponent!.materials[index!].t;
-      if (t! < 9) {
-        this.addSpesification!.plasma = false;
-      } else {
-        this.addSpesification!.plasma = true;
-      }
-    }
     const modalElement: HTMLElement = document.querySelector('#modalRolledSP')!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -384,11 +373,31 @@ export class DrawingsDatabaseComponent implements OnInit {
     };
     const modal = new Modal(modalElement, modalOptions);
     modal.show();
-    //this.specificatios.push(this.addSpesification);
+
+  }
+
+  selectHardwareSpecification() {
+    const index = this.hardwareComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+    this.addSpesification!.type_position = 2;
+    this.addSpesification!.name_item = this.hardwareComponent?.materials[index!].name_item!;
+    this.addSpesification!.id_item = this.hardwareComponent!.materials[index!].id_item;
+    this.addSpesification!.weight = this.hardwareComponent?.materials[index!].weight;
+    this.addSpesification!.quantity = 1;
+    const modalElement: HTMLElement = document.querySelector('#modalRolledSP')!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+
   }
 
   calculateBlank(index?: number) {
-    if (this.typeMaterial === 3) {
+    if (this.radioMaterial === 3) {
       switch (this.specificUnitsMaterialBlank) {
         case 0:
           this.valueBlank = this.percentBlank! * this.m!;
@@ -400,7 +409,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           this.valueBlank = +this.percentBlank! + +this.len!;
           return;
       }
-    } else if (this.typeMaterial === 1) {
+    } else if (this.radioMaterial === 1) {
       if (this.useLenth === 0) {
         const t = this.rolledComponent!.materials[index!].t;
         if (t! < 9) {
@@ -440,7 +449,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     } else {
       this.addBlankNotMaterial = true;
       let index: number;
-      switch (this.typeMaterial) {
+      switch (this.radioMaterial) {
         case 1:
           this.selectRolledBlank();
           break;
@@ -471,7 +480,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
       return;
     } else {
-      if (this.typeMaterial !== 3) {
+      if (this.radioMaterial !== 3) {
         return;
       }
       let index = this.otherComponent!.tblNavigator?.findCheckedRowNumber();
@@ -488,15 +497,15 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (!this.isDrawingInfo) {
 
       const item: Partial<Ispecification> = {}
-      switch (this.typeMaterial) {
+      switch (this.radioMaterial) {
         case 1:
           this.selectRolledSpecification();
           break;
         case 2:
-
+          this.selectHardwareSpecification();
           break;
         case 3:
-
+          this.selectMaterialSpecification();
           break;
 
         default:
@@ -588,17 +597,13 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addBlankSP() {
+    if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
+      alert('Введите количество, шт!');
+      return;
+    }
     if (this.addSpesification!.type_position === 3) {
-      if (this.specificUnitsMaterialBlank === 0 && (!this.m || this.m <= 0)) {
-        alert('Введите массу детали "m" !');
-        return;
-      }
-      if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
-        alert('Введите размер "L" !');
-        return;
-      }
-      if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
-        alert('Введите площадь поверхности "S" !');
+      if (!this.addSpesification?.value || this.addSpesification?.value <= 0) {
+        alert('Введите количество материала!');
         return;
       }
     } else if (this.addSpesification!.type_position === 1) {
@@ -607,7 +612,6 @@ export class DrawingsDatabaseComponent implements OnInit {
           alert('Введите размер "L" !');
           return;
         }
-
       } else {
         if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
           alert('Введите размер детали D/B!');
@@ -622,19 +626,11 @@ export class DrawingsDatabaseComponent implements OnInit {
             return;
           }
         }
-
-
       }
-     // const newPosition = Object.assign(new Object(), this.addSpesification!);
-      this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
-      this.closeModalRolledSP();
     }
+    this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
+    this.closeModalRolledSP();
 
-    /*  var keyboardEvent = new KeyboardEvent('keydown', {
-       key: 'Escape',
-       bubbles: true
-     });
-     (document.querySelector('#modalFormRolledSP') as HTMLFormElement).dispatchEvent(keyboardEvent); */
   }
 
   addMaterail() {
@@ -675,7 +671,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   closeModalRolledSP() {
-   
+
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -724,25 +720,28 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateBlank();
   }
 
-  radioRolledComponent() {
-    this.typeMaterial = 1;
-  }
 
-  radioHardwareComponent() {
-    this.typeMaterial = 2;
-  }
+   changeRadio(element: HTMLInputElement, type: number) {
+    this.radioMaterial = type;
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(radioButton => {
+      if (radioButton !== element) {
+        (radioButton as HTMLInputElement).checked = false;
+      }
+    });
+  };
 
-  radioMaterialComponent() {
-    this.typeMaterial = 3;
+/* infoPanelOrAddDataPanel(isDrawingInfo:boolean){
+  this.isDrawingInfo=isDrawingInfo;
+  switch (this.radioMaterial) {
+    case 1:
+      (document.getElementById('roll') as HTMLInputElement).checked===true
+      break;
+  
+    default:
+      break;
   }
-
-  radioPurshacedComponent() {
-    this.typeMaterial = 4;
-  }
-  radioDrawingsComponent() {
-    this.typeMaterial = 5;
-  }
-
+} */
 
   async scan() {
     try {

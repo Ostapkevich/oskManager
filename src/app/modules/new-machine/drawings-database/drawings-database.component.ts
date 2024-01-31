@@ -15,10 +15,13 @@ interface IaddMaterial {
   idDrawing: number | null,
   idItem: number | null,
   name_material: string,
-  specific_units: number,
+  specific_unitsMaterial: number,
   percentMaterial: number | null,
-  value: number | null,
-  units: number
+  valueMaterial: number | null,
+  unitsMaterial: number,
+  lenMaterial: number | null,
+  dw: number | null,
+  hMaterial: number | null,
 }
 interface Ispecification {
   ind: number,
@@ -35,7 +38,6 @@ interface Ispecification {
   specific_units: number,
   percentMaterial: number | null,
   value: number | null,
-  units: number,
   plasma: boolean,
   unitsMaterial: number
 }
@@ -65,39 +67,58 @@ export class DrawingsDatabaseComponent implements OnInit {
   @ViewChild(ViewDrawingsComponent, { static: false })
   viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
-  specificatios: Partial<Ispecification>[] = [];
-  materials: IaddMaterial[] = []; //материалы для данного чертежа
-  tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
+  /* Чертеж */
+  idDrawing!: number | null;
+  isp!: number | null;
+  savePath: string[] = []; // Выбор пути в select для сохранения
+  s: number | undefined;//Масса чертежа
+  m: number = 0;
+  len: number | undefined; // L чертежа
+  dw: number | undefined; // D(B) чертежа
+  h: number | undefined;//H чертежа
+  drawingNamber = '';
+  drawingName = '';
+  filePath: string[] = []; // массив путей где будут хранится чертежи
+
+  /* Заготовка */
+  id: number | undefined; // id  - уникальный ключ строки в таблице заготовки чертежа в базе данных
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
   typeBlank: number | undefined; // для отрисовки шаблона заготовки в зависимости от выбранного типа заготовки
-  nameMaterial: string | undefined; // имя добавленного материалы для чертежа
-  idMaterial: number | undefined; // id добавленного материалы для чертежа
-  id: number | undefined; // id  - уникальный ключ строки в таблице заготовки чертежа в базе данных
-  drawingNamber = '';
-  drawingName = '';
-  filePath: string[] = [];
-  len: number | undefined;
-  dw: number | undefined;
-  h: number | undefined;
-  s: number | undefined;
-  m: number = 0;
-  percentMaterial!: number | undefined;//коэф для материалов
-  specific_units!: number | undefined;
-  units!: number | undefined;
-  percentBlank!: number | undefined;//коэф для заготовки
-  valueBlank!: number;
-  valueMaterial!: number | undefined;
-  specificUnitsMaterialBlank!: number;
-  unitsMaterialBlank!: number | undefined;
-  savePath: string[] = [];
   blankWeight!: number;
   useLenth!: number;
-  plasma: boolean = true;
+  plasma: boolean = true
+
   addBlankNotMaterial: boolean | undefined;
-  idDrawing!: number | null;
-  isp!: number | null;
+  percentBlank!: number | undefined;//коэф для заготовки
+  valueBlank!: number;
+
+  specificUnitsBlank!: number;
+  unitsBlank!: number | undefined;
+
+
+  /* Материал */
+  tblNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
+  nameMaterial: string | undefined; // имя добавленного материалы для чертежа
+  idMaterial: number | undefined; // id добавленного материалы для чертежа
+  materials: IaddMaterial[] = []; //материалы для данного чертежа
+
+  lenMaterial: number | undefined;
+  dwMaterial: number | undefined;
+  hMaterial: number | undefined;
+
+  valueMaterial!: number | undefined;
+  percentMaterial!: number | undefined;//коэф для материалов
+
+  specific_unitsMaterial!: number | undefined;
+  unitsMaterial!: number | undefined;
+
+
+  /* Спецификация */
+  specificatios: Partial<Ispecification>[] = [];
   addSpesification: Partial<Ispecification> | undefined = {};
+
+
 
 
   async save() {
@@ -153,15 +174,11 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
       }
       if (this.typeBlank === 3) {
-        if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
+        if (this.specificUnitsBlank === 1 && (!this.s || this.s <= 0)) {
           alert('Введите площадь поверхности "S" !');
         }
       }
-      if (this.typeBlank === 3) {
-        if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
-          alert('Введите размер "L" !');
-        }
-      }
+
 
 
       for (let i = 0; i < files.length; i++) {
@@ -197,9 +214,9 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.id || null);
           blank.push(this.idDrawing || null);
           blank.push(this.idBlank);
-          blank.push(this.specificUnitsMaterialBlank === 3 ? null : this.percentBlank);
-          blank.push(this.specificUnitsMaterialBlank === 3 ? this.valueBlank : null);
-          blank.push(this.specificUnitsMaterialBlank);
+          blank.push(this.specificUnitsBlank === 3 ? null : this.percentBlank);
+          blank.push(this.specificUnitsBlank === 3 ? this.valueBlank : null);
+          blank.push(this.specificUnitsBlank);
           break;
       }
       let materialsServer: any[] = [];
@@ -210,8 +227,8 @@ export class DrawingsDatabaseComponent implements OnInit {
           this.idDrawing || null,
           material.idItem,
           material.percentMaterial || null,
-          material.value || null,
-          material.specific_units);
+          material.valueMaterial || null,
+          material.specific_unitsMaterial);
       }
 
       const dataServer = {
@@ -270,21 +287,18 @@ export class DrawingsDatabaseComponent implements OnInit {
   selectMaterialBlank() {
     const index = this.otherComponent?.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
-      if (this.idBlank && confirm('Удалить текущую заготовку?') === true) {
-        this.idBlank = undefined;
-        this.nameBlank = '';
-        return;
-      } else {
-        return;
-      }
+      return;
+    }
+    if (this.idBlank && confirm('Заменить заготовку?') === false) {
+      return;
     }
     this.typeBlank = 3;
     this.nameBlank = this.otherComponent?.materials[index!].name_item!;
     this.idBlank = this.otherComponent?.materials[index!].id_item;
-    this.specificUnitsMaterialBlank = this.otherComponent?.materials[index!].specific_units!;
-    this.unitsMaterialBlank = this.otherComponent?.materials[index!].units!;
+    this.specificUnitsBlank = this.otherComponent?.materials[index!].specific_units!;
+    this.unitsBlank = this.otherComponent?.materials[index!].units!;
     this.percentBlank = this.otherComponent?.materials[index!].percent!;
-    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsMaterialBlank);
+    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsBlank);
     const modalElement: HTMLElement = document.querySelector('#material-modal')!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -398,7 +412,7 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   calculateBlank(index?: number) {
     if (this.radioMaterial === 3) {
-      switch (this.specificUnitsMaterialBlank) {
+      switch (this.specificUnitsBlank) {
         case 0:
           this.valueBlank = this.percentBlank! * this.m!;
           return;
@@ -406,7 +420,10 @@ export class DrawingsDatabaseComponent implements OnInit {
           this.valueBlank = this.percentBlank! * this.s!;
           return;
         case 2:
-          this.valueBlank = +this.percentBlank! + +this.len!;
+          if (this.unitsBlank === 1) {
+            this.valueBlank = (this.h! * this.len!) / 1000000;
+          }
+
           return;
       }
     } else if (this.radioMaterial === 1) {
@@ -519,10 +536,10 @@ export class DrawingsDatabaseComponent implements OnInit {
   selectMaterial(index: number) {
     this.nameMaterial = this.otherComponent?.materials[index].name_item!;
     this.idMaterial = this.otherComponent?.materials[index].id_item;
-    this.specific_units = this.otherComponent?.materials[index].specific_units!;
-    this.units = this.otherComponent?.materials[index].units!;
+    this.specific_unitsMaterial = this.otherComponent?.materials[index].specific_units!;
+    this.unitsMaterial = this.otherComponent?.materials[index].units!;
     this.percentMaterial = this.otherComponent?.materials[index].percent!;
-    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_units);
+    (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specific_unitsMaterial);
     const modalElement: HTMLElement = document.querySelector('#material-modal')!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -534,7 +551,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   calculateMaterial() {
-    switch (this.specific_units) {
+    switch (this.specific_unitsMaterial) {
       case 0:
         this.valueMaterial = this.percentMaterial! * this.m!;
         return;
@@ -542,6 +559,9 @@ export class DrawingsDatabaseComponent implements OnInit {
         this.valueMaterial = this.percentMaterial! * this.s!;
         return;
       case 2:
+        if (this.unitsMaterial === 1) {
+          this.valueBlank = (this.h! * this.len!) / 1000000;
+        }
         this.valueMaterial = +this.percentMaterial! + +this.len!;
         return;
     }
@@ -549,17 +569,34 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   addBlank() {
     if (this.typeBlank === 3) {
-      if (this.specificUnitsMaterialBlank === 0 && (!this.m || this.m <= 0)) {
-        alert('Введите массу детали "m" !');
-        return;
+      if (this.specificUnitsBlank === 2 && this.unitsBlank === 2) {
+        if (!this.len || this.len < 0) {
+          alert("Введите L");
+          return;
+        }
+      } else if (this.specificUnitsBlank === 2 && this.unitsBlank === 1) {
+        if (!this.len || this.len < 0 || !this.h || this.h < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
       }
-      if (this.specificUnitsMaterialBlank === 2 && (!this.len || this.len <= 0)) {
-        alert('Введите размер "L" !');
-        return;
+      else if (this.specificUnitsBlank === 0 ) {
+        if (!this.percentBlank || this.percentBlank < 0 || !this.m || this.m < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
       }
-      if (this.specificUnitsMaterialBlank === 1 && (!this.s || this.s <= 0)) {
-        alert('Введите площадь поверхности "S" !');
-        return;
+      else if (this.specificUnitsBlank === 1 ) {
+        if (!this.percentBlank || this.percentBlank < 0 || !this.s || this.s< 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      else {
+        if (!this.valueBlank || this.valueBlank < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
       }
     } else if (this.typeBlank === 1) {
       if (this.useLenth === 1) {
@@ -634,17 +671,34 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   addMaterail() {
-    if (this.specific_units === 0 && (!this.m || this.m <= 0)) {
-      alert('Введите массу детали "m" !');
-      return;
+    if (this.specific_unitsMaterial === 2 && this.unitsMaterial === 2) {
+      if (!this.lenMaterial || this.lenMaterial < 0) {
+        alert("Введите L");
+        return;
+      }
+    } else if (this.specific_unitsMaterial === 2 && this.unitsMaterial === 1) {
+      if (!this.lenMaterial|| this.lenMaterial < 0 || !this.hMaterial || this.hMaterial < 0) {
+        alert('Введите количество материала!');
+        return;
+      }
     }
-    if (this.specific_units === 2 && (!this.len || this.len <= 0)) {
-      alert('Введите размер "L" !');
-      return;
+    else if (this.specific_unitsMaterial === 0 ) {
+      if (!this.percentMaterial || this.percentMaterial < 0 || !this.m || this.m < 0) {
+        alert('Введите количество материала!');
+        return;
+      }
     }
-    if (this.specific_units === 1 && (!this.s || this.s <= 0)) {
-      alert('Введите площадь поверхности "S" !');
-      return;
+    else if (this.specific_unitsMaterial === 1 ) {
+      if (!this.percentMaterial || this.percentMaterial < 0 || !this.s || this.s< 0) {
+        alert('Введите количество материала!');
+        return;
+      }
+    }
+     else {
+      if (!this.valueMaterial || this.valueMaterial < 0) {
+        alert('Введите количество материала!');
+        return;
+      }
     }
 
     this.materials.push({
@@ -652,10 +706,13 @@ export class DrawingsDatabaseComponent implements OnInit {
       idDrawing: this.idDrawing || null,
       idItem: this.idMaterial!,
       name_material: this.nameMaterial!,
-      specific_units: this.specific_units!,
-      percentMaterial: this.specific_units === 3 ? null : this.percentMaterial || null,
-      value: this.specific_units === 3 ? +(document.getElementById('amountMaterial') as HTMLInputElement).value : this.valueBlank,
-      units: this.units!
+      unitsMaterial: this.unitsMaterial!,
+      percentMaterial: this.specific_unitsMaterial === 2 ? null : this.percentMaterial || null,
+      valueMaterial: this.unitsMaterial === 2 ?null: +(document.getElementById('amountMaterial') as HTMLInputElement).value ,
+      specific_unitsMaterial: this.specific_unitsMaterial!,
+      lenMaterial: this.lenMaterial || null,
+      dw: this.dwMaterial || null,
+      hMaterial: this.hMaterial || null,
     })
     this.closeModalMaterial();
   }
@@ -686,9 +743,9 @@ export class DrawingsDatabaseComponent implements OnInit {
       bubbles: true
     });
     (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.specific_units = undefined;
+    this.specific_unitsMaterial = undefined;
     this.percentMaterial = undefined;
-    this.units = undefined;
+    this.unitsMaterial = undefined;
     this.valueMaterial = undefined;
   }
 
@@ -702,26 +759,26 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
-  changeMethodMaterial() {
+  methodCalculationChange() {
 
-    this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+    this.specific_unitsMaterial = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
     if (this.addBlankNotMaterial === true) {
-      this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+      this.specificUnitsBlank = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
       this.calculateBlank();
     } else {
-      this.specific_units = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
+      this.specific_unitsMaterial = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
       this.calculateMaterial();
     }
 
   }
 
   changeMethodRolled() {
-    this.specificUnitsMaterialBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
+    this.specificUnitsBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
     this.calculateBlank();
   }
 
 
-   changeRadio(element: HTMLInputElement, type: number) {
+  changeRadio(element: HTMLInputElement, type: number) {
     this.radioMaterial = type;
     const radioButtons = document.querySelectorAll('input[type="radio"]');
     radioButtons.forEach(radioButton => {
@@ -731,17 +788,17 @@ export class DrawingsDatabaseComponent implements OnInit {
     });
   };
 
-/* infoPanelOrAddDataPanel(isDrawingInfo:boolean){
-  this.isDrawingInfo=isDrawingInfo;
-  switch (this.radioMaterial) {
-    case 1:
-      (document.getElementById('roll') as HTMLInputElement).checked===true
-      break;
-  
-    default:
-      break;
-  }
-} */
+  /* infoPanelOrAddDataPanel(isDrawingInfo:boolean){
+    this.isDrawingInfo=isDrawingInfo;
+    switch (this.radioMaterial) {
+      case 1:
+        (document.getElementById('roll') as HTMLInputElement).checked===true
+        break;
+    
+      default:
+        break;
+    }
+  } */
 
   async scan() {
     try {
@@ -752,7 +809,13 @@ export class DrawingsDatabaseComponent implements OnInit {
       alert(error);
     }
   }
-
+  test() {
+    console.log('addBlankNotMaterial ', this.addBlankNotMaterial);
+    console.log('specificUnitsBlank ', this.specificUnitsBlank);
+    console.log('unitsBlank ', this.unitsBlank);
+    console.log('specific_unitsMaterial ', this.specific_unitsMaterial);
+    console.log('uniunitsMaterials ', this.unitsMaterial);
+  }
 
   ngOnInit(): void {
     let event = new Event("click");

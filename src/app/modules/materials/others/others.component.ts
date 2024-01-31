@@ -132,13 +132,13 @@ export class OthersComponent implements OnInit {
       } 
 
   specificUnitsChange(target: any){
-    const index = this.tblNavigator!.findRowSelect(target, 6);
+    const index = this.tblNavigator!.findRowSelect(target, 5);
     this.materials[index].specific_units = +target.value; 
   }
 
   unitsChange(target: any) {
-    const index = this.tblNavigator!.findRowSelect(target, 5);
-     this.materials[index].units = +target.value; 
+    const index = this.tblNavigator!.findRowSelect(target, 7);
+     this.materials[index].units = target.value; 
   }
 
   

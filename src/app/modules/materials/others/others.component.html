@@ -48,8 +48,8 @@
                                 d="M1 5.917 5.724 10.5 15 1.5" />
                         </svg>
                     </td>
-                    <td  *ngIf="showAddmaterial===true"  class="w-0.5/12 text-center">id</td>
-                    <td  *ngIf="showAddmaterial===false"  class="w-1/12 text-center">id</td>
+                    <td *ngIf="showAddmaterial===true" class="w-0.5/12 text-center">id</td>
+                    <td *ngIf="showAddmaterial===false" class="w-1/12 text-center">id</td>
                     <td *ngIf="showAddmaterial===true" class="w-6/12">Наименование</td>
                     <td *ngIf="showAddmaterial===false" class="w-7/12">Наименование</td>
                     <td class="w-0,5/12 text-center"> X1</td>
@@ -73,7 +73,7 @@
         </table>
     </div>
     <div class="flex justify-end  items-end mt-4">
-        <p  class="mr-4 text-2xl  text-white">Страница {{page}}</p>
+        <p class="mr-4 text-2xl  text-white">Страница {{page}}</p>
         <button (click)="firstPage()"
             class="flex items-center justify-center px-3 h-8 ms-0 leading-tight   border border-e-0  bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white">Начало</button>
         <button (click)="previousPage()"
@@ -100,14 +100,14 @@
 <ng-template #readOnlyTemplate let-item>
     <td class="py-1 w-0.5/12">
         <div class="flex justify-center">
-            <input  type="checkbox" (change)="tblNavigator?.boxChange($event)" id={{item.id_item}}
+            <input type="checkbox" (change)="tblNavigator?.boxChange($event)" id={{item.id_item}}
                 class="w-4 h-4 text-blue-600   rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
         </div>
     </td>
-    <td  *ngIf="showAddmaterial===true" class=" py-1 w-0.5/12 text-center ">
+    <td *ngIf="showAddmaterial===true" class=" py-1 w-0.5/12 text-center ">
         {{item.id_item}}
     </td>
-    <td  *ngIf="showAddmaterial===false" class=" py-1 w-1/12 text-center ">
+    <td *ngIf="showAddmaterial===false" class=" py-1 w-1/12 text-center ">
         {{item.id_item}}
     </td>
     <td *ngIf="showAddmaterial===true" class=" py-1 w-6/12">
@@ -122,16 +122,13 @@
     <td class=" py-1 w-0.5/12 text-center">
         {{item.x2}}
     </td>
-      <td *ngIf="item.specific_units===0" class=" py-1 w-1/1 ">
-       % от m, кг
+    <td *ngIf="item.specific_units===0" class=" py-1 w-1/1 ">
+        % от m, кг
     </td>
     <td *ngIf="item.specific_units===1" class=" py-1 w-1/12">
         % от S, м.кв
     </td>
-       <td *ngIf="item.specific_units===2" class=" py-1 w-1/12">
-        Lдет+, мм
-    </td>
-    <td *ngIf="item.specific_units===3" class=" py-1 w-1/12">
+    <td *ngIf="item.specific_units===2" class=" py-1 w-1/12">
         Ввод данных
     </td>
     <td class=" py-1 w-0.5/12 text-center">
@@ -184,14 +181,13 @@
         <input class="border   block w-full   text-black  bg-gray-50" type="text" autocomplete="off"
             [(ngModel)]="item.x2" />
     </td>
-  
+
     <td class=" w-1/12 text-center">
         <select id="selectSpesificUnits" (change)="specificUnitsChange($event.target)"
             class="border p-0.5  text-sm   block   bg-gray-50 border-gray-900 placeholder-gray-400 text-black focus:ring-blue-500 focus:border-blue-500">
             <option value=0>% от m, кг</option>
             <option value=1>% от S, м.кв</option>
-            <option value=2>Lдет+, мм</option>
-            <option value=3>Ввод данных</option>
+            <option value=2>Ввод данных</option>
         </select>
     </td>
     <td class=" w-0.5/12">
@@ -209,13 +205,12 @@
             <option value=5>V, м.куб</option>
         </select>
     </td>
-   
+
     <td class=" w-1.5/12 text-center">
         <div class="flex justify-center gap-2">
             <button class="font-medium  text-blue-500 hover:underline"
                 (click)="updateMaterial($event)">Сохранить</button>
-            <button class="font-medium  text-blue-500 hover:underline"
-                (click)="escape($event.target)">Отменить</button>
+            <button class="font-medium  text-blue-500 hover:underline" (click)="escape($event.target)">Отменить</button>
         </div>
 
     </td>

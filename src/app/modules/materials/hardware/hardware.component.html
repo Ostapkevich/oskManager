@@ -69,7 +69,7 @@
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblHardware" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits" >
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let hardware of materials">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let hardware of collections">
                     <ng-template [ngTemplateOutlet]="loadTemplate(hardware)"
                         [ngTemplateOutletContext]="{ $implicit: hardware}">
                     </ng-template>

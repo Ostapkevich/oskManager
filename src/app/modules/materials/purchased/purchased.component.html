@@ -62,7 +62,7 @@
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblMaterials" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of materials">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of collections">
                     <ng-template [ngTemplateOutlet]="loadTemplate(item)" [ngTemplateOutletContext]="{ $implicit: item}">
                     </ng-template>
                 </tr>

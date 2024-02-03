@@ -23,17 +23,10 @@ interface Imaterial {
   value?:number;
 }
 
-interface IaddMaterial {
-  name_item: string,
-  id_type: number,
-  x1?: number;
-  x2?: number;
-  weight: number
-  
-}
+
 
 interface IMaterials {
   material_type:ImaterialType[];
   materials:Imaterial[];
 }
-export { ImaterialType, Imaterial, IMaterials, IaddMaterial}
+export { ImaterialType, Imaterial, IMaterials}

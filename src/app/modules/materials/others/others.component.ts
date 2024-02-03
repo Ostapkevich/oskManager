@@ -20,7 +20,7 @@ export class OthersComponent implements OnInit {
    }
   @Input() showAddmaterial: Boolean = true;
   materialType: ImaterialType[] | undefined;
-  materials: Imaterial[] = [];
+  collections: Imaterial[] = [];
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
   @ViewChild('editTemplate', { static: false })
@@ -37,7 +37,7 @@ export class OthersComponent implements OnInit {
   }
 
   nextPage() {
-    if (this.materials.length < 20) {
+    if (this.collections.length < 20) {
       return;
     }
     this.page++;
@@ -59,7 +59,7 @@ export class OthersComponent implements OnInit {
   }
 
   findMaterials() {
-    this.materials.length = 0;
+    this.collections.length = 0;
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectMaterials') as HTMLSelectElement).value;
     if (str.length > 0) {
@@ -87,10 +87,10 @@ export class OthersComponent implements OnInit {
       } else {
         data = await this.appService.query('get', `http://localhost:3000/materials/getMaterial/${materialtype}/${position}`);
       }
-      this.materials!.length = 0;
+      this.collections!.length = 0;
       if ((data.materials as []).length !== 0) {
-        this.materials = data.materials;
-        for (const item of this.materials) {
+        this.collections = data.materials;
+        for (const item of this.collections) {
           item.isEdited = false;
         }
       }
@@ -100,45 +100,45 @@ export class OthersComponent implements OnInit {
   }
 
   tableEditRow(event: Event) {
-    for (const item of this.materials) {
+    for (const item of this.collections) {
       if (item.isEdited === true) {
         alert('Редактирование допускается по одной строке!');
         return;
       }
     }
     const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement,8);
-    this.materials[index].isEdited = true;
-    this.materials[index].initial_name_item = this.materials[index].name_item;
-    this.materials[index].initial_x1= this.materials[index].x1;
-    this.materials[index].initial_x2= this.materials[index].x2;
-    this.materials[index].initial_units = this.materials[index].units;
-    this.materials[index].initial_specific_units = this.materials[index].specific_units;
-    this.materials[index].initial_percent = this.materials[index].percent;
-    this.materials[index].units = 0;
-    this.materials[index].specific_units = 0;
+    this.collections[index].isEdited = true;
+    this.collections[index].initial_name_item = this.collections[index].name_item;
+    this.collections[index].initial_x1= this.collections[index].x1;
+    this.collections[index].initial_x2= this.collections[index].x2;
+    this.collections[index].initial_units = this.collections[index].units;
+    this.collections[index].initial_specific_units = this.collections[index].specific_units;
+    this.collections[index].initial_percent = this.collections[index].percent;
+    this.collections[index].units = 0;
+    this.collections[index].specific_units = 0;
   }
 
    escape(target: any) {
     const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 8,1);
-    this.materials[index].isEdited = false;
-    this.materials[index].name_item=this.materials[index].initial_name_item;
-    this.materials[index].x1=this.materials[index].initial_x1;
-    this.materials[index].x2=this.materials[index].initial_x2 ;
-    this.materials[index].units=this.materials[index].initial_units;
-    this.materials[index].specific_units=this.materials[index].initial_specific_units;
-    this.materials[index].percent=this.materials[index].initial_percent ;
-    this.materials[index].units = this.materials[index].initial_units;
-    this.materials[index].specific_units = this.materials[index].initial_specific_units;
+    this.collections[index].isEdited = false;
+    this.collections[index].name_item=this.collections[index].initial_name_item;
+    this.collections[index].x1=this.collections[index].initial_x1;
+    this.collections[index].x2=this.collections[index].initial_x2 ;
+    this.collections[index].units=this.collections[index].initial_units;
+    this.collections[index].specific_units=this.collections[index].initial_specific_units;
+    this.collections[index].percent=this.collections[index].initial_percent ;
+    this.collections[index].units = this.collections[index].initial_units;
+    this.collections[index].specific_units = this.collections[index].initial_specific_units;
       } 
 
   specificUnitsChange(target: any){
     const index = this.tblNavigator!.findRowSelect(target, 5);
-    this.materials[index].specific_units = +target.value; 
+    this.collections[index].specific_units = +target.value; 
   }
 
   unitsChange(target: any) {
     const index = this.tblNavigator!.findRowSelect(target, 7);
-     this.materials[index].units = target.value; 
+     this.collections[index].units = target.value; 
   }
 
   
@@ -149,13 +149,13 @@ export class OthersComponent implements OnInit {
       const percentPattern: RegExp = /^\d{1,3}(\.\d{1,2})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.tblNavigator!.findRowInsertedButton(event.target as HTMLButtonElement,8,0);
-      const name_material = this.materials[index].name_item;
-      const x1 = this.materials[index].x1;
-      const x2 = this.materials[index].x2;
-      const percent = this.materials[index].percent;
-      const units=this.materials[index].units;
-      const specific_units=this.materials[index].specific_units;
-      const id_material = this.materials[index].id_item
+      const name_material = this.collections[index].name_item;
+      const x1 = this.collections[index].x1;
+      const x2 = this.collections[index].x2;
+      const percent = this.collections[index].percent;
+      const units=this.collections[index].units;
+      const specific_units=this.collections[index].specific_units;
+      const id_material = this.collections[index].id_item
 
       if (name_material === '') {
         alert('Не введено название материала!');
@@ -190,7 +190,7 @@ export class OthersComponent implements OnInit {
       }
       const data = await this.appService.query('put', `http://localhost:3000/materials/updateMaterial`, dataServer);
       if (data.response === 'ok') {
-        this.materials[index].isEdited = false;
+        this.collections[index].isEdited = false;
         alert('Данные сохранены!');
         this.findMaterials();
       } else {
@@ -261,9 +261,9 @@ export class OthersComponent implements OnInit {
       if (i == null) {
         return;
       }
-      const id = this.materials[i].id_item;
+      const id = this.collections[i].id_item;
       await this.appService.query('delete', `http://localhost:3000/materials/deleteMaterial`, [id]);
-     this.materials.splice(i,1);
+     this.collections.splice(i,1);
     } catch (error: any) {
       alert(error);
     }
@@ -277,8 +277,8 @@ export class OthersComponent implements OnInit {
       }
 
       if ((data.materials as []).length !== 0) {
-        this.materials = data.materials;
-        for (const item of this.materials) {
+        this.collections = data.materials;
+        for (const item of this.collections) {
           item.isEdited = false;
         }
 

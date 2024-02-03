@@ -5,10 +5,10 @@ import { AppService } from 'src/app/app.service';
 import { FormsModule, NgForm } from '@angular/forms';
 
 interface Idrawing {
-  idDrawing: number,
-  numberDrawing: string,
+  id_item: number,
+  name_item: string,
   isp:number,
-  nameDrawing: string,
+  number_item: string,
   weight: number,
   path:string[],
 }
@@ -25,15 +25,15 @@ export class ViewDrawingsComponent implements OnInit {
   constructor(private appService: AppService) { }
 
   idDrawing: number | undefined;
-  numberDrawing: string = '';
-  nameDrawing: string = '';
+  number_item: string = '';
+  name_item: string = '';
  min: number | undefined;
   max: number | undefined;
  @Input() showElement=true;
 
 
   isDrawingInfo = false;
-  searchedDrawings: Idrawing[] = [];
+  collections: Idrawing[] = [];
   page: number = 1;
   tblNavigator: TableNavigator | undefined;
   showFull = true;
@@ -43,16 +43,16 @@ export class ViewDrawingsComponent implements OnInit {
 
   async onSubmit() {
     try {
-    this.searchedDrawings.length=0;
+    this.collections.length=0;
       const params = <any>{};
       if (this.idDrawing) {
         params.idDrawing = +this.idDrawing;
       }
-      if (this.numberDrawing) {
-        params.numberDrawing = `%${this.numberDrawing}%`;
+      if (this.number_item) {
+        params.numberDrawing = `%${this.number_item}%`;
       }
-      if (this.nameDrawing) {
-        params.nameDrawing = `%${this.nameDrawing}%`;
+      if (this.name_item) {
+        params.nameDrawing = `%${this.name_item}%`;
       }
       if (this.min) {
         params.min = +this.min;
@@ -65,7 +65,7 @@ export class ViewDrawingsComponent implements OnInit {
       }
       const data = await this.appService.query('get', `http://localhost:3000/viewDrawing/selectDrawings`, params);
       if ((data.drawings as []).length !== 0) {
-        this.searchedDrawings = data.drawings;
+        this.collections = data.drawings;
         if (!this.tblNavigator) {
           this.tblNavigator = new TableNavigator(document.getElementById('tblDrawings') as HTMLTableElement, 0);
         }

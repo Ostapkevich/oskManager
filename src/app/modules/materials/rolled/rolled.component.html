@@ -68,7 +68,7 @@
         <!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица --><!--  Таблица -->
         <table id="tblRolled" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodyUnits">
-                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of materials">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let rolled of this.collections">
                     <ng-template [ngTemplateOutlet]="loadTemplate(rolled)"
                         [ngTemplateOutletContext]="{ $implicit: rolled}">
                     </ng-template>

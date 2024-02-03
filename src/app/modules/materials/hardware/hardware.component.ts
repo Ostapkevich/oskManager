@@ -21,7 +21,7 @@ export class HardwareComponent implements OnInit {
   @Input() showAddHardware: Boolean = true;
   hardwareType: IhardwareType[] | undefined;
   steels: Isteel[] | undefined
-  materials: Ihardware[] = [];
+  collections: Ihardware[] = [];
   index: number = 1;
   @ViewChild('readOnlyTemplate', { static: false })
   readOnlyTemplate!: TemplateRef<any>;
@@ -42,7 +42,7 @@ export class HardwareComponent implements OnInit {
   }
 
   nextPage() {
-    if (this.materials.length < 20) {
+    if (this.collections.length < 20) {
       return;
     }
     this.page++;
@@ -64,7 +64,7 @@ export class HardwareComponent implements OnInit {
   }
 
   findHardwares() {
-    this.materials.length = 0;
+    this.collections.length = 0;
     const str = (document.getElementById('searchMaterial') as HTMLInputElement).value;
     const rolledtype = (document.getElementById('selectHardware') as HTMLSelectElement).value;
     const steel = (document.getElementById('selectSteel') as HTMLSelectElement).value;
@@ -84,27 +84,27 @@ export class HardwareComponent implements OnInit {
   }
 
   tableEditRow(event: Event) {
-    for (const item of this.materials) {
+    for (const item of this.collections) {
       if (item.isEdited === true) {
         alert('Редактирование допускается по одной строке!');
         return;
       }
     }
     const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
-    this.materials[index].isEdited = true;
-    this.materials[index].initial_L = this.materials[index].L;
-    this.materials[index].initial_d = this.materials[index].d;
-    this.materials[index].initial_name_item = this.materials[index].name_item;
-    this.materials[index].initial_weight = this.materials[index].weight;
+    this.collections[index].isEdited = true;
+    this.collections[index].initial_L = this.collections[index].L;
+    this.collections[index].initial_d = this.collections[index].d;
+    this.collections[index].initial_name_item = this.collections[index].name_item;
+    this.collections[index].initial_weight = this.collections[index].weight;
   }
 
   escape(target: any) {
     const index = this.tblNavigator!.findRowInsertedButton(target as HTMLButtonElement, 7, 1);
-    this.materials[index].isEdited = false;
-    this.materials[index].L = this.materials[index].initial_L;
-    this.materials[index].d = this.materials[index].initial_d;
-    this.materials[index].name_item = this.materials[index].initial_name_item;
-    this.materials[index].weight = this.materials[index].initial_weight;
+    this.collections[index].isEdited = false;
+    this.collections[index].L = this.collections[index].initial_L;
+    this.collections[index].d = this.collections[index].initial_d;
+    this.collections[index].name_item = this.collections[index].initial_name_item;
+    this.collections[index].weight = this.collections[index].initial_weight;
   }
 
   async loadHardwares(rolledtype: number, steel: number, position: number, str?: string) {
@@ -117,10 +117,10 @@ export class HardwareComponent implements OnInit {
       } else {
         data = await this.appService.query('get', `http://localhost:3000/hardware/getHardware/${rolledtype}/${steel}/${position}`);
       }
-      this.materials!.length = 0;
+      this.collections!.length = 0;
       if ((data.hardwares as []).length !== 0) {
-        this.materials = data.hardwares;
-        for (const item of this.materials) {
+        this.collections = data.hardwares;
+        for (const item of this.collections) {
           item.isEdited = false;
         }
       }
@@ -134,11 +134,11 @@ export class HardwareComponent implements OnInit {
       const weightPttern: RegExp = /^\d{0,4}(?:\.\d{1,3})?$/;
       const numberPattern: RegExp = /^\d+$/;
       const index = this.tblNavigator!.findRowButton(event.target as HTMLButtonElement, 7);
-      const name_rolled = this.materials[index].name_item;
-      const d = this.materials[index].d;
-      const weight = this.materials[index].weight;
-      const t = this.materials[index].L;
-      const id_rolled = this.materials[index].id_item
+      const name_rolled = this.collections[index].name_item;
+      const d = this.collections[index].d;
+      const weight = this.collections[index].weight;
+      const t = this.collections[index].L;
+      const id_rolled = this.collections[index].id_item
 
       if (name_rolled === '') {
         alert('Не введено название!');
@@ -171,7 +171,7 @@ export class HardwareComponent implements OnInit {
       }
       const data = await this.appService.query('put', 'http://localhost:3000/hardware/updateHardware', dataServer);
       if (data.response === 'ok') {
-        this.materials[index].isEdited = false;
+        this.collections[index].isEdited = false;
         alert('Данные сохранены!');
         this.findHardwares();
       } else {
@@ -238,8 +238,8 @@ export class HardwareComponent implements OnInit {
       if (i == null) {
         return;
       }
-      await this.appService.query('delete', `http://localhost:3000/hardware/deleteHardware`, [this.materials[i].id_item]);
-      this.materials.splice(i, 1);
+      await this.appService.query('delete', `http://localhost:3000/hardware/deleteHardware`, [this.collections[i].id_item]);
+      this.collections.splice(i, 1);
     } catch (error: any) {
       alert(error);
     }
@@ -255,8 +255,8 @@ export class HardwareComponent implements OnInit {
         this.steels = data.steels;
       }
       if ((data.hardwares as []).length !== 0) {
-        this.materials = data.hardwares;
-        for (const item of this.materials) {
+        this.collections = data.hardwares;
+        for (const item of this.collections) {
           item.isEdited = false;
         }
 

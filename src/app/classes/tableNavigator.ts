@@ -89,6 +89,20 @@ export class TableNavigator {
         return null;
     }
 
+    public rowByNumberCellChecked( target:any,numberCellChek:number): number  {
+        const rowsCollection = this.table.rows;
+        let i=0
+        if (rowsCollection) {
+            for (let i = 0; i < rowsCollection.length; i++) {
+                const elem=rowsCollection[i].cells[numberCellChek].firstChild;
+                if (elem && elem===target ) {
+                   break;
+                }
+            }
+        }
+        return i;
+    }
+
     public moveCheckbox(isMoveUp: boolean): number | null {
         const collection: any = this.table.rows;
         let j: number;

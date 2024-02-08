@@ -220,7 +220,7 @@
                                 <td *ngIf="specificUnitsBlank===2 && unitsBlank===1" class="w-1/12 text-center">{{h}}
                                 </td>
                                 <td *ngIf="specificUnitsBlank===2 && unitsBlank===1" class=" py-1 w-1/12 text-center">
-                                    {{len!*h!/1000000}}
+                                    {{len!*h!/1000000 | number:"1.0-5"}}
                                 </td>
                                 <td *ngIf="specificUnitsBlank!==2" id="percent" class=" py-1 w-1/12 text-center">
                                     {{percentBlank}}
@@ -245,7 +245,11 @@
                 <!--  Добавленная заготовка из проката -->
                 <div *ngIf="isDrawingInfo && idBlank && typeBlank===1"
                     class="mt-4 w-full relative overflow-x-auto shadow-md ">
-                    <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+                    <div class="flex justify-between">
+                        <label class="block mb-2 mt-3 text-sm font-medium  text-white">Заготовка</label>
+                        <button type="button" class=" self-center px-3 py-1 text-xs font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Сохранить изменения</button>
+                    </div>
+                   
                     <table class="w-full" id="tblBlank">
                         <tbody class="text-sm  bg-gray-700 text-gray-400 ">
                             <tr>
@@ -282,17 +286,17 @@
                                 <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
                                 <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
                                 <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
-                                    {{blankWeight*(+percentBlank!+ +len!)/1000}}
+                                    {{blankWeight*(+percentBlank!+ +len!)/1000 | number:"1.0-3"}}
                                 </td>
                                 <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
-                                    {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000}}
+                                    {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000 | number:"1.0-3"}}
                                 </td>
                                 <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
-                                    {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000}}
+                                    {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000 | number:"1.0-3"}}
                                 </td>
                                 <td *ngIf="typeBlank===1 && useLenth===0 " class=" py-1 w-2/12 text-center">
-                                    <input #checkBoxPl [checked]="plasma" id="plasmaSp" type="checkbox"
-                                        (change)="plasmaBlankChange(checkBoxPl)"
+                                    <input #checkBoxPl  id="plasmaSp" type="checkbox"
+                                        (change)="plasmaBlankChange(checkBoxPl)" name="plasmaSp" [(ngModel)]="plasma"
                                         class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
 
                                 </td>
@@ -867,9 +871,9 @@
                             required="">
                     </div>
                     <div *ngIf="useLenth===0" class="flex items-center">
-                        <input *ngIf="plasma===true" checked id="plasma" type="checkbox" value=""
+                        <input *ngIf="plasma==true" checked id="plasma" type="checkbox" value=""
                             class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
-                        <input *ngIf="plasma===false" id="plasma" type="checkbox" value=""
+                        <input *ngIf="plasma==false" id="plasma" type="checkbox" value=""
                             class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                         <label for="plasma" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Газоплазм.
                             вырезка</label>

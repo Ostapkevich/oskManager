@@ -336,8 +336,14 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.id || null);
           blank.push(this.idDrawing);
           blank.push(this.idBlank);
-          blank.push(this.len || null, this.dw || null, this.h || null);
+          blank.push(this.useLenth===1?this.len : null );
+          blank.push(this.useLenth===1?null:this.dw );
+          blank.push(this.useLenth===1?null:this.h) ;
           blank.push(this.plasma);
+          blank.push(this.percentBlank);
+         this.len=this.useLenth===1?this.len : undefined ;
+         this.dw=this.useLenth===1?undefined:this.dw ;
+         this.h=this.useLenth===1?undefined:this.h ;
           break;
         case 2 || 4:
           blank.push(this.id || null);
@@ -412,19 +418,36 @@ export class DrawingsDatabaseComponent implements OnInit {
 
         this.clearDrawing();
 
-        if (data?.info) {
-          this.idDrawing = data.info.idDrawing;
-          this.drawingNamber = data.info.numberDrawing;
-          this.drawingName = data.info.nameDrawing;
-          this.m = data.info.weight;
-          this.s = data.info.s;
-          if (data.info.path && data.info.path.length > 0) {
-            this.filePath = data.info.path;
+        if (data) {
+          this.idDrawing = data.drawing.idDrawing;
+          this.drawingNamber = data.drawing.numberDrawing;
+          this.drawingName = data.drawing.nameDrawing;
+          this.m = data.drawing.weight;
+          this.s = data.drawing.s;
+          this.typeBlank = data.drawing.type_blank;
+          if (data.drawing.path && data.drawing.path.length > 0) {
+            this.filePath = data.drawing.path;
           }
           (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${this.filePath.length} шт.`;
         } else {
           (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` 0 шт.`;
         }
+        /* Заготовка  */
+        if (data.blank) {
+          this.id = data.blank.id;
+          this.idBlank = data.blank.id_item;
+          this.blankWeight = data.blank.weight;
+          this.nameBlank = data.blank.name_item;
+          this.useLenth = data.blank.uselength;
+          this.len = data.blank.L;
+          this.dw = data.blank.d_b;
+          this.h = data.blank.h;
+          this.plasma = Boolean(data.blank.plasma);
+          this.percentBlank = data.blank.allowance
+          // this.calculateBlank(1, this.useLenth?data.blank.d:data.blank.t, true);
+        }
+
+
         this.dataChanged = false;
         //this.blankChange=false;
         this.materialChange = false;
@@ -488,17 +511,18 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (index === null) {
       return;
     }
+    if (this.idBlank && confirm('Чертеж уже содержит заготовку! Заменить заготовку?') === false) {
+      return;
+    }
     this.nameBlank = materialComponent.collections[index!].name_item!;
     this.idBlank = materialComponent.collections[index!].id_item;
     if (materialComponent !== this.otherComponent) {
       this.blankWeight = materialComponent.collections[index!].weight;
       if (materialComponent === this.hardwareComponent || materialComponent === this.purchasedComponent) {
-
         return;
       }
       if (materialComponent === this.rolledComponent) {
         this.useLenth = this.rolledComponent!.collections[index!].uselength;
-
       }
     } else {
       this.specificUnitsBlank = this.otherComponent?.collections[index!].specific_units!;
@@ -506,7 +530,6 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.percentBlank = this.otherComponent?.collections[index!].percent!;
       (document.getElementById('selectCalculation') as HTMLSelectElement).value = String(this.specificUnitsBlank);
     }
-
     const modalElement: HTMLElement = document.querySelector(idModal!)!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -530,12 +553,11 @@ export class DrawingsDatabaseComponent implements OnInit {
           if (this.unitsBlank === 1) {
             this.valueBlank = (this.h! * this.len!) / 1000000;
           }
-
           return;
       }
     } else if (this.radioMaterial === 1) {
       if (this.useLenth === 0) {
-        const t = this.rolledComponent!.collections[index!].t;
+        const t = this.rolledComponent!.collections[index!].t!;
         if (t! < 9) {
           this.plasma = false;
           this.percentBlank = 10;
@@ -550,7 +572,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           this.percentBlank = 30;
         }
       } else {
-        const d = this.rolledComponent!.collections[index!].d;
+        const d = this.rolledComponent!.collections[index!].d!;
         if (d! < 150) {
           this.percentBlank = 10;
         } else {
@@ -632,7 +654,7 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   changeMethodRolled() {
     this.specificUnitsBlank = +(document.getElementById('selectCalculationBlank') as HTMLInputElement).value;
-    this.calculateBlank();
+    this.calculateBlank(this.radioMaterial);
   }
 
   clearBlank() {
@@ -647,7 +669,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (!this.id) {
       this.clearBlank();
     }
-       var keyboardEvent = new KeyboardEvent('keydown', {
+    var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
     });
@@ -781,7 +803,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   specificUnitsChange() {
     if (this.addBlankNotMaterial === true) {
       this.specificUnitsBlank = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
-      this.calculateBlank();
+      this.calculateBlank(this.radioMaterial,);
     } else {
       this.specificUnitsMaterial = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
       this.calculateMaterial();

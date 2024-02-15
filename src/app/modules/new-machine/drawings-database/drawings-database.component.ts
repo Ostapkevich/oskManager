@@ -43,8 +43,17 @@ interface Ispecification {
   percentMaterial: number | null,
   value: number | null,
   plasma: boolean | null,
-
 }
+
+/* interface ItempObject {
+  tempId: number,
+  tempType: number,
+  tempName: string,
+  tempUseLenth:number,
+  tempSpecificUnits:number,
+  tempUnits:number,
+  tempPercent:number
+} */
 
 @Component({
   imports: [FormsModule, CommonModule, RolledComponent, HardwareComponent, OthersComponent, PurchasedComponent, ViewDrawingsComponent],
@@ -54,7 +63,9 @@ interface Ispecification {
   styleUrls: ['./drawings-database.component.css']
 })
 export class DrawingsDatabaseComponent implements OnInit {
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService) {
+
+  }
 
   dataChanged: boolean | null | undefined = false;
   //blankChange:boolean=false;
@@ -63,6 +74,10 @@ export class DrawingsDatabaseComponent implements OnInit {
   isDrawingInfo: boolean = true;
   radioMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
   changedData = false;
+  oldTypeBlank: number | undefined;
+
+
+  //tempObj: Partial<ItempObject> = {};
 
   @ViewChild(OthersComponent, { static: false })
   otherComponent: OthersComponent | undefined;
@@ -93,13 +108,13 @@ export class DrawingsDatabaseComponent implements OnInit {
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
   typeBlank: number | undefined;
-  blankWeight!: number;
-  useLenth!: number;
+  blankWeight: number | undefined;
+  useLenth: number | undefined;
   plasma: boolean = true
 
   addBlankNotMaterial: boolean | undefined;
   percentBlank!: number | undefined;//коэф для заготовки
-  valueBlank!: number;
+  valueBlank: number | undefined;
 
   specificUnitsBlank!: number | undefined;
   unitsBlank!: number | undefined;
@@ -331,21 +346,21 @@ export class DrawingsDatabaseComponent implements OnInit {
   async saveBlank() {
     try {
       const blank: any[] = [];
-      switch (this.typeBlank) {
+       switch (this.typeBlank) {
         case 1:
           blank.push(this.id || null);
           blank.push(this.idDrawing);
           blank.push(this.idBlank);
-          blank.push(this.useLenth===1?this.len : null );
-          blank.push(this.useLenth===1?null:this.dw );
-          blank.push(this.useLenth===1?null:this.h) ;
+          blank.push(this.useLenth === 1 ? this.len : null);
+          blank.push(this.useLenth === 1 ? null : this.dw);
+          blank.push(this.useLenth === 1 ? null : this.h);
           blank.push(this.plasma);
           blank.push(this.percentBlank);
-         this.len=this.useLenth===1?this.len : undefined ;
-         this.dw=this.useLenth===1?undefined:this.dw ;
-         this.h=this.useLenth===1?undefined:this.h ;
+          this.len = this.useLenth === 1 ? this.len : undefined;
+          this.dw = this.useLenth === 1 ? undefined : this.dw;
+          this.h = this.useLenth === 1 ? undefined : this.h;
           break;
-        case 2 || 4:
+        case 2:
           blank.push(this.id || null);
           blank.push(this.idDrawing);
           blank.push(this.idBlank);
@@ -358,6 +373,11 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.specificUnitsBlank === 3 ? this.valueBlank : null);
           blank.push(this.specificUnitsBlank);
           blank.push(this.len || null, this.h || null)
+          break;
+        case 4:
+          blank.push(this.id || null);
+          blank.push(this.idDrawing);
+          blank.push(this.idBlank);
           break;
       }
       const data = await this.appService.query('post', `http://localhost:3000/drawings/saveBlank/${this.typeBlank}`, blank);
@@ -417,8 +437,8 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
 
         this.clearDrawing();
-
-        if (data) {
+        this.clearBlank();
+        if (data.drawing) {
           this.idDrawing = data.drawing.idDrawing;
           this.drawingNamber = data.drawing.numberDrawing;
           this.drawingName = data.drawing.nameDrawing;
@@ -438,15 +458,27 @@ export class DrawingsDatabaseComponent implements OnInit {
           this.idBlank = data.blank.id_item;
           this.blankWeight = data.blank.weight;
           this.nameBlank = data.blank.name_item;
-          this.useLenth = data.blank.uselength;
-          this.len = data.blank.L;
-          this.dw = data.blank.d_b;
-          this.h = data.blank.h;
-          this.plasma = Boolean(data.blank.plasma);
-          this.percentBlank = data.blank.allowance
+          switch (this.typeBlank) {
+            case 1:
+              this.useLenth = data.blank.uselength;
+              this.len = data.blank.L;
+              this.dw = data.blank.d_b;
+              this.h = data.blank.h;
+              this.plasma = Boolean(data.blank.plasma);
+              this.percentBlank = data.blank.allowance
+              break;
+            case 3:
+              this.len = data.blank.L;
+              this.h = data.blank.h;
+              this.percentBlank = data.blank.percent;
+              this.valueBlank = data.blank.value;
+              this.specificUnitsBlank = data.blank.specific_units;
+              this.unitsBlank = data.blank.units;
+              break;
+          }
+
           // this.calculateBlank(1, this.useLenth?data.blank.d:data.blank.t, true);
         }
-
 
         this.dataChanged = false;
         //this.blankChange=false;
@@ -467,6 +499,22 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
+  clearBlank() {
+    this.id = undefined;
+    this.idBlank = undefined;
+    this.blankWeight = undefined;
+    this.nameBlank = "";
+    this.useLenth = undefined;
+    this.len = undefined;
+    this.dw = undefined;
+    this.h = undefined;
+    //this.plasma = undefined;
+    this.percentBlank = undefined;
+    this.valueBlank = undefined;
+    this.specificUnitsBlank = undefined;
+    this.unitsBlank = undefined;
+  }
+
   selectFiles() {
     this.filePath.length = 0;
     const count = (document.getElementById('selectFiles') as HTMLInputElement).files!.length;
@@ -480,30 +528,47 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
       return;
     } else {
+      if (this.id) {
+        this.oldTypeBlank = this.typeBlank;
+      }
       this.addBlankNotMaterial = true;
       let index: number;
       switch (this.radioMaterial) {
         case 1:
           this.typeBlank = 1;
           this.selectBlank(this.rolledComponent!, '#rolled-modal');
+          this.deleteBlank();
           break;
         case 2:
           this.typeBlank = 2;
           this.changedData = true;
           this.selectBlank(this.hardwareComponent!);
+          this.deleteBlank();
+          this.saveBlank();
           break;
         case 3:
           this.typeBlank = 3;
           this.selectBlank(this.otherComponent!, '#material-modal');
+          this.deleteBlank();
           break;
         case 4:
           this.typeBlank = 4;
           this.changedData = true;
           this.selectBlank(this.purchasedComponent!);
+          this.deleteBlank();
+          this.saveBlank();
           break;
       }
     }
+  }
+  async deleteBlank() {
+    if (this.id && this.typeBlank !== this.oldTypeBlank) {
+      const data = await this.appService.query('delete', `http://localhost:3000/drawings/deleteBlank/${this.oldTypeBlank}/${this.id}/${this.idDrawing}/${this.typeBlank}`)
+      if (data.response !== 'ok') {
+        alert('Что-то пошло не так!');
 
+      }
+    }
   }
 
   selectBlank(materialComponent: any, idModal?: string) {
@@ -514,11 +579,13 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (this.idBlank && confirm('Чертеж уже содержит заготовку! Заменить заготовку?') === false) {
       return;
     }
+
     this.nameBlank = materialComponent.collections[index!].name_item!;
     this.idBlank = materialComponent.collections[index!].id_item;
     if (materialComponent !== this.otherComponent) {
       this.blankWeight = materialComponent.collections[index!].weight;
       if (materialComponent === this.hardwareComponent || materialComponent === this.purchasedComponent) {
+
         return;
       }
       if (materialComponent === this.rolledComponent) {
@@ -657,7 +724,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateBlank(this.radioMaterial);
   }
 
-  clearBlank() {
+  clearRolledBlank() {
     this.id = undefined;
     this.idBlank = undefined;
     this.nameBlank = '';
@@ -667,7 +734,7 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   closeModalRolled() {
     if (!this.id) {
-      this.clearBlank();
+      this.clearRolledBlank();
     }
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',

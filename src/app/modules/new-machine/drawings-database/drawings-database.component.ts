@@ -91,7 +91,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
   /* Чертеж */
-  idDrawing!: number | null;
+  idDrawing!: number | null | undefined;
   //isp!: number | null;
   savePath: string[] = []; // Выбор пути в select для сохранения
   s: number | undefined;//Масса чертежа
@@ -104,7 +104,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   filePath: string[] = []; // массив путей где будут хранится чертежи
 
   /* Заготовка */
-  id: number | undefined; // id  - уникальный ключ строки в таблице заготовки чертежа в базе данных
+  id: number | undefined; // id  - уникальный ключ в таблице заготовки чертежа в базе данных
   idBlank: number | undefined; // id добавленной заготовки
   nameBlank: string = ''; // имя добавленной заготовки
   typeBlank: number | undefined;
@@ -144,7 +144,7 @@ export class DrawingsDatabaseComponent implements OnInit {
 
 
 
-  async save() {
+  async saveAll() {
     try {
       if (this.drawingNamber === '') {
         alert("Введите номер чертежа!");
@@ -201,9 +201,6 @@ export class DrawingsDatabaseComponent implements OnInit {
           alert('Введите площадь поверхности "S" !');
         }
       }
-
-
-
       for (let i = 0; i < files.length; i++) {
         this.filePath.push(path + files[i].name);
       }
@@ -229,7 +226,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.useLenth ? null : this.plasma);
           blank.push(this.len || null, this.dw || null, this.h || null);
           break;
-        case 2 || 4:
+        case 2:
           blank.push(this.id || null);
           blank.push(this.idDrawing || null);
           blank.push(this.idBlank);
@@ -242,6 +239,11 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.specificUnitsBlank === 3 ? this.valueBlank : null);
           blank.push(this.specificUnitsBlank);
           blank.push(this.len || null, this.h || null)
+          break;
+        case 4:
+          blank.push(this.id || null);
+          blank.push(this.idDrawing || null);
+          blank.push(this.idBlank);
           break;
       }
       const materialsServer: any[] = [];
@@ -295,35 +297,41 @@ export class DrawingsDatabaseComponent implements OnInit {
       alert("Введите массу детали!");
       return;
     }
-    if (this.filePath.length === 0) {
-      const files = (document.getElementById('selectFiles') as HTMLInputElement).files;
-      if (!files || files.length === 0) {
+    let path = (document.getElementById('selectPath') as HTMLSelectElement).value;
+    if (path === '-1') {
+      alert("Выберите путь для сохранения из выпадающего списка!");
+      return;
+    }
+    const inputFiles = (document.getElementById('selectFiles') as HTMLInputElement).files;
+    if (inputFiles && inputFiles.length > 0) {
+      for (let i = 0; i < inputFiles.length; i++) {
+        this.filePath.push(path + '\\' + inputFiles[i].name);
+      }
+    } else {
+      if (this.filePath.length > 0) {
+        const oldPath = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
+        if (oldPath !== path) {
+          this.filePath = this.filePath.map(function (item) { return item.replace(oldPath, path) })
+        }
+      } else {
+        //(document.getElementById('selectPath') as HTMLSelectElement).value = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
         alert("Выберите файлы чертежей для сохранения!");
         return;
       }
-      let path = (document.getElementById('selectPath') as HTMLSelectElement).value;
-      if (path === '-1') {
-        alert("Выберите путь для сохранения из выпадающего списка!");
-        return;
-      }
-      for (let i = 0; i < files.length; i++) {
-        this.filePath.push(path + files[i].name);
-      }
     }
-
-    if (this.drawingNamber && this.drawingNamber !== (document.getElementById('numberDrawing') as HTMLInputElement).value) {
+    if (this.idDrawing && this.drawingNamber !== (document.getElementById('numberDrawing') as HTMLInputElement).value) {
       this.showSaveModal();
     } else {
-      this.saveDrawing(true);
+      this.saveDrawing();
     }
 
   }
 
-  async saveDrawing(saveOrSaveAs: boolean) {
+  async saveDrawing() {
     try {
       const numberDraw = (document.getElementById('numberDrawing') as HTMLInputElement).value;
       const drawing: any[] = [];
-      drawing.push(saveOrSaveAs ? this.idDrawing : null);
+      drawing.push(this.idDrawing);
       drawing.push(numberDraw);
       drawing.push(this.drawingName);
       drawing.push(this.m);
@@ -346,7 +354,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   async saveBlank() {
     try {
       const blank: any[] = [];
-       switch (this.typeBlank) {
+      switch (this.typeBlank) {
         case 1:
           blank.push(this.id || null);
           blank.push(this.idDrawing);
@@ -381,8 +389,8 @@ export class DrawingsDatabaseComponent implements OnInit {
           break;
       }
       const data = await this.appService.query('post', `http://localhost:3000/drawings/saveBlank/${this.typeBlank}`, blank);
-      if (typeof data.response === 'number') {
-        this.id = data.response;
+      if (data.id) {
+        this.id = data.id;
         alert('Данные сохранены!');
       } else {
         alert("Что-то пошло не так... Данные не сохранены!");
@@ -402,7 +410,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     modal.show();
   }
 
-  closeSaveModal() {
+  closeSaveDrawingModal() {
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -410,90 +418,120 @@ export class DrawingsDatabaseComponent implements OnInit {
     (document.querySelector('#saveModal') as HTMLDivElement).dispatchEvent(keyboardEvent);
   }
 
-  saveModal() {
-    this.closeSaveModal();
-    this.saveDrawing(true);
+  saveDrawingModal() {
+    this.closeSaveDrawingModal();
+    this.saveDrawing();
   }
 
-  saveAsModal() {
-    this.closeSaveModal();
-    this.saveDrawing(false);
+  saveAsDrawingModal() {
+    this.closeSaveDrawingModal();
+    this.saveAll();
   }
 
-  async saveAs() { }
-
-  async findBy(event: any) {
-    if (event.key === 'Enter') {
-      try {
-        const idElem = document.getElementById('idDrawing');
-        const numberElem = document.getElementById('numberDrawing');
-        let data: any;
-        if (event.target === idElem) {
-          const id = +(idElem as HTMLInputElement).value
-          data = await this.appService.query('get', `http://localhost:3000/drawings/findByID/${id}`);
-        } else {
-          const number = (numberElem as HTMLInputElement).value;
-          data = await this.appService.query('get', `http://localhost:3000/drawings/findByNumber/${number}`);
-        }
-
-        this.clearDrawing();
-        this.clearBlank();
-        if (data.drawing) {
-          this.idDrawing = data.drawing.idDrawing;
-          this.drawingNamber = data.drawing.numberDrawing;
-          this.drawingName = data.drawing.nameDrawing;
-          this.m = data.drawing.weight;
-          this.s = data.drawing.s;
-          this.typeBlank = data.drawing.type_blank;
-          if (data.drawing.path && data.drawing.path.length > 0) {
-            this.filePath = data.drawing.path;
-          }
-          (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${this.filePath.length} шт.`;
-        } else {
-          (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` 0 шт.`;
-        }
-        /* Заготовка  */
-        if (data.blank) {
-          this.id = data.blank.id;
-          this.idBlank = data.blank.id_item;
-          this.blankWeight = data.blank.weight;
-          this.nameBlank = data.blank.name_item;
-          switch (this.typeBlank) {
-            case 1:
-              this.useLenth = data.blank.uselength;
-              this.len = data.blank.L;
-              this.dw = data.blank.d_b;
-              this.h = data.blank.h;
-              this.plasma = Boolean(data.blank.plasma);
-              this.percentBlank = data.blank.allowance
-              break;
-            case 3:
-              this.len = data.blank.L;
-              this.h = data.blank.h;
-              this.percentBlank = data.blank.percent;
-              this.valueBlank = data.blank.value;
-              this.specificUnitsBlank = data.blank.specific_units;
-              this.unitsBlank = data.blank.units;
-              break;
-          }
-
-          // this.calculateBlank(1, this.useLenth?data.blank.d:data.blank.t, true);
-        }
-
-        this.dataChanged = false;
-        //this.blankChange=false;
-        this.materialChange = false;
-        this.spChange = false;
-      } catch (error) {
-        alert(error);
-      }
+  inputEnter(event?: any) {
+    if (event?.key === 'Enter') {
+      this.findBy(event);
     }
   }
 
+  async findBy(event?: any) {
+    try {
+      const idElem = document.getElementById('idDrawing');
+      const numberElem = document.getElementById('numberDrawing');
+      let data: any;
+      if (event?.target === numberElem) {
+        const number = (numberElem as HTMLInputElement).value;
+        data = await this.appService.query('get', `http://localhost:3000/drawings/findByNumber/${number}`);
+      } else {
+        const id = +(idElem as HTMLInputElement).value
+        data = await this.appService.query('get', `http://localhost:3000/drawings/findByID/${id}`);
+      }
+      const tempIdDrawind = (document.getElementById('idDrawing') as HTMLInputElement).value;
+      this.clearDrawing();
+      this.clearBlank();
+      this.clearMaterial();
+      if (data.drawing) {
+        this.idDrawing = data.drawing.idDrawing;
+        this.drawingNamber = data.drawing.numberDrawing;
+        this.drawingName = data.drawing.nameDrawing;
+        this.m = data.drawing.weight;
+        this.s = data.drawing.s;
+        this.typeBlank = data.drawing.type_blank;
+        if (data.drawing.path && data.drawing.path.length > 0) {
+          this.filePath = data.drawing.path;
+        }
+        (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${this.filePath.length} шт.`;
+        const path = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
+        const ind = this.savePath.indexOf(path);
+        if (ind === -1) {
+          alert(`Путь расположения Файлов чертежей '${path}' не принадлежит какому либо варианту из списка путей сохранения!`)
+        } else {
+          (document.getElementById('selectPath') as HTMLSelectElement).value = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
+        }
+      } else {
+        (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` 0 шт.`;
+      }
+      /* Заготовка  */
+      if (data.blank) {
+        this.id = data.blank.id;
+        this.idBlank = data.blank.id_item;
+        this.blankWeight = data.blank.weight;
+        this.nameBlank = data.blank.name_item;
+        switch (this.typeBlank) {
+          case 1:
+            this.useLenth = data.blank.uselength;
+            this.len = data.blank.L;
+            this.dw = data.blank.d_b;
+            this.h = data.blank.h;
+            this.plasma = Boolean(data.blank.plasma);
+            this.percentBlank = data.blank.allowance
+            break;
+          case 3:
+            this.len = data.blank.L;
+            this.h = data.blank.h;
+            this.percentBlank = data.blank.percent;
+            this.valueBlank = data.blank.value;
+            this.specificUnitsBlank = data.blank.specific_units;
+            this.unitsBlank = data.blank.units;
+            break;
+        }
+      }
+      /* Материалы */
+      if (data.materials) {
+        for (const item of data.materials) {
+          this.materials.push({
+            id: item.id,
+            idDrawing: item.idDrawing,
+            idItem: item.id_item,
+            name_material: item.name_item,
+            unitsMaterial: item.units,
+            percentMaterial: item.percent,
+            valueMaterial: item.value,
+            specific_unitsMaterial: item.specific_units,
+            lenMaterial: item.L,
+            //dw: this.dwMaterial || null,
+            hMaterial: item.h,
+          })
+        }
+      
+      }
+
+      this.dataChanged = false;
+      //this.blankChange=false;
+      this.materialChange = false;
+      this.spChange = false;
+    } catch (error) {
+      alert(error);
+    }
+
+  }
+
   clearDrawing() {
+    (document.getElementById('selectPath') as HTMLSelectElement).value = '-1';
+    this.idDrawing = undefined;
     this.drawingNamber = '';
     this.drawingName = '';
-    this.m = 0;
+    this.m = undefined;
     this.s = undefined;
     this.filePath.length = 0;
   }
@@ -513,6 +551,10 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.valueBlank = undefined;
     this.specificUnitsBlank = undefined;
     this.unitsBlank = undefined;
+  }
+
+  clearMaterial() {
+    this.materials.length = 0;
   }
 
   selectFiles() {
@@ -537,7 +579,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         case 1:
           this.typeBlank = 1;
           this.selectBlank(this.rolledComponent!, '#rolled-modal');
-          this.deleteBlank();
+          //this.deleteBlank();
           break;
         case 2:
           this.typeBlank = 2;
@@ -549,7 +591,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         case 3:
           this.typeBlank = 3;
           this.selectBlank(this.otherComponent!, '#material-modal');
-          this.deleteBlank();
+          //this.deleteBlank();
           break;
         case 4:
           this.typeBlank = 4;
@@ -561,14 +603,20 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
     }
   }
-  async deleteBlank() {
-    if (this.id && this.typeBlank !== this.oldTypeBlank) {
-      const data = await this.appService.query('delete', `http://localhost:3000/drawings/deleteBlank/${this.oldTypeBlank}/${this.id}/${this.idDrawing}/${this.typeBlank}`)
-      if (data.response !== 'ok') {
-        alert('Что-то пошло не так!');
 
+  async deleteBlank() {
+    try {
+      if (this.id && this.typeBlank !== this.oldTypeBlank) {
+        const data = await this.appService.query('delete', `http://localhost:3000/drawings/deleteBlank/${this.oldTypeBlank}/${this.id}/${this.idDrawing}/${this.typeBlank}`)
+        if (data.response !== 'ok') {
+          alert('Что-то пошло не так!');
+
+        }
       }
+    } catch (error) {
+      alert(error)
     }
+
   }
 
   selectBlank(materialComponent: any, idModal?: string) {
@@ -710,7 +758,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       }
     }
-
+    this.deleteBlank();
     this.saveBlank();
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
@@ -724,30 +772,27 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateBlank(this.radioMaterial);
   }
 
-  clearRolledBlank() {
+  /* clearRolledBlank() {
     this.id = undefined;
     this.idBlank = undefined;
     this.nameBlank = '';
     this.specificUnitsBlank = undefined;
     this.percentBlank = undefined;
-  }
+  } */
 
   closeModalRolled() {
-    if (!this.id) {
-      this.clearRolledBlank();
-    }
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
     });
     (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    if (this.id) {
+      this.findBy();
+    } else {
+      this.clearBlank();
+    }
+
   }
-
-  plasmaBlankChange(elem: any) {
-    this.plasma = (elem as HTMLInputElement).checked;
-
-  }
-
 
 
   btnMaterialClick() {
@@ -775,6 +820,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
 
   }
+
   selectMaterial(index: number) {
     this.nameMaterial = this.otherComponent?.collections[index].name_item!;
     this.idMaterial = this.otherComponent?.collections[index].id_item;
@@ -791,6 +837,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     const modal = new Modal(modalElement, modalOptions)
     modal.show();
   }
+
   calculateMaterial() {
     switch (this.specificUnitsMaterial) {
       case 0:
@@ -807,65 +854,84 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
     }
   }
-  addMaterail() {
-    if (this.specificUnitsMaterial === 2 && this.unitsMaterial === 2) {
-      if (!this.lenMaterial || this.lenMaterial < 0) {
-        alert("Введите L");
-        return;
-      }
-    } else if (this.specificUnitsMaterial === 2 && this.unitsMaterial === 1) {
-      if (!this.lenMaterial || this.lenMaterial < 0 || !this.hMaterial || this.hMaterial < 0) {
-        alert('Введите количество материала!');
-        return;
-      }
-    }
-    else if (this.specificUnitsMaterial === 0) {
-      if (!this.percentMaterial || this.percentMaterial < 0 || !this.m || this.m < 0) {
-        alert('Введите количество материала!');
-        return;
-      }
-    }
-    else if (this.specificUnitsMaterial === 1) {
-      if (!this.percentMaterial || this.percentMaterial < 0 || !this.s || this.s < 0) {
-        alert('Введите количество материала!');
-        return;
-      }
-    }
-    else {
-      if (!this.valueMaterial || this.valueMaterial < 0) {
-        alert('Введите количество материала!');
-        return;
-      }
-    }
 
-    this.materials.push({
-      id: null,
-      idDrawing: this.idDrawing || null,
-      idItem: this.idMaterial!,
-      name_material: this.nameMaterial!,
-      unitsMaterial: this.unitsMaterial!,
-      percentMaterial: this.specificUnitsMaterial === 2 ? null : this.percentMaterial || null,
-      valueMaterial: this.unitsMaterial === 2 ? null : +(document.getElementById('amountMaterial') as HTMLInputElement).value,
-      specific_unitsMaterial: this.specificUnitsMaterial!,
-      lenMaterial: this.lenMaterial || null,
-      //dw: this.dwMaterial || null,
-      hMaterial: this.hMaterial || null,
-    })
-    this.closeModalMaterial();
+  async addMaterail() {
+    try {
+      if (this.specificUnitsMaterial === 2 && this.unitsMaterial === 2) {
+        if (!this.lenMaterial || this.lenMaterial < 0) {
+          alert("Введите L");
+          return;
+        }
+      } else if (this.specificUnitsMaterial === 2 && this.unitsMaterial === 1) {
+        if (!this.lenMaterial || this.lenMaterial < 0 || !this.hMaterial || this.hMaterial < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      else if (this.specificUnitsMaterial === 0) {
+        if (!this.percentMaterial || this.percentMaterial < 0 || !this.m || this.m < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      else if (this.specificUnitsMaterial === 1) {
+        if (!this.percentMaterial || this.percentMaterial < 0 || !this.s || this.s < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      else {
+        if (!this.valueMaterial || this.valueMaterial < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      let id = null;
+      const idDrawing = this.idDrawing;
+      const percentMaterial = this.specificUnitsMaterial === 2 ? null : this.percentMaterial || null;
+      const valueMaterial = this.unitsMaterial === 2 ? null : +(document.getElementById('amountMaterial') as HTMLInputElement).value;
+      const data: any = await this.appService.query('post', `http://localhost:3000/drawings/addMaterial`, [null, this.idDrawing, this.idMaterial, percentMaterial, valueMaterial, this.specificUnitsMaterial, this.lenMaterial || null, this.hMaterial || null])
+      if (data.id) {
+        id = data.id;
+        this.materials.push({
+          id: id,
+          idDrawing: idDrawing!,
+          idItem: this.idMaterial!,
+          name_material: this.nameMaterial!,
+          unitsMaterial: this.unitsMaterial!,
+          percentMaterial: percentMaterial,
+          valueMaterial: valueMaterial,
+          specific_unitsMaterial: this.specificUnitsMaterial!,
+          lenMaterial: this.lenMaterial || null,
+          //dw: this.dwMaterial || null,
+          hMaterial: this.hMaterial || null,
+        })
+        this.closeModalMaterial();
+        alert("Материал добавлен!");
+      } else {
+        alert("Что-то пошло не так...");
+        return;
+      }
+
+    } catch (error) {
+      alert(error)
+    }
   }
+
   closeModalMaterial() {
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
     });
     (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.specificUnitsMaterial = undefined;
-    this.percentMaterial = undefined;
-    this.unitsMaterial = undefined;
-    this.valueMaterial = undefined;
+    if (this.addBlankNotMaterial) {
+      if (this.id) {
+        this.findBy();
+      } else {
+        this.clearBlank();
+      }
+    }
   }
-
-
 
   specificUnitsChange() {
     if (this.addBlankNotMaterial === true) {
@@ -877,8 +943,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
 
   }
-
-
 
   plasmaSpChange(target: any) {
     if (!this.spNavigator) {
@@ -1095,9 +1159,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.addSpesification!.unitsMaterial = undefined;
     this.addSpesification!.percentMaterial = undefined;
     this.addSpesification!.value = undefined;
-
-
-
   }
 
   specificUnitsChangeSP() {
@@ -1147,14 +1208,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   formChange(dataForm: NgForm) {
     this.dataChanged = dataForm.dirty;
 
-  }
-
-  test() {
-    console.log('addBlankNotMaterial ', this.addBlankNotMaterial);
-    console.log('specificUnitsBlank ', this.specificUnitsBlank);
-    console.log('unitsBlank ', this.unitsBlank);
-    console.log('specific_unitsMaterial ', this.specificUnitsMaterial);
-    console.log('uniunitsMaterials ', this.unitsMaterial);
   }
 
 

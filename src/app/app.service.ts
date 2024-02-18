@@ -59,7 +59,6 @@ export class AppService {
             if (data.serverError) {
               reject(new Error(data.serverError));
             }
-
             resolve(data);
           }
           ,

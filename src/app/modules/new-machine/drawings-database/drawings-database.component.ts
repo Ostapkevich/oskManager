@@ -43,6 +43,7 @@ interface Ispecification {
   percentMaterial: number | null,
   value: number | null,
   plasma: boolean | null,
+  name: string
 }
 
 /* interface ItempObject {
@@ -513,7 +514,7 @@ export class DrawingsDatabaseComponent implements OnInit {
             hMaterial: item.h,
           })
         }
-      
+
       }
 
       this.dataChanged = false;
@@ -772,13 +773,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.calculateBlank(this.radioMaterial);
   }
 
-  /* clearRolledBlank() {
-    this.id = undefined;
-    this.idBlank = undefined;
-    this.nameBlank = '';
-    this.specificUnitsBlank = undefined;
-    this.percentBlank = undefined;
-  } */
 
   closeModalRolled() {
     var keyboardEvent = new KeyboardEvent('keydown', {
@@ -793,6 +787,9 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
 
   }
+
+
+  /* Материалы  */
 
 
   btnMaterialClick() {
@@ -933,6 +930,10 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
+
+  /* SP */
+
+
   specificUnitsChange() {
     if (this.addBlankNotMaterial === true) {
       this.specificUnitsBlank = +(document.getElementById('selectCalculation') as HTMLInputElement).value;
@@ -1025,7 +1026,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     modal.show();
   }
 
-  addBlankSP() {
+  addPositionSP() {
     if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
       alert('Введите количество, шт!');
       return;
@@ -1057,11 +1058,15 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
       }
     }
-    this.addSpesification.plasma = this.addSpesification.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
+    this.addSpesification.name=this.addSpesification.type_position===1||this.addSpesification.type_position===2||this.addSpesification.type_position===3?(document.getElementById('namePosition') as HTMLInputElement).value:'';
+    this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
     this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
-    this.closeModalRolledSP();
+    console.log(this.specificatios)
+    this.closeModalSP();
 
   }
+
+  
 
   addMaterailSP() {
     if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
@@ -1110,7 +1115,9 @@ export class DrawingsDatabaseComponent implements OnInit {
       h: this.addSpesification!.h || null,
       quantity: this.addSpesification?.quantity,
       type_position: this.addSpesification?.type_position,
+      name:(document.getElementById('nameMaterialSP') as HTMLInputElement).value,
     })
+    console.log(this.specificatios)
     this.closeModalMaterialSP();
   }
 
@@ -1131,34 +1138,39 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
 
   }
-  closeModalRolledSP() {
+
+  closeModalSP() {
 
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
     });
-    (document.querySelector('#modalFormRolledSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.addSpesification!.len = undefined;
-    this.addSpesification!.dw = undefined;
-    this.addSpesification!.h = undefined;
+    (document.querySelector('#modalFormSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.clearAddPositionSP();
   }
 
   closeModalMaterialSP() {
-
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
     });
     (document.querySelector('#modaFormMatSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.clearAddPositionSP();
+  }
+
+  clearAddPositionSP() {
+     this.addSpesification!.len = undefined;
+    this.addSpesification!.dw = undefined;
+    this.addSpesification!.h = undefined;
+    this.addSpesification!.name=undefined;
+    this.addSpesification!.name_item=undefined;
     this.addSpesification!.number_item = undefined;
     this.addSpesification!.weight = undefined;
-    this.addSpesification!.h = undefined;
-    this.addSpesification!.len = undefined;
-    this.addSpesification!.dw = undefined;
     this.addSpesification!.specific_units = undefined;
     this.addSpesification!.unitsMaterial = undefined;
     this.addSpesification!.percentMaterial = undefined;
     this.addSpesification!.value = undefined;
+  
   }
 
   specificUnitsChangeSP() {

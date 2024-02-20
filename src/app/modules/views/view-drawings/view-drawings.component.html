@@ -1,38 +1,36 @@
 <div class="w-1/2 mx-auto " id="idmaterial">
     <p *ngIf="showElement" class="text-4xl mt-4  text-white">Поиск чертежа</p>
-    <div *ngIf="!showElement" class=" mt-10" ></div>
+    <div *ngIf="!showElement" class=" mt-10"></div>
     <form #orderform="ngForm" id="orderform" name="orderform" (ngSubmit)="onSubmit()">
+        <input value="Поиск"
+            class="block  self-end text-white focus:ring-4 focus:outline-none font-medium  text-sm px-14 py-2 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+            type="submit" />
         <div class="mt-4 flex gap-4">
             <div class="basis-24">
-                <label  for="idSearchID" class="block mb-2 text-sm font-medium  text-white">id чертежа</label>
-                <input required type="number" id="idSearchID" name="searchID" [(ngModel)]="idDrawing" ngModel 
+                <label for="idSearchID" class="block mb-2 text-sm font-medium  text-white">id чертежа</label>
+                <input required type="number" id="idSearchID" name="searchID" [(ngModel)]="idDrawing" ngModel
                     class="border  text-sm w-full block   py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="">
-                <label  for="idSearchNumber" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
-                <input required type="search" id="idSearchNumber" name="searchNumber" [(ngModel)]="number_item" 
+                <label for="idSearchNumber" class="block mb-2 text-sm font-medium  text-white">Номер чертежа</label>
+                <input required type="search" id="idSearchNumber" name="searchNumber" [(ngModel)]="number_item"
                     class="border  text-sm w-full block   py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="">
-                <label  for="idSearchName" class="block mb-2 text-sm font-medium  text-white">Название чертежа</label>
+                <label for="idSearchName" class="block mb-2 text-sm font-medium  text-white">Название чертежа</label>
                 <input required type="search" id="idSearchName" name="searchName" [(ngModel)]="name_item"
                     class="border w-full text-sm  block  py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="basis-24">
                 <label for="idWeightMin" class="  block mb-2 text-sm font-medium  text-white">Масса min, кг</label>
-                <input required type="number" id="idWeightMin" name="weightMin" [(ngModel)]="min" 
+                <input required type="number" id="idWeightMin" name="weightMin" [(ngModel)]="min"
                     class=" border  text-sm  block w-full py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
             <div class="basis-24">
-                <label  for="idWeightMax" class="  block mb-2 text-sm font-medium  text-white">Масса max, кг</label>
-                <input required type="number" id="idWeightMax" name="weightMax" [(ngModel)]="max" 
+                <label for="idWeightMax" class="  block mb-2 text-sm font-medium  text-white">Масса max, кг</label>
+                <input required type="number" id="idWeightMax" name="weightMax" [(ngModel)]="max"
                     class=" border  text-sm  block w-full py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
-            <input value="Поиск"
-                class="block  self-end text-white focus:ring-4 focus:outline-none font-medium  text-sm px-14 py-2 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
-                type="submit" />
-
-            >
         </div>
     </form>
 

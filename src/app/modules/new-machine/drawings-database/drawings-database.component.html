@@ -520,14 +520,10 @@
                     <td class=" py-1 w-1.5/12 ">
                         {{item.number_item}}
                     </td>
-                    <td *ngIf="addSpesification?.type_position===4 || addSpesification?.type_position===5 "
-                        class=" py-1 w-1.5/12" id="name">
-                        {{item.name_item}}
-                    </td>
-                    <td *ngIf="addSpesification?.type_position===1 || addSpesification?.type_position===2 || addSpesification?.type_position===3"
-                        class=" py-1 w-1.5/12" id="name">
+                    <td  class=" py-1 w-1.5/12" id="name">
                         {{item.name}}
                     </td>
+                  
                     <td class=" py-1 w-0.5/12 text-center" id="qvolity">
                         {{item.quantity}}
                     </td>
@@ -541,13 +537,8 @@
                     <td *ngIf="item.type_position===1 && item.useLenth===0" class=" py-1 w-1/12 text-center" id="rol2">
                         {{(item.h?item.dw!*item.h!:item.dw!*item.dw!)/1000000*item.weight! | number:"1.0-3"}}
                     </td>
-                    <td *ngIf="addSpesification?.type_position===1 || addSpesification?.type_position===2 || addSpesification?.type_position===3 "
-                        class=" py-1 w-2/12 " id="nameBlank">
+                    <td  class=" py-1 w-2/12 " id="nameBlank">
                         {{item.name_item}}
-                    </td>
-                    <td *ngIf="addSpesification?.type_position===4 || addSpesification?.type_position===5 "
-                        class=" py-1 w-2/12 " id="nameBlank">
-
                     </td>
                     <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center" id="from m">
                         % от m, кг
@@ -555,7 +546,7 @@
                     <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center" id="from s">
                         % от S, м.кв
                     </td>
-                    <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center" id="inputData">
+                        <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center" id="inputData">
                         Ввод данных
                     </td>
                     <td *ngIf="!(item.specific_units===0 || item.specific_units===1 || item.specific_units===2)"
@@ -607,6 +598,7 @@
                 </tr>
             </tbody>
         </table>
+
     </div>
 </form>
 
@@ -918,22 +910,16 @@
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="addSpesification?.type_position!==5 && addSpesification?.type_position!==4"
+                    <div *ngIf="addSpesification?.type_position!==5"
                         class="col-span-3">
                         <label for="namePosition"
-                            class="block mb-2 text-sm font-medium  text-white">{{addSpesification!.name_item}}</label>
-                        <input *ngIf="addSpesification?.type_position!==3" type="text" name="namePosition"
-                            id="namePosition"  autocomplete="off"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
-                            placeholder="Название позиции">
+                            class="block mb-2 text-sm font-medium  text-white">{{addSpesification!.name_item }}</label>
+                        <input type="text" name="namePosition"
+                            [(ngModel)]="addSpesification!.name" id="namePosition" autocomplete="off" placeholder="Название позиции"
+                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"  >
                     </div>
-                    <div *ngIf="addSpesification?.type_position===4" class="col-span-3">
-                        <label for="namePosition" class="block mb-2 text-sm font-medium  text-white">Покупное
-                            изделие</label>
-                        <input type="text" name="namePosition" id="namePosition" [(ngModel)]="addSpesification!.name_item"
-                            class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
-                            required="">
-                    </div>
+
+               
                     <div
                         *ngIf=" addSpesification?.type_position===2 || addSpesification?.type_position===4 || addSpesification?.type_position===5 ">
                         <label id="lblWeight" for="WeightPos" class="block mb-2 text-sm font-medium  text-white">Масса,
@@ -1043,6 +1029,7 @@
                         <label for="nameMaterialSP"
                             class="block mb-2 text-sm font-medium  text-white">{{addSpesification?.name_item}}</label>
                         <input type="text" name="nameMaterialSP" id="nameMaterialSP" autocomplete="off"
+                            [(ngModel)]="addSpesification!.name" placeholder="Название позиции"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Название позиции">
 
@@ -1110,7 +1097,7 @@
                         <label *ngIf="addSpesification!.unitsMaterial===1" for="amountMaterialSP"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             S,м.кв</label>
-                        <label *ngIf="addSpesification!.unitsMaterial===2" for="amountMaterialSP"
+                        <label *ngIf="addSpesification!.unitsMaterial===2 && addSpesification?.specific_units!==2" for="amountMaterialSP"
                             class="block mb-2 text-sm font-medium  text-white">Материал
                             L,мм</label>
                         <label *ngIf="addSpesification!.unitsMaterial===3" for="amountMaterialSP"

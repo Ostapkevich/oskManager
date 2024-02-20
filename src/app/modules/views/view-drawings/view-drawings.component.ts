@@ -71,6 +71,7 @@ export class ViewDrawingsComponent implements OnInit {
         }
        
       }
+      console.log()
     } catch (error) {
       alert(error);
     }

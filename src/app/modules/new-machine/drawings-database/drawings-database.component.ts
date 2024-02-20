@@ -10,7 +10,7 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
-
+import {NgSwitch, NgSwitchCase, NgSwitchDefault} from "@angular/common";
 
 interface IaddMaterial {
   id: number | null,
@@ -991,15 +991,18 @@ export class DrawingsDatabaseComponent implements OnInit {
       return;
     }
     this.addSpesification!.quantity = 1;
-    this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
     this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
-
+    if (materialComponent === this.viewDrawingsComponent) {
+      this.addSpesification!.name = materialComponent.collections[index!].name_item!;
+      this.addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
+      this.addSpesification!.name_item=undefined;
+    }else{
+      this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
+      this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+    }
     if (materialComponent !== this.otherComponent) {
       this.addSpesification!.weight = materialComponent.collections[index!].weight;
-      if (materialComponent === this.viewDrawingsComponent) {
-        this.addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
-      }
-      if (materialComponent === this.rolledComponent) {
+        if (materialComponent === this.rolledComponent) {
         this.addSpesification!.useLenth = this.rolledComponent!.collections[index!].uselength;
         if (this.addSpesification!.useLenth === 0) {
           const t = this.rolledComponent!.collections[index!].t;
@@ -1058,12 +1061,10 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
       }
     }
-    this.addSpesification.name=this.addSpesification.type_position===1||this.addSpesification.type_position===2||this.addSpesification.type_position===3?(document.getElementById('namePosition') as HTMLInputElement).value:'';
+   // this.addSpesification.name=this.addSpesification.type_position===1||this.addSpesification.type_position===2||this.addSpesification.type_position===3?(document.getElementById('namePosition') as HTMLInputElement).value:'';
     this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
     this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
-    console.log(this.specificatios)
     this.closeModalSP();
-
   }
 
   
@@ -1115,10 +1116,14 @@ export class DrawingsDatabaseComponent implements OnInit {
       h: this.addSpesification!.h || null,
       quantity: this.addSpesification?.quantity,
       type_position: this.addSpesification?.type_position,
-      name:(document.getElementById('nameMaterialSP') as HTMLInputElement).value,
+      name:this.addSpesification.name,
     })
-    console.log(this.specificatios)
+   
     this.closeModalMaterialSP();
+  }
+
+  trackByFn(index:any, item:any) {
+    return item.id; // Замените на уникальное свойство, которое идентифицирует элемент
   }
 
   calculateMaterialSP() {

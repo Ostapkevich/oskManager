@@ -10,7 +10,7 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
-import {NgSwitch, NgSwitchCase, NgSwitchDefault} from "@angular/common";
+import { NgSwitch, NgSwitchCase, NgSwitchDefault } from "@angular/common";
 
 interface IaddMaterial {
   id: number | null,
@@ -26,6 +26,8 @@ interface IaddMaterial {
   hMaterial: number | null,
 }
 interface Ispecification {
+  idItem:number,
+  idParent: number | undefined,
   id: number | null,
   ind: number,
   type_position: number,
@@ -451,6 +453,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.clearDrawing();
       this.clearBlank();
       this.clearMaterial();
+      this.specificatios.length = 0;
       if (data.drawing) {
         this.idDrawing = data.drawing.idDrawing;
         this.drawingNamber = data.drawing.numberDrawing;
@@ -514,7 +517,10 @@ export class DrawingsDatabaseComponent implements OnInit {
             hMaterial: item.h,
           })
         }
-
+        if (data.positionsSP) {
+          console.log(data.positionsSP)
+          this.specificatios = data.positionsSP;
+        }
       }
 
       this.dataChanged = false;
@@ -792,7 +798,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   /* Материалы  */
 
 
-  btnMaterialClick() {
+  async btnMaterialClick() {
     if (this.isDrawingInfo) {
       if (this.materials.length > 0) {
         if (!this.materialNavigator) {
@@ -800,10 +806,15 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
         const index = this.materialNavigator!.findCheckedRowNumber();
         if (index !== null && confirm('Удалить выбранный материал?') === true) {
-          this.materials.splice(index, 1);
+          const data: any = await this.appService.query('delete', `http://localhost:3000/drawings/deleteMaterial/${this.materials[index].id}`);
+          if (data?.response === 'ok') {
+            alert("Материал удален!");
+            this.materials.splice(index, 1);
+          } else {
+            alert("Что-то пошбо не так!");
+          }
         }
       }
-      return;
     } else {
       if (this.radioMaterial !== 3) {
         return;
@@ -815,7 +826,6 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.addBlankNotMaterial = false;
       this.selectMaterial(index!);
     }
-
   }
 
   selectMaterial(index: number) {
@@ -991,18 +1001,19 @@ export class DrawingsDatabaseComponent implements OnInit {
       return;
     }
     this.addSpesification!.quantity = 1;
-    this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+    this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
     if (materialComponent === this.viewDrawingsComponent) {
       this.addSpesification!.name = materialComponent.collections[index!].name_item!;
       this.addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
-      this.addSpesification!.name_item=undefined;
-    }else{
+      this.addSpesification!.name_item = undefined;
+    } else {
       this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
-      this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+      // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+      this.addSpesification!.number_item = 'б/ч';
     }
     if (materialComponent !== this.otherComponent) {
       this.addSpesification!.weight = materialComponent.collections[index!].weight;
-        if (materialComponent === this.rolledComponent) {
+      if (materialComponent === this.rolledComponent) {
         this.addSpesification!.useLenth = this.rolledComponent!.collections[index!].uselength;
         if (this.addSpesification!.useLenth === 0) {
           const t = this.rolledComponent!.collections[index!].t;
@@ -1029,102 +1040,146 @@ export class DrawingsDatabaseComponent implements OnInit {
     modal.show();
   }
 
-  addPositionSP() {
-    if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
-      alert('Введите количество, шт!');
-      return;
-    }
-    if (this.addSpesification!.type_position === 3) {
-      if (!this.addSpesification?.value || this.addSpesification?.value <= 0) {
-        alert('Введите количество материала!');
+  async addPositionSP() {
+    try {
+      if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
+        alert('Введите количество, шт!');
         return;
       }
-    } else if (this.addSpesification!.type_position === 1) {
-      if (this.addSpesification!.useLenth === 1) {
-        if (!this.addSpesification!.len || this.addSpesification!.len <= 0) {
-          alert('Введите размер "L" !');
+      if (this.addSpesification!.type_position === 3) {
+        if (!this.addSpesification?.value || this.addSpesification?.value <= 0) {
+          alert('Введите количество материала!');
           return;
         }
-      } else {
-        if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
-          alert('Введите размер детали D/B!');
-          return;
-        }
-        if (this.addSpesification!.h && this.addSpesification!.dw <= 0) {
-          alert('Размер Н должен быть больше нуля!');
-          return;
-        }
-        if (!this.addSpesification!.h) {
-          if (confirm('Ввести размер "Н" ?') === true) {
+      } else if (this.addSpesification!.type_position === 1) {
+        if (this.addSpesification!.useLenth === 1) {
+          if (!this.addSpesification!.len || this.addSpesification!.len <= 0) {
+            alert('Введите размер "L" !');
             return;
+          }
+        } else {
+          if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
+            alert('Введите размер детали D/B!');
+            return;
+          }
+          if (this.addSpesification!.h && this.addSpesification!.dw <= 0) {
+            alert('Размер Н должен быть больше нуля!');
+            return;
+          }
+          if (!this.addSpesification!.h) {
+            if (confirm('Ввести размер "Н" ?') === true) {
+              return;
+            }
           }
         }
       }
+      this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
+      // ind, idDrawing, type_position, quantity
+      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      let dataDetails: any[] = [];
+      switch (+this.addSpesification.type_position!) {
+        case 1:
+          // id_sprolled, id_item, L, d_b, h, plasma, name, id
+          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma||null, this.addSpesification.name);
+          break;
+        case 2:
+          // id_sphardware, id_item, name, id
+          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.name);
+
+          break;
+        case 4:
+          //id_sppurshasered, id_item, name, id
+          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.name);
+          break;
+        case 5:
+          //id_spdrawing, idDrawing, id
+          dataDetails.push(null, this.addSpesification.id_item);
+          break;
+      }
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
+      console.log(data)
+      this.addSpesification!.idParent = data.idParent;
+      this.addSpesification!.id = data.id;
+      this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
+      this.closeModalSP();
+      alert("Позиция добавлена.");
+
+    } catch (error) {
+      alert(error);
     }
-   // this.addSpesification.name=this.addSpesification.type_position===1||this.addSpesification.type_position===2||this.addSpesification.type_position===3?(document.getElementById('namePosition') as HTMLInputElement).value:'';
-    this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
-    this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
-    this.closeModalSP();
   }
 
-  
+  async addMaterailSP() {
+    try {
+      if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
+        alert('Введите количество позиций!');
+        return;
+      }
+      if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
+          alert("Введите L");
+          return;
+        }
+      } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 1) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
+          alert('Введите размеры L, h!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 0) {
+        if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.m || this.m < 0) {
+          alert('Введите коэффициент, массу!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 1) {
+        if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.s || this.s < 0) {
+          alert('Введите коэффициент, S!');
+          return;
+        }
+      }
+      else {
+        if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      let dataDetails: any[] = [];
+      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percentMaterial || null;
+      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
+      // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
+      dataDetails.push(null, this.addSpesification.id_item, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
 
-  addMaterailSP() {
-    if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
-      alert('Введите количество позиций!');
-      return;
-    }
-    if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2) {
-      if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
-        alert("Введите L");
-        return;
-      }
-    } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 1) {
-      if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
-        alert('Введите размеры L, h!');
-        return;
-      }
-    }
-    else if (this.addSpesification!.specific_units === 0) {
-      if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.m || this.m < 0) {
-        alert('Введите коэффициент, массу!');
-        return;
-      }
-    }
-    else if (this.addSpesification!.specific_units === 1) {
-      if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.s || this.s < 0) {
-        alert('Введите коэффициент, S!');
-        return;
-      }
-    }
-    else {
-      if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
-        alert('Введите количество материала!');
-        return;
-      }
+      this.specificatios.push({
+        id: data.id,
+        id_item: this.addSpesification!.id_item,
+        name_item: this.addSpesification!.name_item,
+        unitsMaterial: this.addSpesification!.unitsMaterial!,
+        percentMaterial: percentMaterial,
+        value: value,
+        specific_units: this.addSpesification!.specific_units,
+        len: this.addSpesification!.len || null,
+        h: this.addSpesification!.h || null,
+        quantity: this.addSpesification?.quantity,
+        type_position: this.addSpesification?.type_position,
+        name: this.addSpesification.name,
+        idParent: data.idParent,
+      })
+
+      this.closeModalMaterialSP();
+      alert('Позиция добавлена.');
+    } catch (error) {
+      alert(error);
     }
 
-    this.specificatios.push({
-      id: this.addSpesification!.id || null,
-      id_item: this.addSpesification!.id_item,
-      name_item: this.addSpesification!.name_item,
-      unitsMaterial: this.addSpesification!.unitsMaterial!,
-      percentMaterial: this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percentMaterial || null,
-      value: this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value,
-      specific_units: this.addSpesification!.specific_units,
-      len: this.addSpesification!.len || null,
-      h: this.addSpesification!.h || null,
-      quantity: this.addSpesification?.quantity,
-      type_position: this.addSpesification?.type_position,
-      name:this.addSpesification.name,
-    })
-   
-    this.closeModalMaterialSP();
+
   }
 
-  trackByFn(index:any, item:any) {
+  /* trackByFn(index: any, item: any) {
     return item.id; // Замените на уникальное свойство, которое идентифицирует элемент
-  }
+  } */
 
   calculateMaterialSP() {
     switch (this.addSpesification!.specific_units) {
@@ -1164,18 +1219,18 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   clearAddPositionSP() {
-     this.addSpesification!.len = undefined;
+    this.addSpesification!.len = undefined;
     this.addSpesification!.dw = undefined;
     this.addSpesification!.h = undefined;
-    this.addSpesification!.name=undefined;
-    this.addSpesification!.name_item=undefined;
+    this.addSpesification!.name = undefined;
+    this.addSpesification!.name_item = undefined;
     this.addSpesification!.number_item = undefined;
     this.addSpesification!.weight = undefined;
     this.addSpesification!.specific_units = undefined;
     this.addSpesification!.unitsMaterial = undefined;
     this.addSpesification!.percentMaterial = undefined;
     this.addSpesification!.value = undefined;
-  
+
   }
 
   specificUnitsChangeSP() {

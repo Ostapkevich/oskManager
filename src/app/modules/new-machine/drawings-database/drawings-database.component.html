@@ -594,7 +594,7 @@
                         V,м.куб
                     </td>
                     <td class=" py-1 w-0.5/12 text-center" id="plasmaTd">
-                        <input *ngIf="(item.type_position===1 || item.type_position===5) && item.useLenth===0" [checked]="item.plasma" id="plasmaSp"
+                        <input *ngIf="(item.type_position===1 && item.useLenth===0 ) || (item.type_position===5 && item.useLenth===0)" [checked]="item.plasma" id="plasmaSp"
                             type="checkbox" (change)="plasmaSpChange($event.target)"
                             class="w-4 h-4 text-blue-600  rounded  focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
 

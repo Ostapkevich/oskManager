@@ -10,7 +10,7 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
-import { NgSwitch, NgSwitchCase, NgSwitchDefault } from "@angular/common";
+
 
 interface IaddMaterial {
   id: number | null,
@@ -25,13 +25,13 @@ interface IaddMaterial {
   // dw: number | null,
   hMaterial: number | null,
 }
+
 interface Ispecification {
-  idItem:number,
-  idParent: number | undefined,
-  id: number | null,
+  idItem:number,  // id добавленного чертежа, материала (прокат, метизы, покуп, материал)
+  idParent: number | undefined,  // id position в таблице drawing_specification в базе данных
+  idChild: number | null,// id position в связанной таблице drawing_specification в базе данных
   ind: number,
   type_position: number,
-  id_item: number,
   number_item: string,
   name_item: string,
   quantity: number,
@@ -1073,33 +1073,34 @@ export class DrawingsDatabaseComponent implements OnInit {
           }
         }
       }
-      this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
+     
       // ind, idDrawing, type_position, quantity
       const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
       let dataDetails: any[] = [];
       switch (+this.addSpesification.type_position!) {
         case 1:
+          this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
           // id_sprolled, id_item, L, d_b, h, plasma, name, id
-          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma||null, this.addSpesification.name);
+          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma||null, this.addSpesification.name);
           break;
         case 2:
           // id_sphardware, id_item, name, id
-          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.name);
+          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.name);
 
           break;
         case 4:
           //id_sppurshasered, id_item, name, id
-          dataDetails.push(null, this.addSpesification.id_item, this.addSpesification.name);
+          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.name);
           break;
         case 5:
           //id_spdrawing, idDrawing, id
-          dataDetails.push(null, this.addSpesification.id_item);
+          dataDetails.push(null, this.addSpesification.idItem);
           break;
       }
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
       console.log(data)
       this.addSpesification!.idParent = data.idParent;
-      this.addSpesification!.id = data.id;
+      this.addSpesification!.idChild = data.idChild;
       this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
       this.closeModalSP();
       alert("Позиция добавлена.");
@@ -1149,12 +1150,12 @@ export class DrawingsDatabaseComponent implements OnInit {
       const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percentMaterial || null;
       const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
       // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
-      dataDetails.push(null, this.addSpesification.id_item, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
+      dataDetails.push(null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
 
       this.specificatios.push({
-        id: data.id,
-        id_item: this.addSpesification!.id_item,
+        idChild: data.idChild,
+        idItem: this.addSpesification!.idItem,
         name_item: this.addSpesification!.name_item,
         unitsMaterial: this.addSpesification!.unitsMaterial!,
         percentMaterial: percentMaterial,
@@ -1166,6 +1167,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         type_position: this.addSpesification?.type_position,
         name: this.addSpesification.name,
         idParent: data.idParent,
+        number_item:'б/ч'
       })
 
       this.closeModalMaterialSP();

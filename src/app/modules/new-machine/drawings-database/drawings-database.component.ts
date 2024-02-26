@@ -5,70 +5,28 @@ import { HardwareComponent } from 'src/app/modules/materials/hardware/hardware.c
 import { OthersComponent } from 'src/app/modules/materials/others/others.component';
 import { PurchasedComponent } from 'src/app/modules/materials/purchased/purchased.component';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
-import { FormsModule, UntypedFormBuilder } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
+import { Ispecification, IaddMaterial } from '../../views/drawingSP/interfaceDrawingSP';
+
+//import { DrawingService} from './drawing.service';
+//import { DrawingSpService } from '../../views/drawingSP/drawingSp.service';
 
 
-interface IaddMaterial {
-  id: number | null,
-  idDrawing: number | null,
-  idItem: number | null,
-  name_material: string,
-  specific_unitsMaterial: number,
-  percentMaterial: number | null,
-  valueMaterial: number | null,
-  unitsMaterial: number,
-  lenMaterial: number | null,
-  // dw: number | null,
-  hMaterial: number | null,
-}
-
-interface Ispecification {
-  idItem:number,  // id добавленного чертежа, материала (прокат, метизы, покуп, материал)
-  idParent: number | undefined,  // id position в таблице drawing_specification в базе данных
-  idChild: number | null,// id position в связанной таблице drawing_specification в базе данных
-  ind: number,
-  type_position: number,
-  number_item: string,
-  name_item: string,
-  quantity: number,
-  weight: number,
-  useLenth: number,
-  len: number | null,
-  dw: number,
-  h: number | null,
-  specific_units: number,
-  unitsMaterial: number,
-  percentMaterial: number | null,
-  value: number | null,
-  plasma: boolean | null,
-  name: string
-}
-
-/* interface ItempObject {
-  tempId: number,
-  tempType: number,
-  tempName: string,
-  tempUseLenth:number,
-  tempSpecificUnits:number,
-  tempUnits:number,
-  tempPercent:number
-} */
 
 @Component({
   imports: [FormsModule, CommonModule, RolledComponent, HardwareComponent, OthersComponent, PurchasedComponent, ViewDrawingsComponent],
   standalone: true,
+  providers: [],
   selector: 'app-drawings-database',
   templateUrl: './drawings-database.component.html',
   styleUrls: ['./drawings-database.component.css']
 })
 export class DrawingsDatabaseComponent implements OnInit {
-  constructor(private appService: AppService) {
-
-  }
+  constructor(private appService: AppService) { }
 
   dataChanged: boolean | null | undefined = false;
   //blankChange:boolean=false;
@@ -80,7 +38,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   oldTypeBlank: number | undefined;
 
 
-  //tempObj: Partial<ItempObject> = {};
 
   @ViewChild(OthersComponent, { static: false })
   otherComponent: OthersComponent | undefined;
@@ -94,7 +51,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
   /* Чертеж */
-  idDrawing!: number | null | undefined;
+  idDrawing!: number | undefined;
   //isp!: number | null;
   savePath: string[] = []; // Выбор пути в select для сохранения
   s: number | undefined;//Масса чертежа
@@ -138,13 +95,45 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   specificUnitsMaterial!: number | undefined;
   unitsMaterial!: number | undefined;
-
-
-  /* Спецификация */
+  /* Сп */
   specificatios: Partial<Ispecification>[] = [];
-  addSpesification: Partial<Ispecification> | undefined = {};
   spNavigator: TableNavigator | undefined;
+  addSpesification: Partial<Ispecification> | undefined = {};
+  selectedPositionSP: number | undefined;
 
+  changeRadio(element: HTMLInputElement, type: number) {
+    this.radioMaterial = type;
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(radioButton => {
+      if (radioButton !== element) {
+        (radioButton as HTMLInputElement).checked = false;
+      }
+    });
+  };
+
+  async scan() {
+    try {
+
+      const data = await this.appService.query('get', `http://localhost:3000/drawings/scan`);
+      this.savePath = data.scan;
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  formChange(dataForm: NgForm) {
+    this.dataChanged = dataForm.dirty;
+
+  }
+
+
+  ngOnInit(): void {
+    let event = new Event("click");
+    document.getElementById('numberDrawing')!.dispatchEvent(event);
+    this.scan();
+
+  }
 
 
   async saveAll() {
@@ -207,7 +196,6 @@ export class DrawingsDatabaseComponent implements OnInit {
       for (let i = 0; i < files.length; i++) {
         this.filePath.push(path + files[i].name);
       }
-
       const drawing: any[] = [];
       drawing.push(this.idDrawing || null);
       drawing.push(this.drawingNamber);
@@ -256,9 +244,9 @@ export class DrawingsDatabaseComponent implements OnInit {
           material.id || null,
           this.idDrawing || null,
           material.idItem,
-          material.percentMaterial || null,
+          material.percent || null,
           material.valueMaterial || null,
-          material.specific_unitsMaterial,
+          material.specific_units,
           material.lenMaterial || null,
           material.hMaterial || null
         );
@@ -287,7 +275,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
   preparingTosaveDrawing() {
-
     if (this.drawingNamber === '') {
       alert("Введите номер чертежа!");
       return;
@@ -431,98 +418,97 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.saveAll();
   }
 
-  inputEnter(event?: any) {
-    if (event?.key === 'Enter') {
-      this.findBy(event);
+
+
+  showDrawingInfo(drawingInfo: any) {
+    if (drawingInfo) {
+      this.idDrawing = drawingInfo.idDrawing;
+      this.drawingNamber = drawingInfo.numberDrawing;
+      this.drawingName = drawingInfo.nameDrawing;
+      this.m = drawingInfo.weight;
+      this.s = drawingInfo.s;
+      this.typeBlank = drawingInfo.type_blank;
+      if (drawingInfo.path && drawingInfo.path.length > 0) {
+        this.filePath = drawingInfo.path;
+      }
+      (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${this.filePath.length} шт.`;
+      const path = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
+      const ind = this.savePath.indexOf(path);
+      if (ind === -1) {
+        alert(`Путь расположения Файлов чертежей '${path}' не принадлежит какому либо варианту из списка путей сохранения!`)
+      } else {
+        (document.getElementById('selectPath') as HTMLSelectElement).value = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
+      }
+    } else {
+      (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` 0 шт.`;
     }
   }
 
-  async findBy(event?: any) {
-    try {
-      const idElem = document.getElementById('idDrawing');
-      const numberElem = document.getElementById('numberDrawing');
-      let data: any;
-      if (event?.target === numberElem) {
-        const number = (numberElem as HTMLInputElement).value;
-        data = await this.appService.query('get', `http://localhost:3000/drawings/findByNumber/${number}`);
-      } else {
-        const id = +(idElem as HTMLInputElement).value
-        data = await this.appService.query('get', `http://localhost:3000/drawings/findByID/${id}`);
+  showBlankInfo(blankInfo: any) {
+    if (blankInfo) {
+      this.id = blankInfo.id;
+      this.idBlank = blankInfo.id_item;
+      this.blankWeight = blankInfo.weight;
+      this.nameBlank = blankInfo.name_item;
+      switch (this.typeBlank) {
+        case 1:
+          this.useLenth = blankInfo.uselength;
+          this.len = blankInfo.L;
+          this.dw = blankInfo.d_b;
+          this.h = blankInfo.h;
+          this.plasma = Boolean(blankInfo.plasma);
+          this.percentBlank = blankInfo.allowance
+          break;
+        case 3:
+          this.len = blankInfo.L;
+          this.h = blankInfo.h;
+          this.percentBlank = blankInfo.percent;
+          this.valueBlank = blankInfo.value;
+          this.specificUnitsBlank = blankInfo.specific_units;
+          this.unitsBlank = blankInfo.units;
+          break;
       }
+    }
+  }
+
+  showMaterialInfo(materialInfo: any) {
+    if (materialInfo) {
+      for (const item of materialInfo) {
+        this.materials.push({
+          id: item.id,
+          idDrawing: item.idDrawing,
+          idItem: item.id_item,
+          name_material: item.name_item,
+          unitsMaterial: item.units,
+          percent: item.percent,
+          valueMaterial: item.value,
+          specific_units: item.specific_units,
+          lenMaterial: item.L,
+          //dw: this.dwMaterial || null,
+          hMaterial: item.h,
+        })
+      }
+    }
+  }
+
+  async getDrawingInfoFull(idOrNumber: number | string, findBy: 'id' | 'number') {
+    try {
+      let data: any;
+      data = await this.appService.query('get', `http://localhost:3000/drawings/getDrawingInfoFull/${idOrNumber}/${findBy}`);
       const tempIdDrawind = (document.getElementById('idDrawing') as HTMLInputElement).value;
       this.clearDrawing();
       this.clearBlank();
       this.clearMaterial();
+      if (data.notFound) {
+        setTimeout(() => alert('Чертеж не найден!'));
+      }
+      this.showDrawingInfo(data.drawing)
       this.specificatios.length = 0;
-      if (data.drawing) {
-        this.idDrawing = data.drawing.idDrawing;
-        this.drawingNamber = data.drawing.numberDrawing;
-        this.drawingName = data.drawing.nameDrawing;
-        this.m = data.drawing.weight;
-        this.s = data.drawing.s;
-        this.typeBlank = data.drawing.type_blank;
-        if (data.drawing.path && data.drawing.path.length > 0) {
-          this.filePath = data.drawing.path;
-        }
-        (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${this.filePath.length} шт.`;
-        const path = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
-        const ind = this.savePath.indexOf(path);
-        if (ind === -1) {
-          alert(`Путь расположения Файлов чертежей '${path}' не принадлежит какому либо варианту из списка путей сохранения!`)
-        } else {
-          (document.getElementById('selectPath') as HTMLSelectElement).value = this.filePath[0].substring(0, this.filePath[0].lastIndexOf('\\'));
-        }
-      } else {
-        (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` 0 шт.`;
+      this.showBlankInfo(data.blank);
+      this.showMaterialInfo(data.materials);
+      if (data.positionsSP) {
+        this.specificatios = data.positionsSP;
       }
-      /* Заготовка  */
-      if (data.blank) {
-        this.id = data.blank.id;
-        this.idBlank = data.blank.id_item;
-        this.blankWeight = data.blank.weight;
-        this.nameBlank = data.blank.name_item;
-        switch (this.typeBlank) {
-          case 1:
-            this.useLenth = data.blank.uselength;
-            this.len = data.blank.L;
-            this.dw = data.blank.d_b;
-            this.h = data.blank.h;
-            this.plasma = Boolean(data.blank.plasma);
-            this.percentBlank = data.blank.allowance
-            break;
-          case 3:
-            this.len = data.blank.L;
-            this.h = data.blank.h;
-            this.percentBlank = data.blank.percent;
-            this.valueBlank = data.blank.value;
-            this.specificUnitsBlank = data.blank.specific_units;
-            this.unitsBlank = data.blank.units;
-            break;
-        }
-      }
-      /* Материалы */
-      if (data.materials) {
-        for (const item of data.materials) {
-          this.materials.push({
-            id: item.id,
-            idDrawing: item.idDrawing,
-            idItem: item.id_item,
-            name_material: item.name_item,
-            unitsMaterial: item.units,
-            percentMaterial: item.percent,
-            valueMaterial: item.value,
-            specific_unitsMaterial: item.specific_units,
-            lenMaterial: item.L,
-            //dw: this.dwMaterial || null,
-            hMaterial: item.h,
-          })
-        }
-        if (data.positionsSP) {
-          console.log(data.positionsSP)
-          this.specificatios = data.positionsSP;
-        }
-      }
-
       this.dataChanged = false;
       //this.blankChange=false;
       this.materialChange = false;
@@ -531,6 +517,21 @@ export class DrawingsDatabaseComponent implements OnInit {
       alert(error);
     }
 
+  }
+
+  inputEnter(event?: any) {
+    if (event?.key === 'Enter') {
+      const idElem = document.getElementById('idDrawing');
+      const numberElem = document.getElementById('numberDrawing');
+      let data: any;
+      if (event?.target === numberElem) {
+        const number = (numberElem as HTMLInputElement).value;
+        this.getDrawingInfoFull(number, 'number');
+      } else {
+        const id = +(idElem as HTMLInputElement).value
+        this.getDrawingInfoFull(id, 'id');
+      }
+    }
   }
 
   clearDrawing() {
@@ -787,7 +788,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     });
     (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
     if (this.id) {
-      this.findBy();
+      this.getDrawingInfoFull(this.idDrawing!, 'id');
     } else {
       this.clearBlank();
     }
@@ -811,7 +812,8 @@ export class DrawingsDatabaseComponent implements OnInit {
             alert("Материал удален!");
             this.materials.splice(index, 1);
           } else {
-            alert("Что-то пошбо не так!");
+            alert("Материал удален!");
+
           }
         }
       }
@@ -906,9 +908,9 @@ export class DrawingsDatabaseComponent implements OnInit {
           idItem: this.idMaterial!,
           name_material: this.nameMaterial!,
           unitsMaterial: this.unitsMaterial!,
-          percentMaterial: percentMaterial,
+          percent: percentMaterial,
           valueMaterial: valueMaterial,
-          specific_unitsMaterial: this.specificUnitsMaterial!,
+          specific_units: this.specificUnitsMaterial!,
           lenMaterial: this.lenMaterial || null,
           //dw: this.dwMaterial || null,
           hMaterial: this.hMaterial || null,
@@ -933,15 +935,12 @@ export class DrawingsDatabaseComponent implements OnInit {
     (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
     if (this.addBlankNotMaterial) {
       if (this.id) {
-        this.findBy();
+        this.getDrawingInfoFull(this.idDrawing!, 'id');
       } else {
         this.clearBlank();
       }
     }
   }
-
-
-  /* SP */
 
 
   specificUnitsChange() {
@@ -955,82 +954,174 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   }
 
-  plasmaSpChange(target: any) {
-    if (!this.spNavigator) {
-      this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
-    }
-    this.specificatios[this.spNavigator!.rowByNumberCellChecked(target, 13)].plasma = (target as HTMLInputElement).checked;
 
-  }
+  /* Спецификация  */
 
-  btnSpecificationClick() {
-    if (!this.isDrawingInfo) {
 
-      const item: Partial<Ispecification> = {}
-      switch (this.radioMaterial) {
-        case 1:
-          this.addSpesification!.type_position = 1;
-          this.selectToSpecification(this.rolledComponent, '#modalSP');
-          break;
-        case 2:
-          this.addSpesification!.type_position = 2;
-          this.selectToSpecification(this.hardwareComponent, '#modalSP');
-          break;
-        case 3:
-          this.addSpesification!.type_position = 3;
-          this.selectToSpecification(this.otherComponent, '#material-modalSP');
-          break;
-        case 4:
-          this.addSpesification!.type_position = 4;
-          this.selectToSpecification(this.purchasedComponent, '#modalSP');
-          break;
-        case 5:
-          this.addSpesification!.type_position = 5;
-          this.selectToSpecification(this.viewDrawingsComponent, '#modalSP');
-          break;
 
+  async addMaterailSP() {
+    try {
+      if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
+        alert('Введите количество позиций!');
+        return;
       }
-    } else {
+      if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
+          alert("Введите L");
+          return;
+        }
+      } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 1) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
+          alert('Введите размеры L, h!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 0) {
+        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.m || this.m < 0) {
+          alert('Введите коэффициент, массу!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 1) {
+        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.s || this.s < 0) {
+          alert('Введите коэффициент, S!');
+          return;
+        }
+      }
+      else {
+        if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      let dataDetails: any[] = [];
+      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percent || null;
+      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
+      // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
+      dataDetails.push(null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
 
+      this.specificatios.push({
+        idChild: data.idChild,
+        idItem: this.addSpesification!.idItem,
+        name_item: this.addSpesification!.name_item,
+        units: this.addSpesification!.units!,
+        percent: percentMaterial,
+        value: value,
+        specific_units: this.addSpesification!.specific_units,
+        len: this.addSpesification!.len || null,
+        h: this.addSpesification!.h || null,
+        quantity: this.addSpesification?.quantity,
+        type_position: this.addSpesification?.type_position,
+        name: this.addSpesification.name,
+        idParent: data.idParent,
+        number_item: 'б/ч'
+      })
+
+      this.closeModalMaterialSP();
+
+      alert('Позиция добавлена.');
+      if (!this.spNavigator) {
+        this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
+      }
+    } catch (error) {
+      alert(error);
     }
   }
 
-  selectToSpecification(materialComponent: any, idModal?: string) {
+
+  closeModalMaterialSP() {
+    var keyboardEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true
+    });
+    (document.querySelector('#modaFormMatSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.clearAddPositionSP();
+  }
+
+
+  calculateMaterialSP() {
+    switch (this.addSpesification!.specific_units) {
+      case 0:
+        this.addSpesification!.value = this.addSpesification!.percent! * this.m!;
+        return;
+      case 1:
+        this.addSpesification!.value = this.addSpesification!.percent! * this.s!;
+        return;
+      case 2:
+        if (this.addSpesification!.units === 1) {
+          this.addSpesification!.value = (this.addSpesification!.h! * this.addSpesification!.len!) / 1000000;
+        }
+        this.addSpesification!.value = +this.addSpesification!.percent! + +this.addSpesification!.len!;
+        return;
+    }
+
+  }
+
+  /* selectToSpecification(materialComponent: any, idModal?: string) {
     const index = materialComponent!.tblNavigator?.findCheckedRowNumber();
     if (index === null) {
       return;
     }
-    this.addSpesification!.quantity = 1;
-    this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
+    const addSpesification: Partial<Ispecification> = {}
+    addSpesification!.quantity = 1;
+    addSpesification!.idItem = materialComponent.collections[index!].id_item;
     if (materialComponent === this.viewDrawingsComponent) {
-      this.addSpesification!.name = materialComponent.collections[index!].name_item!;
-      this.addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
-      this.addSpesification!.name_item = undefined;
+      addSpesification!.name = materialComponent.collections[index!].name_item!;
+      addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
+      addSpesification!.name_item = undefined;
     } else {
-      this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
+      addSpesification!.name_item = materialComponent.collections[index!].name_item!;
       // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
-      this.addSpesification!.number_item = 'б/ч';
+      addSpesification!.number_item = 'б/ч';
     }
     if (materialComponent !== this.otherComponent) {
-      this.addSpesification!.weight = materialComponent.collections[index!].weight;
+      addSpesification!.weight = materialComponent.collections[index!].weight;
       if (materialComponent === this.rolledComponent) {
-        this.addSpesification!.useLenth = this.rolledComponent!.collections[index!].uselength;
-        if (this.addSpesification!.useLenth === 0) {
+        addSpesification!.useLenth = this.rolledComponent!.collections[index!].uselength;
+        if (addSpesification!.useLenth === 0) {
           const t = this.rolledComponent!.collections[index!].t;
           if (t! < 9) {
-            this.addSpesification!.plasma = false;
+            addSpesification!.plasma = false;
           } else {
-            this.addSpesification!.plasma = true;
+            addSpesification!.plasma = true;
           }
         }
       }
     } else {
-      this.addSpesification!.specific_units = this.otherComponent?.collections[index!].specific_units!;
-      this.addSpesification!.unitsMaterial = this.otherComponent?.collections[index!].units!;
-      this.addSpesification!.percentMaterial = this.otherComponent?.collections[index!].percent!;
-      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.addSpesification!.specific_units);
-
+      addSpesification!.specific_units = this.otherComponent?.collections[index!].specific_units!;
+      addSpesification!.units = this.otherComponent?.collections[index!].units!;
+      addSpesification!.percent = this.otherComponent?.collections[index!].percent!;
+      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.spComponent!.addSpesification!.specific_units);
     }
+  
+    const modalElement: HTMLElement = document.querySelector(idModal!)!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+  } */
+
+  editSp() {
+    if (!this.spNavigator) {
+      this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
+    }
+    const index = this.spNavigator!.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+    this.selectedPositionSP=index;
+    this.addSpesification = Object.assign({}, this.specificatios[index]);
+    let idModal = '';
+    if (this.addSpesification.type_position === 3) {
+      idModal = '#material-modalSP';
+    } else {
+      idModal = '#modalSP';
+    }
+    console.log(this.specificatios)
     const modalElement: HTMLElement = document.querySelector(idModal!)!;
     const modalOptions: ModalOptions = {
       closable: true,
@@ -1039,6 +1130,129 @@ export class DrawingsDatabaseComponent implements OnInit {
     const modal = new Modal(modalElement, modalOptions);
     modal.show();
   }
+
+
+  btnSpecificationClick() {
+    if (!this.isDrawingInfo) {
+      switch (this.radioMaterial) {
+        case 1:
+          //this.spComponent!.addSpesification!.type_position = 1;
+          this.selectToSpecification(this.rolledComponent, 1, '#modalSP');
+          break;
+        case 2:
+          // this.spComponent!.addSpesification!.type_position = 2;
+          this.selectToSpecification(this.hardwareComponent, 2, '#modalSP');
+          break;
+        case 3:
+          // this.spComponent!.addSpesification!.type_position = 3;
+          this.selectToSpecification(this.otherComponent, 3, '#material-modalSP');
+          break;
+        case 4:
+          //this.spComponent!.addSpesification!.type_position = 4;
+          this.selectToSpecification(this.purchasedComponent, 4, '#modalSP');
+          break;
+        case 5:
+          // this.spComponent!.addSpesification!.type_position = 5;
+          this.selectToSpecification(this.viewDrawingsComponent, 5, '#modalSP');
+          break;
+      }
+    } else {
+      if (this.specificatios.length === 0) {
+        return
+      }
+      if (!this.spNavigator) {
+        this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
+      }
+
+      const index = this.spNavigator!.findCheckedRowNumber();
+      if (index === null) {
+        return;
+      }
+      if (confirm('Удалить выбранную позицию?') === true) {
+        this.deletePositionSP(index);
+      }
+
+    }
+  }
+
+  async deletePositionSP(index: number) {
+    try {
+      const data = await this.appService.query('delete', `http://localhost:3000/drawings/deletePositionSP/${this.idDrawing}/${this.specificatios[index].idParent}/${index}`);
+      if (data.response === 'ok') {
+        alert('Позиция удалена!');
+        this.specificatios.splice(index, 1);
+        let i = 0;
+        if (this.specificatios.length === 0) {
+          this.spNavigator = undefined;
+          return;
+        }
+        /*  for (const item of this.specificatios) {
+           item.ind = i;
+         } */
+      } else {
+        alert('Что то пошло не так!');
+        return;
+      }
+
+
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  spClick() {
+    if (!this.spNavigator) {
+      this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
+    }
+  }
+
+  selectToSpecification(materialComponent: any, typePosition: number, idModal?: string,) {
+    this.addSpesification!.type_position = typePosition;
+    const index = materialComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+
+    this.addSpesification!.quantity = 1;
+    this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
+    if (typePosition === 5) {
+      this.addSpesification!.name = materialComponent.collections[index!].name_item!;
+      this.addSpesification!.number_item = materialComponent.collections[index!].number_item;
+      this.addSpesification!.name_item = undefined;
+    } else {
+      this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
+      // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+      this.addSpesification!.number_item = 'б/ч';
+    }
+    if (typePosition !== 3) {
+      this.addSpesification!.weight = materialComponent.collections[index!].weight;
+      if (typePosition === 1) {
+        this.addSpesification!.useLenth = materialComponent.collections[index!].uselength;
+        if (this.addSpesification!.useLenth === 0) {
+          const t = materialComponent.collections[index!].t;
+          if (t! < 9) {
+            this.addSpesification!.plasma = false;
+          } else {
+            this.addSpesification!.plasma = true;
+          }
+        }
+      }
+    } else {
+      this.addSpesification!.specific_units = materialComponent.collections[index!].specific_units!;
+      this.addSpesification!.units = materialComponent.collections[index!].units!;
+      this.addSpesification!.percent = materialComponent.collections[index!].percent!;
+      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.addSpesification!.specific_units);
+    }
+
+    const modalElement: HTMLElement = document.querySelector(idModal!)!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+  }
+
 
   async addPositionSP() {
     try {
@@ -1073,136 +1287,51 @@ export class DrawingsDatabaseComponent implements OnInit {
           }
         }
       }
-     
-      // ind, idDrawing, type_position, quantity
-      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      const dataSP: any[] = [this.addSpesification.idParent || null, this.addSpesification.idParent===null? this.selectedPositionSP===undefined?this.specificatios.length:this.selectedPositionSP+1:this.selectedPositionSP, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
       let dataDetails: any[] = [];
       switch (+this.addSpesification.type_position!) {
         case 1:
           this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
-          // id_sprolled, id_item, L, d_b, h, plasma, name, id
-          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma||null, this.addSpesification.name);
+          dataDetails.push(this.addSpesification.idChild||null , this.addSpesification.idItem, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma || null, this.addSpesification.name,this.addSpesification.idParent || null );
           break;
         case 2:
-          // id_sphardware, id_item, name, id
-          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.name);
-
+          dataDetails.push(this.addSpesification.idChild||null, this.addSpesification.idItem, this.addSpesification.name,this.addSpesification.idParent || null );
           break;
         case 4:
-          //id_sppurshasered, id_item, name, id
-          dataDetails.push(null, this.addSpesification.idItem, this.addSpesification.name);
+          dataDetails.push( this.addSpesification.idChild||null, this.addSpesification.idItem, this.addSpesification.name,this.addSpesification.idParent || null);
           break;
         case 5:
-          //id_spdrawing, idDrawing, id
-          dataDetails.push(null, this.addSpesification.idItem);
+          dataDetails.push(this.addSpesification.idChild||null, this.addSpesification.idItem,this.addSpesification.idParent || null );
           break;
       }
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
-      console.log(data)
-      this.addSpesification!.idParent = data.idParent;
-      this.addSpesification!.idChild = data.idChild;
-      this.specificatios.push(Object.assign(new Object(), this.addSpesification!));
+      if (data.response) {
+        this.specificatios.splice(this.selectedPositionSP!,1,Object.assign(new Object(), this.addSpesification));
+        alert("Данные сохранены!");
+      } else {
+        this.addSpesification!.idParent = data.idParent;
+        this.addSpesification!.idChild = data.idChild;
+        if (this.selectedPositionSP===undefined) {
+          this.specificatios.push(Object.assign(new Object(), this.addSpesification));
+        } else {
+          this.specificatios.splice(this.selectedPositionSP+1,0,Object.assign(new Object(), this.addSpesification));
+        }
+        alert("Позиция добавлена.");
+      }
       this.closeModalSP();
-      alert("Позиция добавлена.");
-
     } catch (error) {
       alert(error);
     }
   }
 
-  async addMaterailSP() {
-    try {
-      if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
-        alert('Введите количество позиций!');
-        return;
-      }
-      if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2) {
-        if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
-          alert("Введите L");
-          return;
-        }
-      } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 1) {
-        if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
-          alert('Введите размеры L, h!');
-          return;
-        }
-      }
-      else if (this.addSpesification!.specific_units === 0) {
-        if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.m || this.m < 0) {
-          alert('Введите коэффициент, массу!');
-          return;
-        }
-      }
-      else if (this.addSpesification!.specific_units === 1) {
-        if (!this.addSpesification!.percentMaterial || this.addSpesification!.percentMaterial < 0 || !this.s || this.s < 0) {
-          alert('Введите коэффициент, S!');
-          return;
-        }
-      }
-      else {
-        if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
-          alert('Введите количество материала!');
-          return;
-        }
-      }
-      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
-      let dataDetails: any[] = [];
-      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percentMaterial || null;
-      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.unitsMaterial === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
-      // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
-      dataDetails.push(null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
-      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
 
-      this.specificatios.push({
-        idChild: data.idChild,
-        idItem: this.addSpesification!.idItem,
-        name_item: this.addSpesification!.name_item,
-        unitsMaterial: this.addSpesification!.unitsMaterial!,
-        percentMaterial: percentMaterial,
-        value: value,
-        specific_units: this.addSpesification!.specific_units,
-        len: this.addSpesification!.len || null,
-        h: this.addSpesification!.h || null,
-        quantity: this.addSpesification?.quantity,
-        type_position: this.addSpesification?.type_position,
-        name: this.addSpesification.name,
-        idParent: data.idParent,
-        number_item:'б/ч'
-      })
-
-      this.closeModalMaterialSP();
-      alert('Позиция добавлена.');
-    } catch (error) {
-      alert(error);
-    }
-
-
+  specificUnitsChangeSP() {
+    this.addSpesification!.specific_units = +(document.getElementById('selectCalculationSP') as HTMLInputElement).value;
+    this.calculateMaterialSP();
   }
 
-  /* trackByFn(index: any, item: any) {
-    return item.id; // Замените на уникальное свойство, которое идентифицирует элемент
-  } */
-
-  calculateMaterialSP() {
-    switch (this.addSpesification!.specific_units) {
-      case 0:
-        this.addSpesification!.value = this.addSpesification!.percentMaterial! * this.m!;
-        return;
-      case 1:
-        this.addSpesification!.value = this.addSpesification!.percentMaterial! * this.s!;
-        return;
-      case 2:
-        if (this.addSpesification!.unitsMaterial === 1) {
-          this.addSpesification!.value = (this.addSpesification!.h! * this.addSpesification!.len!) / 1000000;
-        }
-        this.addSpesification!.value = +this.addSpesification!.percentMaterial! + +this.addSpesification!.len!;
-        return;
-    }
-
-  }
 
   closeModalSP() {
-
     var keyboardEvent = new KeyboardEvent('keydown', {
       key: 'Escape',
       bubbles: true
@@ -1211,14 +1340,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.clearAddPositionSP();
   }
 
-  closeModalMaterialSP() {
-    var keyboardEvent = new KeyboardEvent('keydown', {
-      key: 'Escape',
-      bubbles: true
-    });
-    (document.querySelector('#modaFormMatSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.clearAddPositionSP();
-  }
 
   clearAddPositionSP() {
     this.addSpesification!.len = undefined;
@@ -1229,28 +1350,32 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.addSpesification!.number_item = undefined;
     this.addSpesification!.weight = undefined;
     this.addSpesification!.specific_units = undefined;
-    this.addSpesification!.unitsMaterial = undefined;
-    this.addSpesification!.percentMaterial = undefined;
+    this.addSpesification!.units = undefined;
+    this.addSpesification!.percent = undefined;
     this.addSpesification!.value = undefined;
 
   }
 
-  specificUnitsChangeSP() {
-    this.addSpesification!.specific_units = +(document.getElementById('selectCalculationSP') as HTMLInputElement).value;
-    this.calculateMaterialSP();
+
+  plasmaSpChange(target: any) {
+    console.log(this.specificatios[this.spNavigator!.rowByNumberCellChecked(target, 15)].plasma);
   }
+
 
   moveUnit(isMoveUp: boolean) {
     if (!this.spNavigator) {
       this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
     }
-    let i = this.spNavigator?.findCheckedRowNumber();
+    let i = +this.spNavigator.findCheckedRowNumber()!;
     if (i !== null) {
       const unit = this.specificatios[i!];
+      console.log(this.specificatios)
       if (isMoveUp && i! > 0) {
+        this.changeIndex(this.specificatios[i].idParent!, +i - 1, this.specificatios[i - 1].idParent!, i);
         this.specificatios[i!] = this.specificatios[i! - 1];
         this.specificatios[i! - 1] = unit;
       } else if (!isMoveUp && i! < this.specificatios.length - 1) {
+        this.changeIndex(this.specificatios[i].idParent!, +i + 1, this.specificatios[i + 1].idParent!, i);
         this.specificatios[i!] = this.specificatios[i! + 1];
         this.specificatios[i! + 1] = unit;
       }
@@ -1258,37 +1383,47 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
-  changeRadio(element: HTMLInputElement, type: number) {
-    this.radioMaterial = type;
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach(radioButton => {
-      if (radioButton !== element) {
-        (radioButton as HTMLInputElement).checked = false;
-      }
-    });
-  };
-
-  async scan() {
+  async changeIndex(id1: number, ind1: number, id2: number, ind2: number) {
     try {
+      const data = await this.appService.query('put', `http://localhost:3000/drawings/changeIndPositionSP/${id1}/${ind1}/${id2}/${ind2}`);
+      if (data.response === 'ok') {
+        alert('Готово!');
 
-      const data = await this.appService.query('get', `http://localhost:3000/drawings/scan`);
-      this.savePath = data.scan;
+      } else {
+        alert('Что то пошло не так!');
+        return;
+      }
     } catch (error) {
       alert(error);
     }
   }
 
 
-  formChange(dataForm: NgForm) {
-    this.dataChanged = dataForm.dirty;
-
+  async infoSP(idOrNumber: number | string, findBy: 'id' | 'number') {
+    try {
+      let data: any;
+      data = await this.appService.query('get', `http://localhost:3000/drawings/findDrawingInfoFUll/${idOrNumber}/${findBy}`);
+      const tempIdDrawind = (document.getElementById('idDrawing') as HTMLInputElement).value;
+      this.specificatios.length = 0;
+      if (data.positionsSP) {
+        this.specificatios = data.positionsSP;
+      }
+    } catch (error) {
+      alert(error);
+    }
   }
 
-
-  ngOnInit(): void {
-    let event = new Event("click");
-    document.getElementById('numberDrawing')!.dispatchEvent(event);
-    this.scan();
-
+  addDataSpClick() {
+    if (!this.spNavigator) {
+      this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
+    }
+    this.isDrawingInfo=false;
+    let i = +this.spNavigator.findCheckedRowNumber()!;
+    if (i===null) {
+      this.selectedPositionSP=undefined;
+    } else {
+      this.selectedPositionSP=i;
+    }
   }
+
 }

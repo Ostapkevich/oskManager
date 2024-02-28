@@ -8,7 +8,7 @@ interface Ispecification {
     name_item: string,
     quantity: number,
     weight: number,
-    useLenth: number,
+    uselength: number,
     len: number | null,
     dw: number,
     h: number | null,

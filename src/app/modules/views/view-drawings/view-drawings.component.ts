@@ -5,12 +5,20 @@ import { AppService } from 'src/app/app.service';
 import { FormsModule, NgForm } from '@angular/forms';
 
 interface Idrawing {
-  id_item: number,
+  idDrawing: number,
+  nameDrawings: string,
+  numberDrawings: string,
   name_item: string,
-  isp:number,
-  number_item: string,
   weight: number,
   path:string[],
+  len:number,
+  h:number,
+  dw:number,
+  percent:number,
+  value:number,
+  plasma:boolean,
+  typeBlank:number,
+  uselength:boolean
 }
 
 
@@ -32,8 +40,8 @@ export class ViewDrawingsComponent implements OnInit {
  @Input() showElement=true;
 
 
-  isDrawingInfo = false;
-  collections: Idrawing[] = [];
+  //isDrawingInfo = false;
+  drawings: Idrawing[] = [];
   page: number = 1;
   tblNavigator: TableNavigator | undefined;
   showFull = true;
@@ -43,7 +51,7 @@ export class ViewDrawingsComponent implements OnInit {
 
   async onSubmit() {
     try {
-    this.collections.length=0;
+    this.drawings.length=0;
       const params = <any>{};
       if (this.idDrawing) {
         params.idDrawing = +this.idDrawing;
@@ -65,9 +73,9 @@ export class ViewDrawingsComponent implements OnInit {
       }
       const data = await this.appService.query('get', `http://localhost:3000/viewDrawing/selectDrawings`, params);
       if ((data.drawings as []).length !== 0) {
-        this.collections = data.drawings;
+        this.drawings = data.drawings;
         if (!this.tblNavigator) {
-          this.tblNavigator = new TableNavigator(document.getElementById('tblDrawings') as HTMLTableElement, 0);
+          this.tblNavigator = new TableNavigator(document.getElementById('tblDrawings') as HTMLTableElement);
         }
        
       }

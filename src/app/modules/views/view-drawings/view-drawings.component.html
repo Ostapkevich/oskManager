@@ -40,13 +40,7 @@
             <table class="w-full mt-6" id="tblMaterial ">
                 <tbody class="text-sm  uppercase  bg-gray-700 text-gray-400 ">
                     <tr>
-                        <td class="w-1/12  py-2">
-                            <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5" />
-                            </svg>
-                        </td>
+
                         <td class="w-1/12 py-1 text-center">id</td>
                         <td class="w-4/12">Номер чертежа</td>
                         <td class="w-3/12">Название чертежа</td>
@@ -58,20 +52,13 @@
             </table>
             <table id="tblDrawings" class="w-full  text-sm text-left rtl:text-right  text-gray-300">
                 <tbody id="tbodyDrawings">
-                    <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
-                        *ngFor="let item of collections">
-                        <td class="py-1 w-1/12">
-                            <div class="flex justify-center">
-                                <input type="checkbox" (change)="tblNavigator?.boxChange($event)"
-                                    class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
-                            </div>
-                        </td>
+                    <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600" *ngFor="let item of drawings">
                         <td class=" py-1 w-1/12 text-center ">
-                            {{item.id_item}}
+                            {{item.idDrawing}}
                         </td>
                         <td class=" py-1 w-4/12">
                             <a class="font-medium  text-blue-500 hover:underline cursor-pointer">
-                                {{item.number_item}}
+                                {{item.numberDrawings}}
                             </a>
                         </td>
                         <td class=" py-1 w-3/12">
@@ -80,16 +67,83 @@
                         <td class=" py-1 w-2/12">
                             {{item.weight}}
                         </td>
-                        <td class=" py-1 w-1/12 text-center">
-                            <button class="font-medium  text-blue-500 hover:underline"
-                                (click)="showDrawing($event.target)">Инфо</button>
-                        </td>
-
                     </tr>
                 </tbody>
             </table>
         </div>
+        <table class="w-full" id="headSpecification">
+            <tbody class="text-sm   bg-gray-700 text-gray-400 ">
+                <tr>
+                    <td class="w-0.5/12 text-center">id</td>
+                    <td class="w-1.5/12 pl-3">Номер</td>
+                    <td class="w-1.5/12 ">Наименование</td>
+                    <td class="w-1/12 text-center">Масса,кг</td>
+                    <td class="w-1.5/12 ">Заготовка</td>
+                    <td class="w-0.5/12 text-center">L,мм</td>
+                    <td class="w-0.5/12 text-center">D(B),мм</td>
+                    <td class="w-0.5/12 text-center">H,мм</td>
+                    <td class="w-0.5/12 text-center">Г/плзм.</td>
+                </tr>
+            </tbody>
+        </table>
+        <table *ngIf="drawings.length>0" id="tblSpecification"
+            class="w-full  text-sm text-left rtl:text-right  text-gray-300">
+            <tbody id="tbodySpecification">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
+                    *ngFor="let item of drawings; let i = index">
 
+
+                    <td class=" py-1 w-0.5/12 text-center ">
+                        {{ item.idDrawing }}
+                    </td>
+                    <td class=" py-1 w-1.5/12 ">
+                        {{item.numberDrawings}}
+                    </td>
+                    <td class=" py-1 w-1.5/12" id="name">
+                        {{item.name_item}}
+                    </td>
+                    <td *ngIf="item.typeBlank!==1" class=" py-1 w-1/12 text-center" id="weight1">
+                        {{item.weight | number:"1.0-3"}}
+                    </td>
+
+                    <td *ngIf="item.typeBlank===1 && item.uselength" class=" py-1 w-1/12 text-center" id="rol1">
+                        {{item.len!*item.weight!/1000 | number:"1.0-3"}}
+                    </td>
+                    <td *ngIf="item.typeBlank===1 && item.uselength" class=" py-1 w-1/12 text-center" id="rol2">
+                        {{(item.h?item.dw!*item.h!:item.dw!*item.dw!)/1000000*item.weight! | number:"1.0-3"}}
+                    </td>
+                    <td class=" py-1 w-1.5/12 " id="nameBlank">
+                        {{item.name_item}}
+                    </td>
+                    <td class=" py-1 w-0.5/12 text-center " id="len">
+                        {{ item.len }}
+                    </td>
+                    <td class=" py-1 w-0.5/12 text-center " id="dw">
+                        {{ item.dw }}
+                    </td>
+                    <td class=" py-1 w-0.5/12 text-center " id="h">
+                        {{ item.h }}
+                    </td>
+                    <td class=" py-1 w-0.5/12 text-center" id="percentMaterial">
+                        {{item.percent}}
+                    </td>
+
+                    <td class=" py-1 w-0.5/12 text-center" id="value">
+                        {{item.value | number:"1.0-3"}}
+                    </td>
+                    <td *ngIf="item.typeBlank===1 || item.typeBlank===2|| item.typeBlank===4"
+                        class=" py-1 w-0.5/12 text-center" id="typepos!3">
+                    </td>
+
+                    <td class=" py-1 w-0.5/12 text-center" id="plasmaTd">
+                        <input
+                            *ngIf="(item.typeBlank===1 && !item.uselength ) || (item.typeBlank===5 && !item.uselength)"
+                            [ngModel]="item.plasma" [name]="i+'plasma'" [id]="i+'plasma'" type="checkbox" disabled
+                            class="w-4 h-4 text-blue-600   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
     </div>
 

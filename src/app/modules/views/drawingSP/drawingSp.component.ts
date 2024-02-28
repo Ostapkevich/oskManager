@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
-import { Ispecification } from './interfaceDrawingSP';
+import { Ispecification } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AppService } from 'src/app/app.service';

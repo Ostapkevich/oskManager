@@ -10,7 +10,7 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
-import { Ispecification, IaddMaterial } from '../../views/drawingSP/interfaceDrawingSP';
+import { Ispecification, IaddMaterial } from './interfaceDrawingSP';
 
 //import { DrawingService} from './drawing.service';
 //import { DrawingSpService } from '../../views/drawingSP/drawingSp.service';
@@ -69,7 +69,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   nameBlank: string = ''; // имя добавленной заготовки
   typeBlank: number | undefined;
   blankWeight: number | undefined;
-  useLenth: number | undefined;
+  uselength: number | undefined;
   plasma: boolean = true
 
   addBlankNotMaterial: boolean | undefined;
@@ -166,7 +166,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
 
       if (this.typeBlank === 1) {
-        if (this.useLenth === 1) {
+        if (this.uselength === 1) {
           if (!this.len || this.len <= 0) {
             alert('Введите длину детали!');
             return;
@@ -214,7 +214,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.idDrawing || null);
           blank.push(this.idBlank);
           blank.push(this.percentBlank);
-          blank.push(this.useLenth ? null : this.plasma);
+          blank.push(this.uselength ? null : this.plasma);
           blank.push(this.len || null, this.dw || null, this.h || null);
           break;
         case 2:
@@ -349,14 +349,14 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.id || null);
           blank.push(this.idDrawing);
           blank.push(this.idBlank);
-          blank.push(this.useLenth === 1 ? this.len : null);
-          blank.push(this.useLenth === 1 ? null : this.dw);
-          blank.push(this.useLenth === 1 ? null : this.h);
+          blank.push(this.uselength === 1 ? this.len : null);
+          blank.push(this.uselength === 1 ? null : this.dw);
+          blank.push(this.uselength === 1 ? null : this.h);
           blank.push(this.plasma);
           blank.push(this.percentBlank);
-          this.len = this.useLenth === 1 ? this.len : undefined;
-          this.dw = this.useLenth === 1 ? undefined : this.dw;
-          this.h = this.useLenth === 1 ? undefined : this.h;
+          this.len = this.uselength === 1 ? this.len : undefined;
+          this.dw = this.uselength === 1 ? undefined : this.dw;
+          this.h = this.uselength === 1 ? undefined : this.h;
           break;
         case 2:
           blank.push(this.id || null);
@@ -452,7 +452,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       this.nameBlank = blankInfo.name_item;
       switch (this.typeBlank) {
         case 1:
-          this.useLenth = blankInfo.uselength;
+          this.uselength = blankInfo.uselength;
           this.len = blankInfo.L;
           this.dw = blankInfo.d_b;
           this.h = blankInfo.h;
@@ -550,7 +550,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     this.idBlank = undefined;
     this.blankWeight = undefined;
     this.nameBlank = "";
-    this.useLenth = undefined;
+    this.uselength = undefined;
     this.len = undefined;
     this.dw = undefined;
     this.h = undefined;
@@ -645,7 +645,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       }
       if (materialComponent === this.rolledComponent) {
-        this.useLenth = this.rolledComponent!.collections[index!].uselength;
+        this.uselength = this.rolledComponent!.collections[index!].uselength;
       }
     } else {
       this.specificUnitsBlank = this.otherComponent?.collections[index!].specific_units!;
@@ -679,7 +679,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           return;
       }
     } else if (this.radioMaterial === 1) {
-      if (this.useLenth === 0) {
+      if (this.uselength === 0) {
         const t = this.rolledComponent!.collections[index!].t!;
         if (t! < 9) {
           this.plasma = false;
@@ -738,7 +738,7 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
       }
     } else if (this.typeBlank === 1) {
-      if (this.useLenth === 1) {
+      if (this.uselength === 1) {
         if (!this.len || this.len <= 0) {
           alert('Введите размер "L" !');
           return;
@@ -956,182 +956,6 @@ export class DrawingsDatabaseComponent implements OnInit {
 
 
   /* Спецификация  */
-
-
-
-  async addMaterailSP() {
-    try {
-      if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
-        alert('Введите количество позиций!');
-        return;
-      }
-      if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2) {
-        if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
-          alert("Введите L");
-          return;
-        }
-      } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 1) {
-        if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
-          alert('Введите размеры L, h!');
-          return;
-        }
-      }
-      else if (this.addSpesification!.specific_units === 0) {
-        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.m || this.m < 0) {
-          alert('Введите коэффициент, массу!');
-          return;
-        }
-      }
-      else if (this.addSpesification!.specific_units === 1) {
-        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.s || this.s < 0) {
-          alert('Введите коэффициент, S!');
-          return;
-        }
-      }
-      else {
-        if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
-          alert('Введите количество материала!');
-          return;
-        }
-      }
-      const dataSP: any[] = [this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
-      let dataDetails: any[] = [];
-      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percent || null;
-      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
-      // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
-      dataDetails.push(null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name);
-      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
-
-      this.specificatios.push({
-        idChild: data.idChild,
-        idItem: this.addSpesification!.idItem,
-        name_item: this.addSpesification!.name_item,
-        units: this.addSpesification!.units!,
-        percent: percentMaterial,
-        value: value,
-        specific_units: this.addSpesification!.specific_units,
-        len: this.addSpesification!.len || null,
-        h: this.addSpesification!.h || null,
-        quantity: this.addSpesification?.quantity,
-        type_position: this.addSpesification?.type_position,
-        name: this.addSpesification.name,
-        idParent: data.idParent,
-        number_item: 'б/ч'
-      })
-
-      this.closeModalMaterialSP();
-
-      alert('Позиция добавлена.');
-      if (!this.spNavigator) {
-        this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
-      }
-    } catch (error) {
-      alert(error);
-    }
-  }
-
-
-  closeModalMaterialSP() {
-    var keyboardEvent = new KeyboardEvent('keydown', {
-      key: 'Escape',
-      bubbles: true
-    });
-    (document.querySelector('#modaFormMatSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.clearAddPositionSP();
-  }
-
-
-  calculateMaterialSP() {
-    switch (this.addSpesification!.specific_units) {
-      case 0:
-        this.addSpesification!.value = this.addSpesification!.percent! * this.m!;
-        return;
-      case 1:
-        this.addSpesification!.value = this.addSpesification!.percent! * this.s!;
-        return;
-      case 2:
-        if (this.addSpesification!.units === 1) {
-          this.addSpesification!.value = (this.addSpesification!.h! * this.addSpesification!.len!) / 1000000;
-        }
-        this.addSpesification!.value = +this.addSpesification!.percent! + +this.addSpesification!.len!;
-        return;
-    }
-
-  }
-
-  /* selectToSpecification(materialComponent: any, idModal?: string) {
-    const index = materialComponent!.tblNavigator?.findCheckedRowNumber();
-    if (index === null) {
-      return;
-    }
-    const addSpesification: Partial<Ispecification> = {}
-    addSpesification!.quantity = 1;
-    addSpesification!.idItem = materialComponent.collections[index!].id_item;
-    if (materialComponent === this.viewDrawingsComponent) {
-      addSpesification!.name = materialComponent.collections[index!].name_item!;
-      addSpesification!.number_item = this.viewDrawingsComponent!.collections[index!].number_item;
-      addSpesification!.name_item = undefined;
-    } else {
-      addSpesification!.name_item = materialComponent.collections[index!].name_item!;
-      // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
-      addSpesification!.number_item = 'б/ч';
-    }
-    if (materialComponent !== this.otherComponent) {
-      addSpesification!.weight = materialComponent.collections[index!].weight;
-      if (materialComponent === this.rolledComponent) {
-        addSpesification!.useLenth = this.rolledComponent!.collections[index!].uselength;
-        if (addSpesification!.useLenth === 0) {
-          const t = this.rolledComponent!.collections[index!].t;
-          if (t! < 9) {
-            addSpesification!.plasma = false;
-          } else {
-            addSpesification!.plasma = true;
-          }
-        }
-      }
-    } else {
-      addSpesification!.specific_units = this.otherComponent?.collections[index!].specific_units!;
-      addSpesification!.units = this.otherComponent?.collections[index!].units!;
-      addSpesification!.percent = this.otherComponent?.collections[index!].percent!;
-      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.spComponent!.addSpesification!.specific_units);
-    }
-  
-    const modalElement: HTMLElement = document.querySelector(idModal!)!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    const modal = new Modal(modalElement, modalOptions);
-    modal.show();
-  } */
-
-  editSp() {
-    if (!this.spNavigator) {
-      this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
-    }
-    const index = this.spNavigator!.findCheckedRowNumber();
-    if (index === null) {
-      return;
-    }
-    this.selectedPositionSP=index;
-    this.addSpesification = Object.assign({}, this.specificatios[index]);
-    let idModal = '';
-    if (this.addSpesification.type_position === 3) {
-      idModal = '#material-modalSP';
-    } else {
-      idModal = '#modalSP';
-    }
-    console.log(this.specificatios)
-    const modalElement: HTMLElement = document.querySelector(idModal!)!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    const modal = new Modal(modalElement, modalOptions);
-    modal.show();
-  }
-
-
   btnSpecificationClick() {
     if (!this.isDrawingInfo) {
       switch (this.radioMaterial) {
@@ -1175,6 +999,276 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
+
+  selectToSpecification(materialComponent: any, typePosition: number, idModal?: string,) {
+    this.addSpesification!.type_position = typePosition;
+    const index = materialComponent!.tblNavigator?.findCheckedRowNumber();
+    if (index === null) {
+      return;
+    }
+
+    this.addSpesification!.quantity = 1;
+    this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
+    if (typePosition === 5) {
+      this.addSpesification!.name = materialComponent.collections[index!].name_item!;
+      this.addSpesification!.number_item = materialComponent.collections[index!].number_item;
+      this.addSpesification!.name_item = undefined;
+    } else {
+      this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
+      // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
+      this.addSpesification!.number_item = 'б/ч';
+    }
+    if (typePosition !== 3) {
+      this.addSpesification!.weight = materialComponent.collections[index!].weight;
+      if (typePosition === 1) {
+        this.addSpesification!.uselength = materialComponent.collections[index!].uselength;
+        if (this.addSpesification!.uselength === 0) {
+          const t = materialComponent.collections[index!].t;
+          if (t! < 9) {
+            this.addSpesification!.plasma = false;
+          } else {
+            this.addSpesification!.plasma = true;
+          }
+        }
+      }
+    } else {
+      this.addSpesification!.specific_units = materialComponent.collections[index!].specific_units!;
+      this.addSpesification!.units = materialComponent.collections[index!].units!;
+      this.addSpesification!.percent = materialComponent.collections[index!].percent!;
+      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.addSpesification!.specific_units);
+    }
+    const modalElement: HTMLElement = document.querySelector(idModal!)!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+
+  }
+
+
+  async addPositionSP() {
+    try {
+      if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
+        alert('Введите количество, шт!');
+        return;
+      }
+      if (this.addSpesification!.type_position === 3) {
+        if (!this.addSpesification?.value || this.addSpesification?.value <= 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      } else if (this.addSpesification!.type_position === 1) {
+        if (this.addSpesification!.uselength === 1) {
+          if (!this.addSpesification!.len || this.addSpesification!.len <= 0) {
+            alert('Введите размер "L" !');
+            return;
+          }
+        } else {
+          if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
+            alert('Введите размер детали D/B!');
+            return;
+          }
+          if (this.addSpesification!.h && this.addSpesification!.dw <= 0) {
+            alert('Размер Н должен быть больше нуля!');
+            return;
+          }
+          if (!this.addSpesification!.h) {
+            if (confirm('Ввести размер "Н" ?') === true) {
+              return;
+            }
+          }
+        }
+      }
+
+      let dataDetails: any[] = [];
+      const dataSP: any[] = [this.addSpesification.idParent || null, this.isDrawingInfo ? this.selectedPositionSP : this.selectedPositionSP?this.selectedPositionSP! + 1 : this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      switch (+this.addSpesification.type_position!) {
+        case 1:
+          this.addSpesification.plasma = this.addSpesification?.uselength === 0 ? this.addSpesification.plasma : null;
+          dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma || null, this.addSpesification.name, this.addSpesification.idParent || null);
+          break;
+        case 2:
+          dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, this.addSpesification.name, this.addSpesification.idParent || null);
+          break;
+        case 4:
+          dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, this.addSpesification.name, this.addSpesification.idParent || null);
+          break;
+        case 5:
+          dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, this.addSpesification.idParent || null);
+          break;
+      }
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
+      if (this.isDrawingInfo) {
+        if (data.response) {
+          this.specificatios.splice(this.selectedPositionSP!, 1, Object.assign(new Object(), this.addSpesification));
+          alert("Данные сохранены!");
+        }
+      } else {
+        this.addSpesification!.idParent = data.idParent;
+        this.addSpesification!.idChild = data.idChild;
+        if (this.selectedPositionSP === undefined) {
+          this.specificatios.push(Object.assign(new Object(), this.addSpesification));
+        } else {
+          this.specificatios.splice(this.selectedPositionSP + 1, 0, Object.assign(new Object(), this.addSpesification));
+        }
+        alert("Позиция добавлена.");
+      }
+      this.closeModalSP();
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  async addMaterailSP() {
+    try {
+      if (!this.addSpesification?.quantity || this.addSpesification.quantity <= 0) {
+        alert('Введите количество позиций!');
+        return;
+      }
+      if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0) {
+          alert("Введите L");
+          return;
+        }
+      } else if (this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 1) {
+        if (!this.addSpesification!.len || this.addSpesification!.len < 0 || !this.addSpesification!.h || this.addSpesification!.h < 0) {
+          alert('Введите размеры L, h!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 0) {
+        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.m || this.m < 0) {
+          alert('Введите коэффициент, массу!');
+          return;
+        }
+      }
+      else if (this.addSpesification!.specific_units === 1) {
+        if (!this.addSpesification!.percent || this.addSpesification!.percent < 0 || !this.s || this.s < 0) {
+          alert('Введите коэффициент, S!');
+          return;
+        }
+      }
+      else {
+        if (!this.addSpesification!.value || this.addSpesification!.value < 0) {
+          alert('Введите количество материала!');
+          return;
+        }
+      }
+      const dataSP: any[] = [this.addSpesification.idParent || null, this.isDrawingInfo ? this.selectedPositionSP : this.selectedPositionSP?this.selectedPositionSP! + 1 : this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
+      let dataDetails: any[] = [];
+      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percent || null;
+      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
+      // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
+      dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.name, this.addSpesification.idParent || null);
+      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
+      if (this.isDrawingInfo) {
+        if (data.response) {
+          this.calculateMaterialSP();
+          this.specificatios.splice(this.selectedPositionSP!, 1, Object.assign(new Object(), this.addSpesification));
+          alert("Данные сохранены!");
+        }
+      } else {
+        this.addSpesification.number_item = 'б/ч';
+        this.addSpesification!.idParent = data.idParent;
+        this.addSpesification!.idChild = data.idChild;
+        this.calculateMaterialSP();
+        if (this.selectedPositionSP === undefined) {
+          this.specificatios.push(Object.assign(new Object(), this.addSpesification));
+        } else {
+          this.specificatios.splice(this.selectedPositionSP + 1, 0, Object.assign(new Object(), this.addSpesification));
+        }
+        alert("Позиция добавлена.");
+      }
+
+      this.closeModalMaterialSP();
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  clearAddPositionSP() {
+    this.addSpesification!.len = undefined;
+    this.addSpesification!.dw = undefined;
+    this.addSpesification!.h = undefined;
+    this.addSpesification!.name = undefined;
+    this.addSpesification!.name_item = undefined;
+    this.addSpesification!.number_item = undefined;
+    this.addSpesification!.weight = undefined;
+    this.addSpesification!.specific_units = undefined;
+    this.addSpesification!.units = undefined;
+    this.addSpesification!.percent = undefined;
+    this.addSpesification!.value = undefined;
+
+  }
+
+
+  closeModalSP() {
+    var keyboardEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true
+    });
+    (document.querySelector('#modalFormSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.clearAddPositionSP();
+  }
+
+
+  closeModalMaterialSP() {
+    var keyboardEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true
+    });
+    (document.querySelector('#modaFormMatSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
+    this.clearAddPositionSP();
+  }
+
+
+  calculateMaterialSP() {
+    switch (this.addSpesification!.specific_units) {
+      case 0:
+        this.addSpesification!.value = this.addSpesification!.percent! * this.m!;
+        return;
+      case 1:
+        this.addSpesification!.value = this.addSpesification!.percent! * this.s!;
+        return;
+      case 2:
+        if (this.addSpesification!.units === 1) {
+
+          this.addSpesification!.value = (this.addSpesification!.h! * this.addSpesification!.len!) / 1000000;
+        }
+        // this.addSpesification!.value = +this.addSpesification!.percent! + +this.addSpesification!.len!;
+        return;
+    }
+
+  }
+
+
+  editTableSpesification() {
+    this.checkSelectedPositionSP();
+    if (this.selectedPositionSP === undefined) {
+      return
+    }
+    this.addSpesification = Object.assign({}, this.specificatios[this.selectedPositionSP]);
+    let idModal = '';
+    if (this.addSpesification.type_position === 3) {
+      idModal = '#material-modalSP';
+    } else {
+      idModal = '#modalSP';
+    }
+    console.log(this.specificatios)
+    const modalElement: HTMLElement = document.querySelector(idModal!)!;
+    const modalOptions: ModalOptions = {
+      closable: true,
+      backdrop: 'static',
+    };
+    const modal = new Modal(modalElement, modalOptions);
+    modal.show();
+  }
+
+
   async deletePositionSP(index: number) {
     try {
       const data = await this.appService.query('delete', `http://localhost:3000/drawings/deletePositionSP/${this.idDrawing}/${this.specificatios[index].idParent}/${index}`);
@@ -1200,127 +1294,10 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
-  spClick() {
+
+  tblSpesificationClick() {
     if (!this.spNavigator) {
       this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
-    }
-  }
-
-  selectToSpecification(materialComponent: any, typePosition: number, idModal?: string,) {
-    this.addSpesification!.type_position = typePosition;
-    const index = materialComponent!.tblNavigator?.findCheckedRowNumber();
-    if (index === null) {
-      return;
-    }
-
-    this.addSpesification!.quantity = 1;
-    this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
-    if (typePosition === 5) {
-      this.addSpesification!.name = materialComponent.collections[index!].name_item!;
-      this.addSpesification!.number_item = materialComponent.collections[index!].number_item;
-      this.addSpesification!.name_item = undefined;
-    } else {
-      this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;
-      // this.addSpesification!.id_item = materialComponent.collections[index!].id_item;
-      this.addSpesification!.number_item = 'б/ч';
-    }
-    if (typePosition !== 3) {
-      this.addSpesification!.weight = materialComponent.collections[index!].weight;
-      if (typePosition === 1) {
-        this.addSpesification!.useLenth = materialComponent.collections[index!].uselength;
-        if (this.addSpesification!.useLenth === 0) {
-          const t = materialComponent.collections[index!].t;
-          if (t! < 9) {
-            this.addSpesification!.plasma = false;
-          } else {
-            this.addSpesification!.plasma = true;
-          }
-        }
-      }
-    } else {
-      this.addSpesification!.specific_units = materialComponent.collections[index!].specific_units!;
-      this.addSpesification!.units = materialComponent.collections[index!].units!;
-      this.addSpesification!.percent = materialComponent.collections[index!].percent!;
-      (document.getElementById('selectCalculationSP') as HTMLSelectElement).value = String(this.addSpesification!.specific_units);
-    }
-
-    const modalElement: HTMLElement = document.querySelector(idModal!)!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    const modal = new Modal(modalElement, modalOptions);
-    modal.show();
-  }
-
-
-  async addPositionSP() {
-    try {
-      if (!this.addSpesification?.quantity || this.addSpesification?.quantity <= 0) {
-        alert('Введите количество, шт!');
-        return;
-      }
-      if (this.addSpesification!.type_position === 3) {
-        if (!this.addSpesification?.value || this.addSpesification?.value <= 0) {
-          alert('Введите количество материала!');
-          return;
-        }
-      } else if (this.addSpesification!.type_position === 1) {
-        if (this.addSpesification!.useLenth === 1) {
-          if (!this.addSpesification!.len || this.addSpesification!.len <= 0) {
-            alert('Введите размер "L" !');
-            return;
-          }
-        } else {
-          if (!this.addSpesification!.dw || this.addSpesification!.dw <= 0) {
-            alert('Введите размер детали D/B!');
-            return;
-          }
-          if (this.addSpesification!.h && this.addSpesification!.dw <= 0) {
-            alert('Размер Н должен быть больше нуля!');
-            return;
-          }
-          if (!this.addSpesification!.h) {
-            if (confirm('Ввести размер "Н" ?') === true) {
-              return;
-            }
-          }
-        }
-      }
-      const dataSP: any[] = [this.addSpesification.idParent || null, this.addSpesification.idParent===null? this.selectedPositionSP===undefined?this.specificatios.length:this.selectedPositionSP+1:this.selectedPositionSP, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
-      let dataDetails: any[] = [];
-      switch (+this.addSpesification.type_position!) {
-        case 1:
-          this.addSpesification.plasma = this.addSpesification?.useLenth === 0 ? (document.getElementById('plasmaPos') as HTMLInputElement).checked : null;
-          dataDetails.push(this.addSpesification.idChild||null , this.addSpesification.idItem, this.addSpesification.len || null, this.addSpesification.dw || null, this.addSpesification.h || null, this.addSpesification.plasma || null, this.addSpesification.name,this.addSpesification.idParent || null );
-          break;
-        case 2:
-          dataDetails.push(this.addSpesification.idChild||null, this.addSpesification.idItem, this.addSpesification.name,this.addSpesification.idParent || null );
-          break;
-        case 4:
-          dataDetails.push( this.addSpesification.idChild||null, this.addSpesification.idItem, this.addSpesification.name,this.addSpesification.idParent || null);
-          break;
-        case 5:
-          dataDetails.push(this.addSpesification.idChild||null, this.addSpesification.idItem,this.addSpesification.idParent || null );
-          break;
-      }
-      const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
-      if (data.response) {
-        this.specificatios.splice(this.selectedPositionSP!,1,Object.assign(new Object(), this.addSpesification));
-        alert("Данные сохранены!");
-      } else {
-        this.addSpesification!.idParent = data.idParent;
-        this.addSpesification!.idChild = data.idChild;
-        if (this.selectedPositionSP===undefined) {
-          this.specificatios.push(Object.assign(new Object(), this.addSpesification));
-        } else {
-          this.specificatios.splice(this.selectedPositionSP+1,0,Object.assign(new Object(), this.addSpesification));
-        }
-        alert("Позиция добавлена.");
-      }
-      this.closeModalSP();
-    } catch (error) {
-      alert(error);
     }
   }
 
@@ -1331,37 +1308,6 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
-  closeModalSP() {
-    var keyboardEvent = new KeyboardEvent('keydown', {
-      key: 'Escape',
-      bubbles: true
-    });
-    (document.querySelector('#modalFormSP') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    this.clearAddPositionSP();
-  }
-
-
-  clearAddPositionSP() {
-    this.addSpesification!.len = undefined;
-    this.addSpesification!.dw = undefined;
-    this.addSpesification!.h = undefined;
-    this.addSpesification!.name = undefined;
-    this.addSpesification!.name_item = undefined;
-    this.addSpesification!.number_item = undefined;
-    this.addSpesification!.weight = undefined;
-    this.addSpesification!.specific_units = undefined;
-    this.addSpesification!.units = undefined;
-    this.addSpesification!.percent = undefined;
-    this.addSpesification!.value = undefined;
-
-  }
-
-
-  plasmaSpChange(target: any) {
-    console.log(this.specificatios[this.spNavigator!.rowByNumberCellChecked(target, 15)].plasma);
-  }
-
-
   moveUnit(isMoveUp: boolean) {
     if (!this.spNavigator) {
       this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
@@ -1369,7 +1315,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     let i = +this.spNavigator.findCheckedRowNumber()!;
     if (i !== null) {
       const unit = this.specificatios[i!];
-      console.log(this.specificatios)
+
       if (isMoveUp && i! > 0) {
         this.changeIndex(this.specificatios[i].idParent!, +i - 1, this.specificatios[i - 1].idParent!, i);
         this.specificatios[i!] = this.specificatios[i! - 1];
@@ -1399,7 +1345,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   }
 
 
-  async infoSP(idOrNumber: number | string, findBy: 'id' | 'number') {
+  /* async infoSP(idOrNumber: number | string, findBy: 'id' | 'number') {
     try {
       let data: any;
       data = await this.appService.query('get', `http://localhost:3000/drawings/findDrawingInfoFUll/${idOrNumber}/${findBy}`);
@@ -1411,18 +1357,30 @@ export class DrawingsDatabaseComponent implements OnInit {
     } catch (error) {
       alert(error);
     }
+  } */
+testInfo(){
+  console.log(this.specificatios)
+}
+
+  btnInfoOrAddDataDrawings() {
+    if (this.isDrawingInfo) {
+      this.checkSelectedPositionSP();
+      this.spNavigator = undefined;
+      this.isDrawingInfo = false;
+      console.log(this.selectedPositionSP)
+    }
+   
   }
 
-  addDataSpClick() {
+  checkSelectedPositionSP() {
     if (!this.spNavigator) {
       this.spNavigator = new TableNavigator((document.querySelector('#tblSpecification') as HTMLTableElement), 0);
     }
-    this.isDrawingInfo=false;
-    let i = +this.spNavigator.findCheckedRowNumber()!;
-    if (i===null) {
-      this.selectedPositionSP=undefined;
+    let i = this.spNavigator.findCheckedRowNumber()!;
+    if (i === null) {
+      this.selectedPositionSP = undefined;
     } else {
-      this.selectedPositionSP=i;
+      this.selectedPositionSP = i;
     }
   }
 

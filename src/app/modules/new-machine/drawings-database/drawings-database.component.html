@@ -69,19 +69,19 @@
         <!-- Параметры чертежа -->
         <div class="grid gap-4 grid-cols-12 items-end mt-6">
             <div class="col-span-3 flex rounded-md shadow-sm" role="group">
-                <button *ngIf="isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+                <button *ngIf="isDrawingInfo" type="button" 
                     class="w-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
                     Данные чертежа
                 </button>
-                <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=true"
+                <button *ngIf="!isDrawingInfo" type="button"  (click)="isDrawingInfo=true"
                     class="w-1/2 px-2 py-2 text-sm font-medium  bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
                     Данные чертежа
                 </button>
-                <button *ngIf="isDrawingInfo" type="button" (click)="addDataSpClick()"
+                <button *ngIf="isDrawingInfo" type="button" (click)="btnInfoOrAddDataDrawings()"
                     class="w-1/2 px-2 py-2 text-sm font-medium bg-gray-700 border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
                     Добавить данные
                 </button>
-                <button *ngIf="!isDrawingInfo" type="button" (click)="addDataSpClick()"
+                <button *ngIf="!isDrawingInfo" type="button" 
                     class="w-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-se-xl  focus:z-10    border-white text-white  hover:bg-gray-900">
                     Добавить данные
                 </button>
@@ -230,14 +230,14 @@
                         <tbody class="text-sm  bg-gray-700 text-gray-400 ">
                             <tr>
                                 <td class="w-1/12 text-center">id</td>
-                                <td *ngIf="useLenth===1" class="w-6/12">Наименование</td>
-                                <td *ngIf="useLenth===0" class="w-4/12">Наименование</td>
+                                <td *ngIf="uselength===1" class="w-6/12">Наименование</td>
+                                <td *ngIf="uselength===0" class="w-4/12">Наименование</td>
                                 <td class="w-1/12 text-center">Прип,мм</td>
-                                <td *ngIf="useLenth===1" class="w-1/12 text-center">L, мм</td>
-                                <td *ngIf="useLenth===0" class="w-2/12 text-center">D(B) ,мм</td>
-                                <td *ngIf="useLenth===0" class="w-1/12 text-center">H, мм</td>
+                                <td *ngIf="uselength===1" class="w-1/12 text-center">L, мм</td>
+                                <td *ngIf="uselength===0" class="w-2/12 text-center">D(B) ,мм</td>
+                                <td *ngIf="uselength===0" class="w-1/12 text-center">H, мм</td>
                                 <td class="w-2/12 text-center">Масса, кг</td>
-                                <td *ngIf="useLenth===0" class="w-1/12 text-center">Г/пл</td>
+                                <td *ngIf="uselength===0" class="w-1/12 text-center">Г/пл</td>
                             </tr>
                         </tbody>
                     </table>
@@ -247,32 +247,32 @@
                                 <td class=" py-1 w-1/12 text-center">
                                     {{idBlank}}
                                 </td>
-                                <td *ngIf="useLenth===1" class=" py-1 w-6/12 ">
+                                <td *ngIf="uselength===1" class=" py-1 w-6/12 ">
                                     {{nameBlank}}
                                 </td>
-                                <td *ngIf="useLenth===0" class=" py-1 w-4/12 ">
+                                <td *ngIf="uselength===0" class=" py-1 w-4/12 ">
                                     {{nameBlank}}
                                 </td>
                                 <td class=" py-1 w-1/12 text-center">
                                     {{percentBlank!}}
                                 </td>
-                                <td *ngIf="useLenth===1" class=" py-1 w-1/12 text-center">
+                                <td *ngIf="uselength===1" class=" py-1 w-1/12 text-center">
                                     {{+percentBlank!+ +len!}}
                                 </td>
-                                <td *ngIf="useLenth===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
-                                <td *ngIf="useLenth===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
-                                <td *ngIf="useLenth===1" class=" py-1 w-2/12 text-center">
+                                <td *ngIf="uselength===0" class="w-2/12 text-center">{{+percentBlank!+ +dw!}}</td>
+                                <td *ngIf="uselength===0" class="w-1/12 text-center">{{+percentBlank!+ +h!}}</td>
+                                <td *ngIf="uselength===1" class=" py-1 w-2/12 text-center">
                                     {{blankWeight!*(+percentBlank!+ +len!)/1000 | number:"1.0-3"}}
                                 </td>
-                                <td *ngIf="useLenth===0 && dw && !h " class=" py-1 w-2/12 text-center">
+                                <td *ngIf="uselength===0 && dw && !h " class=" py-1 w-2/12 text-center">
                                     {{(blankWeight!*(+percentBlank!+ +dw!)*(+percentBlank!+ +dw!))/1000000 |
                                     number:"1.0-3"}}
                                 </td>
-                                <td *ngIf="useLenth===0 && dw && h " class=" py-1 w-2/12 text-center">
+                                <td *ngIf="uselength===0 && dw && h " class=" py-1 w-2/12 text-center">
                                     {{(blankWeight!*(+percentBlank!+ +dw!)*(percentBlank!+ +h!))/1000000 |
                                     number:"1.0-3"}}
                                 </td>
-                                <td *ngIf="typeBlank===1 && useLenth===0 " class=" py-1 w-2/12 text-center">
+                                <td *ngIf="typeBlank===1 && uselength===0 " class=" py-1 w-2/12 text-center">
                                     <input id="plasmaSp" type="checkbox" disabled name="plasmaSp" [ngModel]="plasma"
                                         class="w-4 h-4 text-blue-600   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
 
@@ -316,7 +316,12 @@
             <!-- Добавленные материалы -->
             <div *ngIf="isDrawingInfo && materials.length>0"
                 class="basis-7/12 mt-4  max-h-181 relative overflow-x-auto shadow-md ">
-                <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
+                <div class="flex justify-between">
+                    <label class="block mb-2 mt-3 text-sm font-medium  text-white">Материалы</label>
+                    <button (click)="testInfo()" type="button"
+                    class="self-center px-3 py-2 text-xs font-medium text-center text-white focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Изменить</button>
+                </div>
+               
                 <table class="w-full" id="tblMaterial">
                     <tbody class="text-sm   bg-gray-700 text-gray-400 ">
                         <tr>
@@ -457,7 +462,7 @@
                 </button>
                 <label class="block mb-2 mt-3 text-sm font-medium  text-white">Спецификация</label>
             </div>
-            <button (click)="editSp()" type="button"
+            <button (click)="editTableSpesification()" type="button"
                 class="self-center px-3 py-2 text-xs font-medium text-center text-white focus:ring-4 focus:outline-none  bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">Изменить</button>
 
         </div>
@@ -490,7 +495,7 @@
                 </tr>
             </tbody>
         </table>
-        <table *ngIf="specificatios.length>0" id="tblSpecification" (click)="spClick()"
+        <table *ngIf="specificatios.length>0" id="tblSpecification" (click)="tblSpesificationClick()"
             class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodySpecification">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
@@ -521,10 +526,10 @@
                         {{item.weight | number:"1.0-3"}}
                     </td>
 
-                    <td *ngIf="item.type_position===1 && item.useLenth===1" class=" py-1 w-1/12 text-center" id="rol1">
+                    <td *ngIf="item.type_position===1 && item.uselength===1" class=" py-1 w-1/12 text-center" id="rol1">
                         {{item.len!*item.weight!/1000 | number:"1.0-3"}}
                     </td>
-                    <td *ngIf="item.type_position===1 && item.useLenth===0" class=" py-1 w-1/12 text-center" id="rol2">
+                    <td *ngIf="item.type_position===1 && item.uselength===0" class=" py-1 w-1/12 text-center" id="rol2">
                         {{(item.h?item.dw!*item.h!:item.dw!*item.dw!)/1000000*item.weight! | number:"1.0-3"}}
                     </td>
                     <td class=" py-1 w-1.5/12 " id="nameBlank">
@@ -558,10 +563,10 @@
                     <td class=" py-1 w-0.5/12 text-center" id="value">
                         {{item.value | number:"1.0-3"}}
                     </td>
-                    <td *ngIf="item.type_position===1 || item.type_position===2 || item.type_position===4"
+                    <td *ngIf="item.type_position===1 || item.type_position===2|| item.type_position===4"
                         class=" py-1 w-0.5/12 text-center" id="typepos!3">
                     </td>
-                    <td *ngIf="(item.type_position===3 && item.units===0) || (item.type_position===5 && (item.useLenth===0 || item.useLenth===1))"
+                    <td *ngIf="(item.type_position===3 && item.units===0) || (item.type_position===5 && (item.uselength===0 || item.uselength===1))"
                         id="m kq" class=" py-1 w-0.5/12 text-center">
                         m,кг
                     </td>
@@ -569,7 +574,7 @@
                         S,м.кв
                     </td>
                     <td *ngIf="item.units===2" class=" py-1 w-0.5/12 text-center">
-                        L,м
+                        L,мм
                     </td>
                     <td *ngIf="item.units===3" class=" py-1 w-0.5/12 text-center">
                         шт.
@@ -582,9 +587,9 @@
                     </td>
                     <td class=" py-1 w-0.5/12 text-center" id="plasmaTd">
                         <input
-                            *ngIf="(item.type_position===1 && item.useLenth===0 ) || (item.type_position===5 && item.useLenth===0)"
+                            *ngIf="(item.type_position===1 && item.uselength===0 ) || (item.type_position===5 && item.uselength===0)"
                             [(ngModel)]="item.plasma" [name]="i+'plasmaSp'" [id]="i+'plasmaSp'" type="checkbox"
-                            (change)="plasmaSpChange($event.target)" disabled
+                           disabled
                             class="w-4 h-4 text-blue-600   focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                     </td>
                 </tr>
@@ -600,7 +605,7 @@
             <div class="relative   shadow bg-gray-700">
                 <div class="flex items-center justify-between p-4 md:p-5 border-b  border-gray-600">
                     <h3 class="text-lg font-semibold  text-white">
-                        {{addSpesification!.idChild===null? 'Новая позиция Сп.':'Обновить позицию Сп.'}}   
+                        {{!isDrawingInfo? 'Новая позиция Сп.':'Обновить позицию Сп.'}}
                     </h3>
                     <button type="button" (click)="closeModalSP()"
                         class="text-gray-400 bg-transparent hover:bg-gray-200   text-sm w-8 h-8 ms-auto inline-flex justify-center items-center bg-gray-600 hover:text-white">
@@ -648,21 +653,21 @@
                                 class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                                 required="">
                         </div>
-                        <div *ngIf=" addSpesification?.type_position===1 && addSpesification!.useLenth===1">
+                        <div *ngIf=" addSpesification?.type_position===1 && addSpesification!.uselength===1">
                             <label id="lbllenPos" for="lenPos"
                                 class="block mb-2 text-sm font-medium  text-white">L,мм</label>
                             <input type="number" name="lenPos" id="lenPos" [(ngModel)]="addSpesification!.len"
                                 class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                                 required="">
                         </div>
-                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0">
+                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.uselength===0">
                             <label id="lblDpos" for="inpDpos" class="block mb-2 text-sm font-medium  text-white">D/B,
                                 мм</label>
                             <input type="number" name="inpDpos" id="inpDpos" [(ngModel)]="addSpesification!.dw"
                                 class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                                 required="">
                         </div>
-                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0">
+                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.uselength===0">
                             <label id="lblinpHpos" for="inpHpos" class="block mb-2 text-sm font-medium  text-white">H,
                                 мм</label>
                             <input type="number" name="inpHpos" id="inpHpos" [(ngModel)]="addSpesification!.h"
@@ -670,13 +675,14 @@
                                 required="">
                         </div>
 
-                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.useLenth===0"
+                        <div *ngIf="addSpesification?.type_position===1 && addSpesification!.uselength===0"
                             class="flex items-center">
-                            <input *ngIf="addSpesification!.plasma===true||addSpesification!.plasma===1" checked="" id="plasmaPos" type="checkbox"
-                                value=""
+                            <input [(ngModel)]="addSpesification!.plasma" name="plasmaPos"
+                                id="plasmaPos" type="checkbox" 
                                 class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
-                            <input *ngIf="addSpesification!.plasma===false || addSpesification!.plasma===0" id="plasmaPos" type="checkbox" value=""
-                                class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                         <!--    <input *ngIf="addSpesification!.plasma===false || addSpesification!.plasma===0" checked="false"
+                                id="plasmaPos" type="checkbox" 
+                                class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600"> -->
                             <label for="plasmaPos" class="ms-2 text-sm font-medium  text-gray-300">Газоплазм.
                                 вырезка</label>
                         </div>
@@ -707,7 +713,7 @@
                     </div>
                     <button type="button" (click)="addPositionSP()"
                         class="text-white inline-flex items-center  focus:ring-4 focus:outline-none  font-medium  text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
-                        {{addSpesification!.idChild===null? 'Добавить':'Обновить'}}
+                        {{!isDrawingInfo? 'Добавить':'Обновить'}}
                     </button>
                 </form>
             </div>
@@ -724,7 +730,7 @@
                 <!-- Modal header -->
                 <div class="flex items-center justify-between p-4 md:p-5 border-b  border-gray-600">
                     <h3 class="text-lg font-semibold  text-white">
-                        {{addSpesification!.idChild===null? 'Новая позиция Сп.':'Обновить позицию Сп.'}}  
+                        {{!isDrawingInfo? 'Новая позиция Сп.':'Обновить позицию Сп.'}}
                     </h3>
                     <button type="button" (click)="closeModalMaterialSP()"
                         class="text-gray-400 bg-transparent hover:bg-gray-200   text-sm w-8 h-8 ms-auto inline-flex justify-center items-center bg-gray-600 hover:text-white">
@@ -855,7 +861,7 @@
                     </div>
                     <button type="button" (click)="addMaterailSP()"
                         class="text-white inline-flex items-center  focus:ring-4 focus:outline-none  font-medium  text-sm px-5 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800">
-                        {{addSpesification!.idChild?'Обновить':'Добавить'}}
+                        {{!isDrawingInfo? 'Добавить':'Обновить'}}
                     </button>
 
                 </form>
@@ -1075,21 +1081,21 @@
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             placeholder="Type product name" required="">
                     </div>
-                    <div *ngIf="useLenth===1">
+                    <div *ngIf="uselength===1">
                         <label id="lblDetailCharBlank" for="inpDetailBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь L,мм</label>
                         <input type="number" name="inpDetailBlank" id="inpDetailBlank" [(ngModel)]="len"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="useLenth===0">
+                    <div *ngIf="uselength===0">
                         <label id="lblDetailBlank" for="inpDetailBlank"
                             class="block mb-2 text-sm font-medium  text-white">Деталь D/B, мм</label>
                         <input type="number" name="inpDetailBlank" id="inpDetailBlank" [(ngModel)]="dw"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="useLenth===0">
+                    <div *ngIf="uselength===0">
                         <label id="lblDetailChar" for="inpDetailChar"
                             class="block mb-2 text-sm font-medium  text-white">Деталь H, мм</label>
                         <input type="number" name="inpDetailChar" id="inpDetailChar" [(ngModel)]="h"
@@ -1103,28 +1109,28 @@
                             required="">
                     </div>
                     <div>
-                        <label *ngIf="useLenth===1" for="amountBlank"
+                        <label *ngIf="uselength===1" for="amountBlank"
                             class="block mb-2 text-sm font-medium  text-white">
                             Заготовка L, мм</label>
-                        <label *ngIf="useLenth===0" for="blankS" class="block mb-2 text-sm font-medium  text-white">
+                        <label *ngIf="uselength===0" for="blankS" class="block mb-2 text-sm font-medium  text-white">
                             Загот-ка D/В, мм</label>
-                        <input *ngIf="useLenth===1" type="number" name="amountBlank" id="amountBlank"
+                        <input *ngIf="uselength===1" type="number" name="amountBlank" id="amountBlank"
                             [value]="percentBlank!+len!" disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
-                        <input *ngIf="useLenth===0" type="number" name="blankS" id="blankS" [value]="percentBlank!+dw!"
+                        <input *ngIf="uselength===0" type="number" name="blankS" id="blankS" [value]="percentBlank!+dw!"
                             disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="useLenth===0">
+                    <div *ngIf="uselength===0">
                         <label for="blankH" class="block mb-2 text-sm font-medium  text-white">
                             Заготовка H, мм</label>
                         <input type="number" name="blankH" id="blankH" value={{percentBlank!+h!}} disabled="true"
                             class=" border  text-sm  focus:ring-primary-600 focus:border-primary-600 block w-full py-2.5 bg-gray-600 border-gray-500 placeholder-gray-400 text-white focus:ring-primary-500 focus:border-primary-500"
                             required="">
                     </div>
-                    <div *ngIf="useLenth===0" class="flex items-center">
+                    <div *ngIf="uselength===0" class="flex items-center">
                         <input *ngIf="plasma==true" checked id="plasma" type="checkbox" value=""
                             class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
                         <input *ngIf="plasma==false" id="plasma" type="checkbox" value=""

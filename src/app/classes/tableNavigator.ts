@@ -7,14 +7,15 @@ export class TableNavigator {
     private table: HTMLTableElement;
     private currentCell: Cell;
     private indexCellCheckbox: number;
-    constructor(table: HTMLTableElement, indexCellCheckbox?: number) {
+     focusedTable: HTMLTableElement|null  ;
+    constructor(table: HTMLTableElement, indexCellCheckbox: number) {
         this.table = table;
         this.currentCell = { row: 0, column: 0 };
         this.highlightCurrent();
         this.setupKeyboardNavigation();
         this.setupMouseNavigation(table);
         this.indexCellCheckbox = indexCellCheckbox!;
-
+        this.focusedTable = table;
 
     }
 
@@ -29,18 +30,18 @@ export class TableNavigator {
         return i;
     }
 
-   /**
-   * Поиск строки, содержащей колонку внутри которой есть кнопки, одна из которой вызвала событие click.
-   * @param {HTMLButtonElement} target кнопка типа HTMLButtonElement, вызывающая событие.
-   * @param {number} indexCellParent индекс колонки в таблице, в которой находятся кнопки.
-   * @param {number} indexCellButton индекс кнопки внутри колонки.
-   * @returns {number} возвращаемый номер строки.
-   */
+    /**
+    * Поиск строки, содержащей колонку внутри которой есть кнопки, одна из которой вызвала событие click.
+    * @param {HTMLButtonElement} target кнопка типа HTMLButtonElement, вызывающая событие.
+    * @param {number} indexCellParent индекс колонки в таблице, в которой находятся кнопки.
+    * @param {number} indexCellButton индекс кнопки внутри колонки.
+    * @returns {number} возвращаемый номер строки.
+    */
     public findRowInsertedButton(target: HTMLButtonElement, indexCellParent: number, indexCellButton: number): number {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
-            const collect:any=rowsCollection[i].cells[indexCellParent].firstChild;
+            const collect: any = rowsCollection[i].cells[indexCellParent].firstChild;
             if (collect.children[indexCellButton] === target) {
                 break;
             }
@@ -48,17 +49,17 @@ export class TableNavigator {
         return i;
     }
 
-/**
-   * Поиск строки, содержащей колонку внутри которой есть элемент <select>.
-   * @param {HTMLSelectElement} target искомый элемент <select>.
-   * @param {number} indexCellSelect индекс колонки в таблице, в которой находится <select>.
-   * @returns {number} возвращаемый номер строки.
-   */
+    /**
+       * Поиск строки, содержащей колонку внутри которой есть элемент <select>.
+       * @param {HTMLSelectElement} target искомый элемент <select>.
+       * @param {number} indexCellSelect индекс колонки в таблице, в которой находится <select>.
+       * @returns {number} возвращаемый номер строки.
+       */
     public findRowSelect(target: HTMLSelectElement, indexCellSelect: number): number {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
-           
+
             if (rowsCollection[i].cells[indexCellSelect].firstChild == target) {
                 break;
             }
@@ -70,8 +71,11 @@ export class TableNavigator {
     public boxChange(event: any) {
         const rowsCollection = this.table.rows;
         const j = rowsCollection.length;
+
+        let elem: any
         for (let i = 0; i < j; i++) {
-            if ((rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement).checked && rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild !== event.target) {
+            elem = rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement
+            if (elem.checked && elem !== event.target) {
                 (rowsCollection[i].cells[this.indexCellCheckbox].firstChild!.firstChild as HTMLInputElement).checked = false;
             }
         }
@@ -89,14 +93,14 @@ export class TableNavigator {
         return null;
     }
 
-    public rowByNumberCellChecked( target:any,numberCellChek:number): number  {
+    public rowByNumberCellChecked(target: any, numberCellChek: number): number {
         const rowsCollection = this.table.rows;
-        let i=0
+        let i = 0
         if (rowsCollection) {
             for (let i = 0; i < rowsCollection.length; i++) {
-                const elem=rowsCollection[i].cells[numberCellChek].firstChild;
-                if (elem && elem===target ) {
-                   break;
+                const elem = rowsCollection[i].cells[numberCellChek].firstChild;
+                if (elem && elem === target) {
+                    break;
                 }
             }
         }
@@ -178,25 +182,28 @@ export class TableNavigator {
                     }
                 }
             }
+            this.focusedTable = table;
         }
         )
     }
 
     private setupKeyboardNavigation(): void {
         document.addEventListener('keydown', (event) => {
-            switch (event.key) {
-                case 'ArrowUp':
-                    this.moveUp();
-                    break;
-                case 'ArrowDown':
-                    this.moveDown();
-                    break;
-                case 'ArrowLeft':
-                    this.moveLeft();
-                    break;
-                case 'ArrowRight':
-                    this.moveRight();
-                    break;
+            if (this.focusedTable === this.table) { // Проверить, находится ли текущая таблица в фокусе
+                switch (event.key) {
+                    case 'ArrowUp':
+                        this.moveUp();
+                        break;
+                    case 'ArrowDown':
+                        this.moveDown();
+                        break;
+                    case 'ArrowLeft':
+                        this.moveLeft();
+                        break;
+                    case 'ArrowRight':
+                        this.moveRight();
+                        break;
+                }
             }
         });
     }
@@ -216,6 +223,7 @@ export class TableNavigator {
             this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
         }
+        console.log(this.focusedTable)
     }
 
 
@@ -224,6 +232,7 @@ export class TableNavigator {
             this.currentCell.row++;
             this.isInputElement(this.currentCell.row, this.currentCell.column);
             this.highlightCurrent();
+            console.log(this.focusedTable)
         }
     }
 

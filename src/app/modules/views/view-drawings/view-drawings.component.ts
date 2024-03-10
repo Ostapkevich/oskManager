@@ -4,21 +4,24 @@ import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { AppService } from 'src/app/app.service';
 import { FormsModule, NgForm } from '@angular/forms';
 
-interface Idrawing {
-  idDrawing: number,
-  nameDrawings: string,
-  numberDrawings: string,
+interface Idrawings {
+ idDrawing:number
+  type_position: number,
+  numberDrawing: string,
   name_item: string,
+ // quantity: number,
   weight: number,
-  path:string[],
-  len:number,
-  h:number,
-  dw:number,
-  percent:number,
-  value:number,
-  plasma:boolean,
-  typeBlank:number,
-  uselength:boolean
+  uselength: number,
+  len: number | null,
+  dw: number,
+  h: number | null,
+  specific_units: number,
+  units: number,
+  percent: number | null,
+  value: number | null,
+  plasma: boolean | null|number,
+  nameDrawing: string,
+  type_blank:number
 }
 
 
@@ -41,7 +44,7 @@ export class ViewDrawingsComponent implements OnInit {
 
 
   //isDrawingInfo = false;
-  drawings: Idrawing[] = [];
+  collections: Idrawings[] = [];
   page: number = 1;
   tblNavigator: TableNavigator | undefined;
   showFull = true;
@@ -51,7 +54,7 @@ export class ViewDrawingsComponent implements OnInit {
 
   async onSubmit() {
     try {
-    this.drawings.length=0;
+    this.collections.length=0;
       const params = <any>{};
       if (this.idDrawing) {
         params.idDrawing = +this.idDrawing;
@@ -72,20 +75,23 @@ export class ViewDrawingsComponent implements OnInit {
         return;
       }
       const data = await this.appService.query('get', `http://localhost:3000/viewDrawing/selectDrawings`, params);
-      if ((data.drawings as []).length !== 0) {
-        this.drawings = data.drawings;
-        if (!this.tblNavigator) {
-          this.tblNavigator = new TableNavigator(document.getElementById('tblDrawings') as HTMLTableElement);
-        }
-       
+      if (data.notFound) {
+        setTimeout(() => alert('Чертеж не найден!'));
+        return;
+      } else{
+        this.collections = data.drawings;
       }
-      console.log()
-    } catch (error) {
+      } catch (error) {
       alert(error);
     }
   }
 
-
+  tblDrawingsClick() {
+    if (!this.tblNavigator) {
+      this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawings') as HTMLTableElement), 0);
+      console.log('eee')
+    }
+  }
 
   showDrawing(element: any) { }
 

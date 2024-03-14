@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ElementRef, Input } from '@angular/core';
 import { RolledComponent } from 'src/app/modules/materials/rolled/rolled.component';
 import { CommonModule } from '@angular/common';
 import { HardwareComponent } from 'src/app/modules/materials/hardware/hardware.component';
@@ -10,7 +10,8 @@ import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
 import { NgForm } from '@angular/forms';
-import { Ispecification, IaddMaterial, IBlank } from './interfaceDrawingSP';
+import { Ispecification, IMaterial, IBlank } from './interfaceDrawingSP';
+import { DrawingsDatabaseService } from './drawings-database.service';
 
 //import { DrawingService} from './drawing.service';
 //import { DrawingSpService } from '../../views/drawingSP/drawingSp.service';
@@ -26,7 +27,7 @@ import { Ispecification, IaddMaterial, IBlank } from './interfaceDrawingSP';
   styleUrls: ['./drawings-database.component.css'],
 })
 export class DrawingsDatabaseComponent implements OnInit {
-  constructor(private appService: AppService) { }
+  constructor(private appService: AppService, private drawingsDbService: DrawingsDatabaseService) { }
 
   dataChanged: boolean | null | undefined = false;
   //blankChange:boolean=false;
@@ -51,7 +52,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   viewDrawingsComponent: ViewDrawingsComponent | undefined;
 
   /* Чертеж */
-  idDrawing!: number | undefined;
+  idDrawing!: number | null;
   savePath: string[] = []; // Выбор пути в select для сохранения
   s: number | undefined;//Масса чертежа
   m: number | undefined;
@@ -66,8 +67,8 @@ export class DrawingsDatabaseComponent implements OnInit {
   btnEditMaterial: boolean = false;
   /* Материал */
   materialNavigator: TableNavigator | undefined; // для таблицы материалов для данного чертежа
-  materials: Partial<IaddMaterial>[] = []; //материалы для данного чертежа
-  material: Partial<IaddMaterial> = {};
+  materials: Partial<IMaterial>[] = []; //материалы для данного чертежа
+  material: Partial<IMaterial> = {};
 
   /* Сп */
   specificatios: Partial<Ispecification>[] = [];
@@ -77,7 +78,8 @@ export class DrawingsDatabaseComponent implements OnInit {
 
 
   addBlankNotMaterial: boolean | undefined;
-  //focusedTable: HTMLTableElement | null = null;
+
+
 
   changeRadio(element: HTMLInputElement, type: number) {
     this.radioMaterial = type;
@@ -116,141 +118,52 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   async saveAll() {
     try {
-      if (this.drawingNamber === '') {
-        alert("Введите номер чертежа!");
-        return;
+      await this.saveDrawing(true);
+      if (this.blank) {
+        await this.saveBlank(true);
       }
-      if (this.drawingName === '') {
-        alert("Введите номер чертежа!");
-        return;
+      if (this.materials.length > 0) {
+        for (const item of this.materials) {
+          await this.appService.query('post', `http://localhost:3000/drawings/addMaterial`, [null, this.idDrawing, item.idItem, item.percent, item.valueMaterial, item.specific_units, item.lenMaterial, item.hMaterial])
+        }
       }
-      if (!this.m || this.m <= 0) {
-        alert("Введите массу детали!");
-        return;
-      }
-      if (!this.blank!.idBlank) {
-        alert('Выберите вид заготовки!');
-        return;
-      }
-      const files = (document.getElementById('selectFiles') as HTMLInputElement).files;
-      if (!files || files.length === 0) {
-        alert("Выберите файлы чертежей для сохранения!");
-        return;
-      }
-      let path = (document.getElementById('selectPath') as HTMLSelectElement).value;
-      if (path === '-1') {
-        alert("Выберите путь для сохранения из выпадающего списка!");
-        return;
-      }
-
-      if (this.blank!.typeBlank === 1) {
-        if (this.blank!.uselength === 1) {
-          if (!this.blank!.len || this.blank!.len <= 0) {
-            alert('Введите длину детали!');
-            return;
-          }
-
-        } else {
-          if (!this.blank!.dw || this.blank!.dw <= 0) {
-            alert('Введите размер детали D/B!');
-            return;
-          }
-          if (this.blank!.h && this.blank!.dw <= 0) {
-            alert('Размер Н должен быть больше нуля!');
-            return;
-          }
-          if (!this.blank!.h) {
-            if (confirm('Ввести размер "Н" ?') === true) {
-              return;
+      if (this.specificatios.length > 0) {
+        let i = 0;
+        for (const item of this.specificatios) {
+          if (item.type_position === 3) {
+            const dataSP: any[] = [null, i, this.idDrawing, item.type_position, item.quantity];
+            let dataDetails: any[] = [];
+            dataDetails.push(null, item.idItem, item.percent, item.value, item!.specific_units, item.len, item.h, item.nameDrawing, null);
+            await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
+          } else {
+            let dataDetails: any[] = [];
+            const dataSP: any[] = [null, i, this.idDrawing, item.type_position, item.quantity];
+            switch (+item.type_position!) {
+              case 1:
+                dataDetails.push(null, item.idItem, item.len, item.dw, item.h, item.plasma, item.nameDrawing, null);
+                break;
+              case 2:
+                dataDetails.push(null, item.idItem, item.nameDrawing, null);
+                break;
+              case 4:
+                dataDetails.push(null, item.idItem, item.nameDrawing, null);
+                break;
+              case 5:
+                dataDetails.push(null, item.idItem, null);
+                break;
             }
+            await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
           }
+          i++;
         }
       }
-      if (this.blank!.typeBlank === 3) {
-        if (this.blank!.specificUnitsBlank === 1 && (!this.s || this.s <= 0)) {
-          alert('Введите площадь поверхности "S" !');
-        }
-      }
-      for (let i = 0; i < files.length; i++) {
-        this.filePath.push(path + files[i].name);
-      }
-      const drawing: any[] = [];
-      drawing.push(this.idDrawing || null);
-      drawing.push(this.drawingNamber);
-      //drawing.push(this.isp || 0);
-      drawing.push(this.drawingName);
-      drawing.push(this.m || null);
-      drawing.push(this.blank!.idBlank === undefined ? null : this.blank!.typeBlank);
-      drawing.push(Boolean(this.materials.length > 0));
-      drawing.push(this.s || null);
-      drawing.push(JSON.stringify(this.filePath));
-      drawing.push(Boolean(this.specificatios.length > 0));
-      let blank: any[] = [];
-      switch (this.blank!.typeBlank) {
-        case 1:
-          blank.push(this.blank!.id || null);
-          blank.push(this.idDrawing || null);
-          blank.push(this.blank!.idBlank);
-          blank.push(this.blank!.percentBlank);
-          blank.push(this.blank!.uselength ? null : this.blank!.plasma);
-          blank.push(this.blank!.len || null, this.blank!.dw || null, this.blank!.h || null);
-          break;
-        case 2:
-          blank.push(this.blank!.id || null);
-          blank.push(this.idDrawing || null);
-          blank.push(this.blank!.idBlank);
-          break;
-        case 3:
-          blank.push(this.blank!.id || null);
-          blank.push(this.idDrawing || null);
-          blank.push(this.blank!.idBlank);
-          blank.push(this.blank!.specificUnitsBlank === 3 ? null : this.blank!.percentBlank);
-          blank.push(this.blank!.specificUnitsBlank === 3 ? this.blank!.valueBlank : null);
-          blank.push(this.blank!.specificUnitsBlank);
-          blank.push(this.blank!.len || null, this.blank!.h || null)
-          break;
-        case 4:
-          blank.push(this.blank!.id || null);
-          blank.push(this.idDrawing || null);
-          blank.push(this.blank!.idBlank);
-          break;
-      }
-      const materialsServer: any[] = [];
-
-      for (const material of this.materials) {
-        materialsServer.push(
-          material.id || null,
-          this.idDrawing || null,
-          material.idItem,
-          material.percent || null,
-          material.valueMaterial || null,
-          material.specific_units,
-          material.lenMaterial || null,
-          material.hMaterial || null
-        );
-      }
-
-      const spServer: any[] = [];
-      for (const item of this.specificatios) {
-
-      }
-      const dataServer = {
-        drawing: drawing,
-        blank: blank.length > 0 ? blank : null,
-        materials: materialsServer.length > 0 ? materialsServer : null,
-        specificatios: spServer.length > 0 ? spServer : null,
-      }
-      const data = await this.appService.query('post', `http://localhost:3000/drawings/saveDrawing/${this.blank!.typeBlank}`, dataServer);
-      if (data.response === 'ok') {
-        alert('Данные сохранены!');
-      } else {
-        alert("Что-то пошло не так... Данные не сохранены!");
-      }
-
+      await this.getDrawingInfoFull(this.idDrawing!, 'id');
+      alert("Данные сохранены!");
     } catch (error) {
       alert(error);
     }
   }
+
 
   preparingTosaveDrawing() {
     if (this.drawingNamber === '') {
@@ -288,25 +201,37 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
     }
     if (this.idDrawing && this.drawingNamber !== (document.getElementById('numberDrawing') as HTMLInputElement).value) {
-    //  this.showSaveModal();
-    const modalElement: HTMLElement = document.querySelector('#saveModal')!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    const modal = new Modal(modalElement, modalOptions);
-    modal.show();
+      //  this.showSaveModal();
+      const modalElement: HTMLElement = document.querySelector('#saveModal')!;
+      const modalOptions: ModalOptions = {
+        closable: true,
+        backdrop: 'static',
+      };
+      const modal = new Modal(modalElement, modalOptions);
+      modal.show();
     } else {
       this.saveDrawing();
     }
 
   }
 
-  async saveDrawing() {
+
+  async saveDrawing(saveAll: boolean = false) {
     try {
       const numberDraw = (document.getElementById('numberDrawing') as HTMLInputElement).value;
       const drawing: any[] = [];
-      drawing.push(this.idDrawing);
+      if (saveAll) {
+        const data = await this.appService.query('get', `http://localhost:3000/drawings/hasNumberDrawing/${numberDraw}`);
+        if (data.response === 'exist') {
+          this.clearDrawing();
+          this.material.lenMaterial = 0;
+          this.specificatios.length = 0;
+          throw new Error('Чертеж с таким номером уже существует');
+        }
+        drawing.push(null);
+      } else {
+        drawing.push(this.idDrawing || null);
+      }
       drawing.push(numberDraw);
       drawing.push(this.drawingName);
       drawing.push(this.m);
@@ -316,18 +241,29 @@ export class DrawingsDatabaseComponent implements OnInit {
       if (typeof data.response === 'number') {
         this.idDrawing = data.response;
         this.drawingNamber = numberDraw;
-        alert('Данные сохранены!');
-        this.dataChanged=false;
+        this.dataChanged = false;
+        if (!saveAll) {
+          alert('Данные сохранены!');
+        }
       } else {
-        alert("Что-то пошло не так... Данные не сохранены!");
+        if (!saveAll) {
+          alert("Что-то пошло не так... Данные не сохранены!");
+        } else {
+          throw new Error('Что-то пошло не так... Данные не сохранены!');
+        }
+      }
+    } catch (error) {
+      if (!saveAll) {
+        alert(error);
+      } else {
+        throw error;
       }
 
-    } catch (error) {
-      alert(error);
     }
   }
 
-  async saveBlank() {
+
+  async saveBlank(saveAll: boolean = false) {
     try {
       const blank: any[] = [];
       switch (this.blank!.typeBlank) {
@@ -353,8 +289,8 @@ export class DrawingsDatabaseComponent implements OnInit {
           blank.push(this.blank!.id || null);
           blank.push(this.idDrawing);
           blank.push(this.blank!.idBlank);
-          blank.push(this.blank!.specificUnitsBlank === 3 ? null : this.blank!.percentBlank);
-          blank.push(this.blank!.specificUnitsBlank === 3 ? this.blank!.valueBlank : null);
+          blank.push(this.blank!.specificUnitsBlank === 2 ? null : this.blank!.percentBlank);
+          blank.push(this.blank!.specificUnitsBlank === 2 ? this.blank!.valueBlank : null);
           blank.push(this.blank!.specificUnitsBlank);
           blank.push(this.blank!.len || null, this.blank!.h || null)
           break;
@@ -367,24 +303,26 @@ export class DrawingsDatabaseComponent implements OnInit {
       const data = await this.appService.query('post', `http://localhost:3000/drawings/saveBlank/${this.blank!.typeBlank}`, blank);
       if (data.id) {
         this.blank!.id = data.id;
-        alert('Данные сохранены!');
+        if (!saveAll) {
+          alert('Данные сохранены!');
+        }
       } else {
-        alert("Что-то пошло не так... Данные не сохранены!");
+        if (!saveAll) {
+          alert("Что-то пошло не так... Данные не сохранены!");
+        } else {
+          throw new Error('Что-то пошло не так... Данные не сохранены!');
+        }
       }
     } catch (error) {
-      alert(error);
+      if (!saveAll) {
+        alert(error);
+      } else {
+        throw error;
+      }
+
     }
   }
 
- /*  showSaveModal() {
-    const modalElement: HTMLElement = document.querySelector('#saveModal')!;
-    const modalOptions: ModalOptions = {
-      closable: true,
-      backdrop: 'static',
-    };
-    const modal = new Modal(modalElement, modalOptions);
-    modal.show();
-  } */
 
   closeSaveDrawingModal() {
     var keyboardEvent = new KeyboardEvent('keydown', {
@@ -394,15 +332,19 @@ export class DrawingsDatabaseComponent implements OnInit {
     (document.querySelector('#saveModal') as HTMLDivElement).dispatchEvent(keyboardEvent);
   }
 
+
   saveDrawingModal() {
     this.closeSaveDrawingModal();
     this.saveDrawing();
   }
 
+
   saveAsDrawingModal() {
     this.closeSaveDrawingModal();
+    this.idDrawing = null;
     this.saveAll();
   }
+
 
   showDrawingInfo(drawingInfo: any) {
     if (drawingInfo) {
@@ -427,54 +369,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
-  showBlankInfo(blankInfo: any, type_blank: number | null) {
-    if (blankInfo) {
-      this.blank = {};
-      this.blank!.typeBlank = type_blank!;
-      this.blank!.id = blankInfo.id;
-      this.blank!.idBlank = blankInfo.id_item;
-      this.blank!.blankWeight = blankInfo.weight;
-      this.blank!.nameBlank = blankInfo.name_item;
-      switch (this.blank!.typeBlank) {
-        case 1:
-          this.blank!.uselength = blankInfo.uselength;
-          this.blank!.len = blankInfo.L;
-          this.blank!.dw = blankInfo.d_b;
-          this.blank!.h = blankInfo.h;
-          this.blank!.plasma = Boolean(blankInfo.plasma);
-          this.blank!.percentBlank = blankInfo.allowance
-          break;
-        case 3:
-          this.blank!.len = blankInfo.L;
-          this.blank!.h = blankInfo.h;
-          this.blank!.percentBlank = blankInfo.percent;
-          this.blank!.valueBlank = blankInfo.value;
-          this.blank!.specificUnitsBlank = blankInfo.specific_units;
-          this.blank!.unitsBlank = blankInfo.units;
-          break;
-      }
-    }
-  }
-
-  showMaterialInfo(materialInfo: any) {
-    if (materialInfo) {
-      for (const item of materialInfo) {
-        this.materials.push({
-          id: item.id,
-          idDrawing: item.idDrawing,
-          idItem: item.id_item,
-          name_material: item.name_item,
-          unitsMaterial: item.units,
-          percent: item.percent,
-          valueMaterial: item.value,
-          specific_units: item.specific_units,
-          lenMaterial: item.L,
-          //dw: this.dwMaterial || null,
-          hMaterial: item.h,
-        })
-      }
-    }
-  }
 
   async getDrawingInfoFull(idOrNumber: number | string, findBy: 'id' | 'number') {
     try {
@@ -483,7 +377,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       // const tempIdDrawind = (document.getElementById('idDrawing') as HTMLInputElement).value;
       this.clearDrawing();
       this.blank = undefined;
-      this.clearMaterial();
+      this.materials.length = 0;
       this.specificatios.length = 0;
       if (data.notFound) {
         setTimeout(() => alert('Чертеж не найден!'));
@@ -491,8 +385,12 @@ export class DrawingsDatabaseComponent implements OnInit {
       }
       this.showDrawingInfo(data.drawing)
       this.specificatios.length = 0;
-      this.showBlankInfo(data.blank, data.drawing.type_blank);
-      this.showMaterialInfo(data.materials);
+      if (data.blank) {
+        this.blank = this.drawingsDbService.showBlankInfo(data.blank, data.drawing.type_blank);
+      }
+      if (data.materials) {
+        this.drawingsDbService.showMaterialInfo(this.materials, data.materials);
+      }
       if (data.positionsSP) {
         this.specificatios = data.positionsSP;
       }
@@ -521,20 +419,15 @@ export class DrawingsDatabaseComponent implements OnInit {
     }
   }
 
+
   clearDrawing() {
     (document.getElementById('selectPath') as HTMLSelectElement).value = '-1';
-    this.idDrawing = undefined;
+    this.idDrawing = null;
     this.drawingNamber = '';
     this.drawingName = '';
     this.m = undefined;
     this.s = undefined;
     this.filePath.length = 0;
-  }
-
-
-
-  clearMaterial() {
-    this.materials.length = 0;
   }
 
   selectFiles() {
@@ -543,7 +436,7 @@ export class DrawingsDatabaseComponent implements OnInit {
     (document.getElementById('lblCountFiles') as HTMLLabelElement).innerText = ` ${count} шт.`;
   }
 
-  btnBlanklClick() {
+  async btnBlanklClick() {
     if (this.isDrawingInfo) {
       if (this.blank && confirm('Удалить заготовку?') === true) {
         this.deleteBlank();
@@ -551,6 +444,9 @@ export class DrawingsDatabaseComponent implements OnInit {
       return;
     } else {
       if (this.blank) {
+        if (confirm('Чертеж уже содержит заготовку! Заменить заготовку?') === false) {
+          return;
+        }
         this.tempBlank = this.blank;
       }
       this.blank = {};
@@ -560,26 +456,29 @@ export class DrawingsDatabaseComponent implements OnInit {
         case 1:
           this.blank!.typeBlank = 1;
           this.selectBlank(this.rolledComponent!, '#rolled-modal');
-          //this.deleteBlank();
+
           break;
         case 2:
           this.blank!.typeBlank = 2;
           this.changedData = true;
           this.selectBlank(this.hardwareComponent!);
-          this.deleteBlank();
-          this.saveBlank();
+          if (this.tempBlank) {
+            await this.deleteBlank();
+          }
+          await this.saveBlank();
           break;
         case 3:
           this.blank!.typeBlank = 3;
           this.selectBlank(this.otherComponent!, '#material-modal');
-          //this.deleteBlank();
           break;
         case 4:
           this.blank!.typeBlank = 4;
           this.changedData = true;
           this.selectBlank(this.purchasedComponent!);
-          this.deleteBlank();
-          this.saveBlank();
+          if (this.tempBlank) {
+            await this.deleteBlank();
+          }
+          await this.saveBlank();
           break;
       }
     }
@@ -599,18 +498,18 @@ export class DrawingsDatabaseComponent implements OnInit {
         if (!this.tempBlank) {
           return;
         }
-        if (this.blank && this.blank!.typeBlank !== this.tempBlank?.typeBlank) {
-          const data = await this.appService.query('delete', `http://localhost:3000/drawings/deleteBlank/${this.tempBlank?.typeBlank}/${this.tempBlank!.id}/${this.idDrawing}/${this.blank!.typeBlank}`);
-          if (data.response !== 'ok') {
-            alert('Что-то пошло не так!');
-          }
+        const data = await this.appService.query('delete', `http://localhost:3000/drawings/deleteBlank/${this.tempBlank?.typeBlank}/${this.tempBlank!.id}/${this.idDrawing}/${null}`);
+        if (data.response !== 'ok') {
+          throw new Error('Что-то пошло не так!')
         }
       }
-
     } catch (error) {
-      alert(error)
+      if (this.isDrawingInfo) {
+        alert(error)
+      } else {
+        throw error;
+      }
     }
-
   }
 
   selectBlank(materialComponent: any, idModal?: string) {
@@ -618,10 +517,6 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (index === null) {
       return;
     }
-    if (this.blank?.id !== undefined && confirm('Чертеж уже содержит заготовку! Заменить заготовку?') === false) {
-      return;
-    }
-
     this.blank!.nameBlank = materialComponent.collections[index!].name_item!;
     this.blank!.idBlank = materialComponent.collections[index!].id_item;
     if (materialComponent !== this.otherComponent) {
@@ -660,7 +555,7 @@ export class DrawingsDatabaseComponent implements OnInit {
           return;
         case 2:
           if (this.blank!.unitsBlank === 1) {
-            this.blank!.valueBlank = (this.blank!.h! * this.blank!.len!) / 1000000;
+            //   this.blank!.valueBlank = (this.blank!.h! * this.blank!.len!) / 1000000;
           }
           return;
       }
@@ -692,7 +587,7 @@ export class DrawingsDatabaseComponent implements OnInit {
 
   }
 
-  addBlank() {
+  async addBlank() {
     if (this.blank!.typeBlank === 3) {
       if (this.blank!.specificUnitsBlank === 2 && this.blank!.unitsBlank === 2) {
         if (!this.blank!.len || this.blank!.len < 0) {
@@ -752,10 +647,10 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       }
     }
-    if (!this.btnEditBlank) {
-      this.deleteBlank();
+    if (!this.btnEditBlank && this.tempBlank) {
+      await this.deleteBlank();
     }
-    this.saveBlank();
+    await this.saveBlank();
     this.tempBlank = undefined;
     this.btnEditBlank = false;
     var keyboardEvent = new KeyboardEvent('keydown', {
@@ -769,6 +664,7 @@ export class DrawingsDatabaseComponent implements OnInit {
   editBlank() {
     this.btnEditBlank = true;
     let idModal: string;
+    this.tempBlank = this.blank;
     if (this.blank!.typeBlank === 1) {
       idModal = '#rolled-modal';
     } else {
@@ -796,13 +692,18 @@ export class DrawingsDatabaseComponent implements OnInit {
       bubbles: true
     });
     (document.querySelector('#modaFormBlank') as HTMLFormElement).dispatchEvent(keyboardEvent);
-    if (this.blank!.id) {
+    if (this.isDrawingInfo) {
       this.blank = this.tempBlank;
-      this.tempBlank = undefined;
       this.btnEditBlank = false;
     } else {
-      this.blank = undefined;
+      if (this.tempBlank) {
+        this.blank = this.tempBlank;
+        this.tempBlank = undefined;
+      } else {
+        this.blank = undefined;
+      }
     }
+
 
   }
 
@@ -926,9 +827,9 @@ export class DrawingsDatabaseComponent implements OnInit {
         return;
       case 2:
         if (this.material.unitsMaterial === 1) {
-          this.blank!.valueBlank = (this.blank!.h! * this.blank!.len!) / 1000000;
+          //this.blank!.valueBlank = (this.blank!.h! * this.blank!.len!) / 1000000;
         }
-        this.material.valueMaterial = +this.material.percent! + +this.blank!.len!;
+        //    this.material.valueMaterial = +this.material.percent! + +this.blank!.len!;
         return;
     }
   }
@@ -971,6 +872,9 @@ export class DrawingsDatabaseComponent implements OnInit {
       const data: any = await this.appService.query('post', `http://localhost:3000/drawings/addMaterial`, [this.material.id || null, this.idDrawing, this.material.idItem, percentMaterial, valueMaterial, this.material.specific_units, this.material.lenMaterial || null, this.material.hMaterial || null])
       if (data.id) {
         this.material.id = data.id;
+        this.material.percent = percentMaterial;
+        this.material.valueMaterial = valueMaterial;
+
         this.materials.push(this.material);
         this.closeModalMaterial();
         alert("Материал добавлен!");
@@ -993,16 +897,17 @@ export class DrawingsDatabaseComponent implements OnInit {
     });
     (document.querySelector('#modaFormmaterial') as HTMLFormElement).dispatchEvent(keyboardEvent);
     if (this.addBlankNotMaterial) {
-      if (this.blank) {
-        //this.getDrawingInfoFull(this.idDrawing!, 'id');
+      if (this.isDrawingInfo) {
         this.blank = this.tempBlank;
-        this.tempBlank = undefined;
         this.btnEditBlank = false;
       } else {
-        this.blank = undefined;
+        if (this.tempBlank) {
+          this.blank = this.tempBlank;
+          this.tempBlank = undefined;
+        } else {
+          this.blank = undefined;
+        }
       }
-    } else {
-      this.btnEditMaterial = false;
     }
   }
 
@@ -1069,12 +974,11 @@ export class DrawingsDatabaseComponent implements OnInit {
     if (index === null) {
       return;
     }
-
     this.addSpesification!.quantity = 1;
 
     if (typePosition === 5) {
-      const id= materialComponent.collections[index!].idItem
-      if (this.idDrawing===id) {
+      const id = materialComponent.collections[index!].idDrawing;
+      if (this.idDrawing === id) {
         alert("Нельзя добавлять чертеж сам в себя!");
         return;
       }
@@ -1121,6 +1025,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       closable: true,
       backdrop: 'static',
     };
+    console.log('selectToSpecification()', this.addSpesification)
     const modal = new Modal(modalElement, modalOptions);
     modal.show();
 
@@ -1178,6 +1083,8 @@ export class DrawingsDatabaseComponent implements OnInit {
           dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, this.addSpesification.idParent || null);
           break;
       }
+      console.log('dataSP ', dataSP)
+      console.log('dataDetails ', dataDetails)
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
       if (this.isDrawingInfo) {
         if (data.response) {
@@ -1187,6 +1094,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       } else {
         this.addSpesification!.idParent = data.idParent;
         this.addSpesification!.idChild = data.idChild;
+        console.log('addSpesification', this.addSpesification)
         if (this.selectedPositionSP === undefined) {
           this.specificatios.push(Object.assign(new Object(), this.addSpesification));
         } else {
@@ -1245,6 +1153,7 @@ export class DrawingsDatabaseComponent implements OnInit {
       const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percent || null;
       const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 : +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
       // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
+      console.log('this.addSpesification before- ', this.addSpesification)
       dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.nameDrawing, this.addSpesification.idParent || null);
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });
       if (this.isDrawingInfo) {
@@ -1257,9 +1166,13 @@ export class DrawingsDatabaseComponent implements OnInit {
         }
       } else {
         this.addSpesification.numberDrawing = 'б/ч';
+        this.addSpesification.percent=percentMaterial;
+        this.addSpesification.value=value;
         this.addSpesification!.idParent = data.idParent;
         this.addSpesification!.idChild = data.idChild;
+        console.log('this.addSpesification before calc - ', this.addSpesification)
         this.calculateMaterialSP();
+        console.log('this.addSpesification after calc - ', this.addSpesification)
         if (this.selectedPositionSP === undefined) {
           this.specificatios.push(Object.assign(new Object(), this.addSpesification));
         } else {

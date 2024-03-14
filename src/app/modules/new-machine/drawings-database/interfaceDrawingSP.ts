@@ -18,10 +18,11 @@ interface Ispecification {
   value: number | null | undefined,
   plasma: boolean | null | number | undefined,
   nameDrawing: string | undefined,
-  isSB: number | undefined
+  isSB: number | undefined,
+  noBlank:string |undefined
 }
 
-interface IaddMaterial {
+interface IMaterial {
   id: number | null,
   idDrawing: number | null,
   idItem: number | null,
@@ -52,4 +53,28 @@ interface IBlank {
   h: number | undefined,//H чертежа
 }
 
-export { Ispecification, IaddMaterial, IBlank }
+interface Idrawings {
+  idDrawing: number
+  type_position: number,
+  numberDrawing: string,
+  name_item: string,
+  weight: number,
+  uselength: number,
+  len: number | null,
+  dw: number,
+  h: number | null,
+  specific_units: number,
+  units: number,
+  percent: number | null,
+  value: number | null,
+  plasma: boolean | null | number,
+  nameDrawing: string,
+  type_blank: number,
+  noBlank: string,
+  isSB: number,
+  filePath: string[], // массив путей где будут хранится чертежи,
+  s:number, //площадь поверхности
+  m:number
+}
+
+export { Ispecification, IMaterial, IBlank, Idrawings }

@@ -50,9 +50,7 @@
                         class="basis-1/3 py-2 text-sm font-medium text-gray-400 bg-gray-700 border-y-2 border-r-2 border-gray-600"
                         for="selectFiles">0 шт.</label>
                 </div>
-
             </div>
-
 
             <select id="selectPath" name="selectPath"
                 class="col-span-2 border text-sm   px-1  py-3 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
@@ -178,6 +176,7 @@
                                 </td>
                                 <td *ngIf="blank!.unitsBlank===0" class="w-1/12 text-center">m,кг</td>
                                 <td *ngIf="blank!.unitsBlank===1" class="w-1/12 text-center">S,м.кв.</td>
+                                <td *ngIf="blank!.unitsBlank===2" class="w-1/12 text-center">L,мм.</td>
                                 <td *ngIf="blank!.unitsBlank===3" class="w-1/12 text-center">шт.</td>
                                 <td *ngIf="blank!.unitsBlank===4" class="w-1/12 text-center">V,л</td>
                                 <td *ngIf="blank!.unitsBlank===5" class="w-1/12 text-center">V,м.куб</td>
@@ -520,8 +519,9 @@
             class="w-full  text-sm text-left rtl:text-right  text-gray-300">
             <tbody id="tbodySpecification">
                 <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
-                    [ngClass]="{isSB:item.type_position===5 && item.isSB===1}"
-                    [ngClass]="{noDrawings:item.type_position!==5}" *ngFor="let item of specificatios; let i = index">
+                [ngClass]="(item.type_position === 5 && item.isSB === 1) ? 'text-green-300' : item.type_position !== 5 ? 'text-orange-200' : ''"
+               
+                     *ngFor="let item of specificatios; let i = index">
                     <td class="py-1 w-0.5/12 ">
                         <div class="flex justify-center">
                             <input type="checkbox" (change)="spNavigator?.boxChange($event)"
@@ -585,10 +585,10 @@
                     <td class=" py-1 w-0.5/12 text-center" id="value">
                         {{item.value | number:"1.0-3"}}
                     </td>
-                    <td *ngIf="item.type_position===1 || item.type_position===2|| item.type_position===4"
+                    <td *ngIf="item.type_position===1 || item.type_position===2|| item.type_position===4 || item.noBlank==='noBlank'"
                         class=" py-1 w-0.5/12 text-center" id="typepos!3">
                     </td>
-                    <td *ngIf="(item.type_position===3 && item.units===0) || (item.type_position===5 && (item.uselength===0 || item.uselength===1))"
+                    <td *ngIf="(item.type_position===3 && item.units===0) || (item.type_position===5 && !(item.units===1 || item.units===2))"
                         id="m kq" class=" py-1 w-0.5/12 text-center">
                         m,кг
                     </td>

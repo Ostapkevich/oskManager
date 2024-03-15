@@ -6,5 +6,36 @@
     background-color: rgb(40, 78, 80);
 }
 
+.table-container {
+    width: auto;
+    /* Изначальная ширина элемента */
+    overflow-y: auto;
+    /* Показывать вертикальную прокрутку при переполнении */
+}
 
+.table-container table {
+    width: 100%;
+    /* Ширина таблицы по умолчанию */
+    border-collapse: collapse;
+    /* Объединение границ ячеек таблицы */
+}
 
+.table-container table thead {
+    display: table;
+    width: calc(100% - 17px);
+    /* Ширина минус 17px для компенсации вертикальной полосы прокрутки */
+}
+
+.table-container table tbody {
+    display: block;
+    max-height: 200px;
+    /* Пример ограничения высоты для появления вертикальной полосы прокрутки */
+    overflow-y: auto;
+    /* Показывать вертикальную прокрутку при переполнении */
+}
+
+.table-container table td,
+.table-container table th {
+    padding: 8px;
+    /* Добавляем отступы для ячеек */
+}

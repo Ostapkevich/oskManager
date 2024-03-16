@@ -72,6 +72,7 @@ export class ViewDrawingsComponent implements OnInit {
         return;
       } else {
         this.collections = data.drawings;
+        console.log(this.collections)
       }
     } catch (error) {
       alert(error);

@@ -1,4 +1,4 @@
-<div class="w-1/2 mx-auto mt-4 ">
+<div class="w-2/3 mx-auto mt-4 ">
     <p class="absolute top-[130px] left-[150px] text-4xl  text-white">Чертеж</p>
     <form #formDrawing="ngForm" id="formDrawing" (change)="formChange(formDrawing)">
         <!-- Номер чертежа -->
@@ -217,11 +217,11 @@
                                 <td *ngIf="blank!.specificUnitsBlank!==2" id="percent" class=" py-1 w-1/12 text-center">
                                     {{blank!.percentBlank}}
                                 </td>
-                                <td *ngIf="blank!.specificUnitsBlank===0" id="percent" class=" py-1 w-1/12 text-center">
-                                    {{blank!.percentBlank!*m!}}
+                                <td *ngIf="blank!.specificUnitsBlank===0" id="perm" class=" py-1 w-1/12 text-center">
+                                    {{blank!.percentBlank!*m!| number:"1.0-5"}}
                                 </td>
-                                <td *ngIf="blank!.specificUnitsBlank===1" id="percent" class=" py-1 w-1/12 text-center">
-                                    {{blank!.percentBlank!*s!}}
+                                <td *ngIf="blank!.specificUnitsBlank===1" id="perv" class=" py-1 w-1/12 text-center">
+                                    {{blank!.percentBlank!*s!| number:"1.0-5"}}
                                 </td>
                                 <td *ngIf="blank!.specificUnitsBlank===2 && (blank!.unitsBlank===0||blank!.unitsBlank===3||blank!.unitsBlank===4||blank!.unitsBlank===5)"
                                     id="valueBlank" class=" py-1 w-1/12 ">
@@ -890,7 +890,7 @@
 
 
 
-<app-rolled *ngIf="!isDrawingInfo &&  radioMaterial===1" [showAddRolled]="false"></app-rolled>
+<app-rolled   *ngIf="!isDrawingInfo &&  radioMaterial===1" [showAddRolled]="false"></app-rolled>
 <app-hardware *ngIf="!isDrawingInfo &&  radioMaterial===2" [showAddHardware]="false"></app-hardware>
 <app-others *ngIf="!isDrawingInfo &&  radioMaterial===3" [showAddmaterial]="false"></app-others>
 <app-purchased *ngIf="!isDrawingInfo && radioMaterial===4" [showAddPurshaced]="false"></app-purchased>

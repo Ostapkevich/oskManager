@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, DoCheck } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, DoCheck } from '@angular/core';
 import { RolledComponent } from 'src/app/modules/materials/rolled/rolled.component';
 import { CommonModule } from '@angular/common';
 import { HardwareComponent } from 'src/app/modules/materials/hardware/hardware.component';
@@ -26,7 +26,7 @@ import { DrawingsDatabaseService } from './drawings-database.service';
   templateUrl: './drawings-database.component.html',
   styleUrls: ['./drawings-database.component.css'],
 })
-export class DrawingsDatabaseComponent implements OnInit, AfterViewInit, DoCheck {
+export class DrawingsDatabaseComponent implements OnInit, DoCheck {
   constructor(private appService: AppService, private drawingsDbService: DrawingsDatabaseService) { }
 
   dataChanged: boolean | null | undefined = false;
@@ -80,30 +80,16 @@ export class DrawingsDatabaseComponent implements OnInit, AfterViewInit, DoCheck
   hasScroll: boolean = false;
   @ViewChild('divSP') divElement!: ElementRef;
 
-  ngAfterViewInit(): void {
-     console.log('ngAfterViewInit out')
-     console.log('ngAfterViewInit divElement', this.divElement?.nativeElement)
-     if (this.divElement) {
-       console.log('ngAfterViewInit in')
-       const element=this.divElement.nativeElement as HTMLDivElement;
-       this.hasScroll = element.scrollHeight > element.clientHeight;
-       console.log('ngAfterViewInit', this.hasScroll)
-     }
-  }
 
   ngDoCheck(): void {
-    console.log('ngDoCheck out')
-   
     if (this.divElement) {
-      console.log('ngDoCheck in')
       const element = this.divElement.nativeElement as HTMLDivElement;
       this.hasScroll = element.scrollHeight > element.clientHeight;
-      console.log('ngDoCheck hasScroll', this.hasScroll)
     }
   }
 
 
- 
+
 
   changeRadio(element: HTMLInputElement, type: number) {
     this.radioMaterial = type;
@@ -1184,10 +1170,10 @@ export class DrawingsDatabaseComponent implements OnInit, AfterViewInit, DoCheck
       }
       const dataSP: any[] = [this.addSpesification.idParent || null, this.isDrawingInfo ? this.selectedPositionSP : this.selectedPositionSP ? this.selectedPositionSP! + 1 : this.specificatios.length, this.idDrawing, this.addSpesification.type_position, this.addSpesification.quantity];
       let dataDetails: any[] = [];
-      const percentMaterial = this.addSpesification!.specific_units === 2  ? null : this.addSpesification!.percent || null;
-     // const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 :null; // +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
+      const percentMaterial = this.addSpesification!.specific_units === 2 ? null : this.addSpesification!.percent || null;
+      // const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units === 2 ? this.addSpesification!.len! / 1000 :null; // +(document.getElementById('amountMaterialSP') as HTMLInputElement).value
       // (id_spmaterial, id_item, percent, value, specific_units, L, h, name, id
-      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units !== 1 &&this.addSpesification!.units !== 2 ? this.addSpesification!.value :null; 
+      const value = this.addSpesification!.specific_units === 2 && this.addSpesification!.units !== 1 && this.addSpesification!.units !== 2 ? this.addSpesification!.value : null;
       console.log('this.addSpesification before- ', this.addSpesification)
       dataDetails.push(this.addSpesification.idChild || null, this.addSpesification.idItem, percentMaterial, value, this.addSpesification!.specific_units, this.addSpesification!.len || null, this.addSpesification!.h || null, this.addSpesification.nameDrawing, this.addSpesification.idParent || null);
       const data = await this.appService.query('post', `http://localhost:3000/drawings/addPositionSP`, { dataSP: dataSP, dataDetails: dataDetails });

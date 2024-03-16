@@ -19,7 +19,8 @@ interface Ispecification {
   plasma: boolean | null | number | undefined,
   nameDrawing: string | undefined,
   isSB: number | undefined,
-  noBlank:string |undefined
+  noBlank:string |undefined,
+  s:number
 }
 
 interface IMaterial {

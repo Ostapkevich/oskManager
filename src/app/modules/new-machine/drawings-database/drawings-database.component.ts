@@ -416,6 +416,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
       //this.blankChange=false;
       this.materialChange = false;
       this.spChange = false;
+      console.log(this.specificatios)
     } catch (error) {
       alert(error);
     }
@@ -1014,7 +1015,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
       this.addSpesification!.specific_units = materialComponent.collections[index!].specific_units! || null;
       this.addSpesification!.units = materialComponent.collections[index!].units || null;
       this.addSpesification!.percent = materialComponent.collections[index!].percent! || null;
-
+      this.addSpesification!.s = materialComponent.collections[index].s || null;
     } else {
       this.addSpesification!.idItem = materialComponent.collections[index!].id_item;
       this.addSpesification!.name_item = materialComponent.collections[index!].name_item!;

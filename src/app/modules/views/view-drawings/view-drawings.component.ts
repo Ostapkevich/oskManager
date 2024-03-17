@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, DoCheck, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
 import { AppService } from 'src/app/app.service';
@@ -7,7 +7,13 @@ import { DrawingsDatabaseComponent } from '../../new-machine/drawings-database/d
 import { Ispecification, IBlank, IMaterial, Idrawings } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { DrawingsDatabaseService } from '../../new-machine/drawings-database/drawings-database.service';
 
-
+interface IcurrentDrawing {
+  s: number,
+  m: number,
+  id: number,
+  numberDrawing: string,
+  nameDrawing: string
+}
 
 @Component({
   standalone: true,
@@ -17,7 +23,7 @@ import { DrawingsDatabaseService } from '../../new-machine/drawings-database/dra
   templateUrl: './view-drawings.component.html',
   styleUrls: ['./view-drawings.component.css']
 })
-export class ViewDrawingsComponent implements OnInit {
+export class ViewDrawingsComponent implements OnInit, DoCheck {
   constructor(private appService: AppService, private drawingsDbService: DrawingsDatabaseService) { }
 
   idDrawing: number | undefined;
@@ -25,8 +31,7 @@ export class ViewDrawingsComponent implements OnInit {
   name_item: string = '';
   min: number | undefined;
   max: number | undefined;
-  s: number | undefined;//Масса чертежа
-  m: number | undefined;
+  currentDrawing: IcurrentDrawing | undefined;
 
 
   collections: Idrawings[] = [];
@@ -42,6 +47,18 @@ export class ViewDrawingsComponent implements OnInit {
 
   @Input() showElement = true;
   showDetail = false;
+
+  hasScroll: boolean = false;
+  @ViewChild('divSP') divElement!: ElementRef;
+
+  drawingsLinks: Array<IcurrentDrawing>= [];
+
+  ngDoCheck(): void {
+    if (this.divElement) {
+      const element = this.divElement.nativeElement as HTMLDivElement;
+      this.hasScroll = element.scrollHeight > element.clientHeight;
+    }
+  }
 
 
   async onSubmit() {
@@ -71,8 +88,9 @@ export class ViewDrawingsComponent implements OnInit {
         setTimeout(() => alert('Чертеж не найден!'));
         return;
       } else {
+        this.tblNavigator = undefined;
         this.collections = data.drawings;
-        console.log(this.collections)
+        console.log('collections', this.collections)
       }
     } catch (error) {
       alert(error);
@@ -80,9 +98,9 @@ export class ViewDrawingsComponent implements OnInit {
   }
 
   tblDrawingsClick() {
+
     if (!this.tblNavigator) {
       this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawings') as HTMLTableElement), 0);
-      console.log('eee')
     }
   }
 
@@ -115,34 +133,43 @@ export class ViewDrawingsComponent implements OnInit {
   }
 
 
-  async showInfo() {
+  showInfo(numberButton: any) {
     try {
+      this.tblDrawingsClick();
       this.showDetail = true;
-      const index = this.tblNavigator?.findCheckedRowNumber();
-      if (index === null) {
-        return;
-      }
-      console.log(this.collections)
-      const id = this.collections[index!].idDrawing;
-      this.m=this.collections[index!].weight;
-      let data: any;
-      data = await this.appService.query('get', `http://localhost:3000/drawings/getDrawingInfoFull/${id}/id`);
-      console.log(data)
-      this.blank = undefined;
-      this.materials.length = 0;
-      this.specificatios.length = 0;
-      console.log(data.blank)
-      if (data.blank) {
-        this.blank = this.drawingsDbService.showBlankInfo(data.blank, data.drawing.type_blank);
-      }
-      if (data.materials) {
-        this.drawingsDbService.showMaterialInfo(this.materials, data.materials);
-      }
-      console.log(data.positionsSP)
-      if (data.positionsSP) {
-        this.specificatios = data.positionsSP;
-      }
+      const index = this.tblNavigator?.findRowButton(numberButton, 2);
+      this.currentDrawing = {
+        s: this.collections[index!].s,
+        m: this.collections[index!].weight,
+        id: this.collections[index!].idDrawing,
+        numberDrawing: this.collections[index!].numberDrawing,
+        nameDrawing: this.collections[index!].nameDrawing
+      };
+      this.getInfo(this.currentDrawing.id);
+      this.drawingsLinks.push(Object.assign({},this.currentDrawing));
+    } catch (error) {
+      alert(error);
+    }
+  }
 
+  drawingLinkClick(){
+    
+  }
+
+  showInfoChild(numberButton: any) {
+    try {
+      this.tblSpesificationClick();
+      const index = this.spNavigator?.findRowButton(numberButton, 3);
+      this.currentDrawing = {
+        s: this.specificatios[index!].s!,
+        m: this.specificatios[index!].weight!,
+        id: this.specificatios[index!].idItem!,
+        numberDrawing: this.specificatios[index!].numberDrawing!,
+        nameDrawing: this.specificatios[index!].nameDrawing!
+      };
+      this.clearInfo();
+      this.getInfo(this.currentDrawing.id!);
+      this.drawingsLinks.push(Object.assign({},this.currentDrawing));
     } catch (error) {
       alert(error);
     }
@@ -150,7 +177,40 @@ export class ViewDrawingsComponent implements OnInit {
   }
 
 
-  showDrawing(element: any) { }
+  async getInfo(id: number) {
+    try {
+      this.blank = undefined;
+      let data: any;
+      data = await this.appService.query('get', `http://localhost:3000/drawings/getDrawingInfoFull/${id}/id`);
+      if (data.blank) {
+        this.blank = this.drawingsDbService.showBlankInfo(data.blank, data.drawing.type_blank);
+      }
+      if (data.materials) {
+        this.drawingsDbService.showMaterialInfo(this.materials, data.materials);
+      }
+      console.log('data.positionsSP', data.positionsSP)
+      if (data.positionsSP) {
+        this.specificatios = data.positionsSP;
+      }
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+  clearInfo() {
+    this.blank = undefined;
+    this.materials.length = 0;
+    this.specificatios.length = 0;
+    this.spNavigator = undefined;
+  }
+
+
+  showMain() {
+    this.clearInfo();
+    this.showDetail = false;
+    this.tblNavigator = undefined;
+    this.drawingsLinks.length = 0;
+  }
 
   firstPage() { }
   previousPage() { }

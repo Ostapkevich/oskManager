@@ -592,7 +592,7 @@
                     <td *ngIf="item.type_position===1 || item.type_position===2|| item.type_position===4 || item.noBlank==='noBlank'"
                         class=" py-1 w-0.5/12 text-center" id="typepos!3">
                     </td>
-                    <td *ngIf="(item.units===0 || !item.units)  && !item.noBlank"
+                    <td *ngIf="(item.type_position===3 && item.units===0) || (item.type_position===5 && item.units===undefined && item.noBlank===undefined)||(item.type_position===5 && item.units===0) "
                         id="m kq" class=" py-1 w-0.5/12 text-center">
                         m,кг
                     </td>

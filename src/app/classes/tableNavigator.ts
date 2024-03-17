@@ -23,7 +23,7 @@ export class TableNavigator {
         const rowsCollection = this.table.rows;
         let i = 0
         for (i = 0; i < rowsCollection.length; i++) {
-            if (rowsCollection[i].cells[indexCellButton].firstChild == target) {
+            if (rowsCollection[i].cells[indexCellButton].firstChild === target) {
                 break;
             }
         }

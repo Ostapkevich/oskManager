@@ -1,5 +1,5 @@
 interface Ispecification {
-  idItem: number | undefined,  // id добавленного чертежа, материала (прокат, метизы, покуп, материал)
+  idItem: number ,  // id добавленного чертежа, материала (прокат, метизы, покуп, материал)
   idParent: number | undefined,  // id position в таблице drawing_specification в базе данных
   idChild: number | null | undefined,// id position в связанной таблице drawing_specification в базе данных
   //ind: number,

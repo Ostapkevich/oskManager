@@ -7,7 +7,7 @@ import { DrawingsDatabaseComponent } from '../../new-machine/drawings-database/d
 import { Ispecification, IBlank, IMaterial, Idrawings } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { DrawingsDatabaseService } from '../../new-machine/drawings-database/drawings-database.service';
 
-import { NgxImageZoomModule } from 'ngx-image-zoom';
+
 interface IcurrentDrawing {
   s: number,
   m: number,
@@ -18,7 +18,7 @@ interface IcurrentDrawing {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent,NgxImageZoomModule],
+  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent],
   providers: [],
   selector: 'app-viewDrawings',
   templateUrl: './view-drawings.component.html',

@@ -73,7 +73,7 @@ interface Idrawings {
   type_blank: number,
   noBlank: string,
   isSB: number,
-  filePath: string[], // массив путей где будут хранится чертежи,
+  path: string[], // массив путей где будут хранится чертежи,
   s:number, //площадь поверхности
   m:number
 }

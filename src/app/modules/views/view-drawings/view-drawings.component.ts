@@ -7,6 +7,7 @@ import { DrawingsDatabaseComponent } from '../../new-machine/drawings-database/d
 import { Ispecification, IBlank, IMaterial, Idrawings } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { DrawingsDatabaseService } from '../../new-machine/drawings-database/drawings-database.service';
 
+import { NgxImageZoomModule } from 'ngx-image-zoom';
 interface IcurrentDrawing {
   s: number,
   m: number,
@@ -17,7 +18,7 @@ interface IcurrentDrawing {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent],
+  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent,NgxImageZoomModule],
   providers: [],
   selector: 'app-viewDrawings',
   templateUrl: './view-drawings.component.html',
@@ -45,13 +46,14 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
   specificatios: Partial<Ispecification>[] = [];
   spNavigator: TableNavigator | undefined;
 
-  @Input() showElement = true;
+  @Input() showAllElements = true;
   showDetail = false;
 
   hasScroll: boolean = false;
   @ViewChild('divSP') divElement!: ElementRef;
 
-  drawingsLinks: Array<IcurrentDrawing>= [];
+  drawingsLinks: Array<IcurrentDrawing> = [];
+path='assets/СВ35-501 Удлинитель к борштангше.JPG';
 
   ngDoCheck(): void {
     if (this.divElement) {
@@ -97,12 +99,14 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
     }
   }
 
+
   tblDrawingsClick() {
 
     if (!this.tblNavigator) {
       this.tblNavigator = new TableNavigator((document.querySelector('#tblDrawings') as HTMLTableElement), 0);
     }
   }
+
 
   tblSpesificationClick() {
     if (!this.spNavigator) {
@@ -111,6 +115,7 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
     this.spFocus();
   }
 
+
   spFocus() {
     this.spNavigator!.focusedTable = document.querySelector('#tblSpecification') as HTMLTableElement;
     if (this.materialNavigator) {
@@ -118,12 +123,14 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
     }
   }
 
+
   tblMaterialsClick() {
     if (!this.materialNavigator) {
       this.materialNavigator = new TableNavigator((document.querySelector('#tblDrawingMaterials') as HTMLTableElement), 0);
     }
     this.materialFocus();
   }
+
 
   materialFocus() {
     this.materialNavigator!.focusedTable = document.querySelector('#tblDrawingMaterials') as HTMLTableElement;
@@ -133,11 +140,12 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
   }
 
 
-  showInfo(numberButton: any) {
+  async showParentDrawing(targetButton: any) {
     try {
+
       this.tblDrawingsClick();
       this.showDetail = true;
-      const index = this.tblNavigator?.findRowButton(numberButton, 2);
+      const index = this.tblNavigator?.findRowButton(targetButton, 2);
       this.currentDrawing = {
         s: this.collections[index!].s,
         m: this.collections[index!].weight,
@@ -145,21 +153,29 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
         numberDrawing: this.collections[index!].numberDrawing,
         nameDrawing: this.collections[index!].nameDrawing
       };
-      this.getInfo(this.currentDrawing.id);
-      this.drawingsLinks.push(Object.assign({},this.currentDrawing));
+      await this.getDrawingInfo(this.currentDrawing.id);
+      this.drawingsLinks.push(Object.assign({}, this.currentDrawing));
+      console.log('this.drawingsLinks parent', this.drawingsLinks)
     } catch (error) {
       alert(error);
     }
   }
 
-  drawingLinkClick(){
-    
+  showImageDrawing(targetButton:any){
+    this.tblDrawingsClick();
+    console.log(this.collections)
+    const index = this.tblNavigator?.findRowButton(targetButton, 3);
+    console.log(this.collections[index!].path[0])
+   // this.path='http://localhost:3000/'+this.collections[index!].path[0].replace(/\\/g, '/');
+   
+    console.log(this.path)
   }
 
-  showInfoChild(numberButton: any) {
+   async showChildDrawing(numberButton: any) {
     try {
+      this.spNavigator = undefined;
       this.tblSpesificationClick();
-      const index = this.spNavigator?.findRowButton(numberButton, 3);
+      const index = this.spNavigator!.findRowButton(numberButton, 3);
       this.currentDrawing = {
         s: this.specificatios[index!].s!,
         m: this.specificatios[index!].weight!,
@@ -167,19 +183,32 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
         numberDrawing: this.specificatios[index!].numberDrawing!,
         nameDrawing: this.specificatios[index!].nameDrawing!
       };
+      
       this.clearInfo();
-      this.getInfo(this.currentDrawing.id!);
-      this.drawingsLinks.push(Object.assign({},this.currentDrawing));
-    } catch (error) {
+      await this.getDrawingInfo(this.currentDrawing.id!);
+      this.drawingsLinks.push(Object.assign({}, this.currentDrawing));
+         } catch (error) {
       alert(error);
     }
-
   }
 
 
-  async getInfo(id: number) {
+  async drawingLinkClick(elem:any) {
     try {
-      this.blank = undefined;
+      this.spNavigator = undefined;
+      this.clearInfo();
+      const index=+(elem as HTMLElement).innerText.split(' ')[0];
+      await this.getDrawingInfo(this.drawingsLinks[index].id);
+      this.drawingsLinks.length=index+1;
+    } catch (error) {
+      alert(error);
+    }
+  }
+
+
+  async getDrawingInfo(id: number) {
+    try {
+      //this.blank = undefined;
       let data: any;
       data = await this.appService.query('get', `http://localhost:3000/drawings/getDrawingInfoFull/${id}/id`);
       if (data.blank) {
@@ -196,6 +225,7 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
       alert(error);
     }
   }
+
 
   clearInfo() {
     this.blank = undefined;

@@ -1,6 +1,6 @@
 <div class="w-2/3 mx-auto " id="idmaterial">
-    <p *ngIf="showElement" class="absolute top-[110px] left-[80px] text-4xl  text-white">Поиск чертежа</p>
-    <div *ngIf="!showElement" class=" mt-10"></div>
+    <p *ngIf="showAllElements" class="absolute top-[110px] left-[80px] text-4xl  text-white">Поиск чертежа</p>
+    <div *ngIf="!showAllElements" class=" mt-10"></div>
 
 </div>
 <div *ngIf="!showDetail" class="w-2/3 mx-auto ">
@@ -50,10 +50,10 @@
                 <td class="w-0.5/12 text-center">id</td>
                 <td class="w-1.5/12 pl-3">Номер</td>
                 <td class="w-2/12 ">Наименование</td>
-                <td class="w-1/12 text-center">Масса,кг</td>
+                <td class="w-0.5/12 text-center">Масса,кг</td>
                 <td class="w-0,5/12 text-center">S м.кв.</td>
                 <td class="w-2/12 ">Заготовка</td>
-                <td class="w-0.5/12 text-center">Расчет</td>
+                <td class="w-1/12 text-center">Расчет</td>
                 <td class="w-0.5/12 text-center">L,мм</td>
                 <td class="w-0.5/12 text-center">D(B),мм</td>
                 <td class="w-0.5/12 text-center">H,мм</td>
@@ -79,16 +79,20 @@
                 <td class=" py-1 w-0.5/12 text-center ">
                     {{ item.idDrawing}}
                 </td>
-                <td class=" py-1 w-1.5/12 " title="Смотреть дополнительную информацию">
+                <td *ngIf="showAllElements===true" class=" py-1 w-1.5/12 " title="Смотреть дополнительную информацию">
                     <button class="font-medium hover:underline cursor-pointer"
-                        (click)="showInfo($event.target)">{{item.numberDrawing}}</button>
+                        (click)="showParentDrawing($event.target)">{{item.numberDrawing}}</button>
 
                 </td>
-                <td class=" py-1 w-2/12 hover:underline hover: cursor-grab" id="name"  title="Смотреть чертеж">
-                    {{item.nameDrawing}}
+                <td *ngIf="showAllElements===false"  class=" py-1 w-1.5/12 ">
+                    {{item.numberDrawing}}
+                </td>
+                <td class=" py-1 w-2/12" id="name" title="Смотреть чертеж">
+                    <button class="font-medium hover:underline cursor-pointer"
+                    (click)="showImageDrawing($event.target)">{{item.numberDrawing}}</button> 
                 </td>
 
-                <td class=" py-1 w-1/12 text-center" id="weight1">
+                <td class=" py-1 w-0.5/12 text-center" id="weight1">
                     {{item.weight | number:"1.0-3"}}
                 </td>
                 <td class=" py-1 w-0.5/12 text-center" id="s">
@@ -97,17 +101,17 @@
                 <td class=" py-1 w-2/12 " id="nameBlank">
                     {{item.name_item}}
                 </td>
-                <td *ngIf="item.specific_units===0" class=" py-1 w-0.5/12 text-center" id="from m">
+                <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center" id="from m">
                     % от m, кг
                 </td>
-                <td *ngIf="item.specific_units===1" class=" py-1 w-0.5/12 text-center" id="from s">
+                <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center" id="from s">
                     % от S, м.кв
                 </td>
-                <td *ngIf="item.specific_units===2" class=" py-1 w-0.5/12 text-center" id="inputData">
+                <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center" id="inputData">
                     Ввод данных
                 </td>
                 <td *ngIf="!(item.specific_units===0 || item.specific_units===1 || item.specific_units===2)" id="pusto"
-                    class=" py-1 w-0.5/12 text-center">
+                    class=" py-1 w-1/12 text-center">
                 </td>
                 <td class=" py-1 w-0.5/12 text-center " id="len">
                     {{ item.len }}
@@ -155,19 +159,23 @@
     </table>
 </div>
 
+<lib-ngx-image-zoom [fullImage]="path"></lib-ngx-image-zoom>
 
+<div *ngIf="showDetail " class="w-2/3 mx-auto ">
 
-<div *ngIf="showDetail" class="w-2/3 mx-auto ">
-    <div class="flex items-center gap-2">
-        <p  class="text-xl  text-white">{{currentDrawing?.numberDrawing+''+currentDrawing?.nameDrawing}}</p>
+    <div class="flex items-center gap-2  overflow-auto">
+        <p class="text-xl  text-white shrink-0">{{currentDrawing?.numberDrawing+' '+currentDrawing?.nameDrawing}}</p>
         <span
-            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded bg-blue-900 text-blue-300 hover:underline cursor-pointer"
+            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded bg-blue-900 text-blue-300 hover:underline cursor-pointer shrink-0"
             (click)="showMain()">вернуться к поиску</span>
-        <div *ngFor="let item of drawingsLinks; let i=index" class="flex gap-2 items-center">
-            <span *ngIf="i<drawingLinkClick.length-1"  (click)="drawingLinkClick()"
-                class="text-sm font-medium me-2 px-2.5 py-0.5 rounded bg-blue-900 text-blue-300">{{currentDrawing?.numberDrawing+''+currentDrawing?.nameDrawing}}</span>
+        <div *ngFor="let item of drawingsLinks; let i=index" class="flex gap-2 items-center shrink-0">
+
+            <span *ngIf="i<drawingsLinks.length-1" (click)="drawingLinkClick($event.target)"
+                class="text-sm font-medium me-2 px-2.5 py-0.5 rounded bg-blue-900 text-blue-300 hover:underline cursor-pointer">{{i+'
+                '+ item.numberDrawing +' '+item?.nameDrawing}}</span>
         </div>
     </div>
+
 
     <!-- Заготовка и материалы -->
     <div class="flex gap-2 ">
@@ -471,10 +479,10 @@
                     <td class="w-1.5/12 pl-3">Номер</td>
                     <td class="w-1.5/12 ">Наименование</td>
                     <td class="w-0.5/12 text-center">Кол.</td>
-                    <td class="w-1/12 text-center">Масса,кг</td>
+                    <td class="w-0.5/12 text-center">Масса,кг</td>
                     <td class="w-0,5/12 text-center">S м.кв.</td>
                     <td class="w-1.5/12 ">Заготовка</td>
-                    <td class="w-0.5/12 text-center">Расчет</td>
+                    <td class="w-1/12 text-center">Расчет</td>
                     <td class="w-0.5/12 text-center">L,мм</td>
                     <td class="w-0.5/12 text-center">D(B),мм</td>
                     <td class="w-0.5/12 text-center">H,мм</td>
@@ -505,11 +513,12 @@
                         <td class=" py-1 w-0.5/12 text-center ">
                             {{ item.idItem }}
                         </td>
-                        <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12 " title="Смотреть дополнительную информацию">
-                           <button class="font-medium hover:underline cursor-pointer"
-                            (click)="showInfoChild($event.target)">{{item.numberDrawing}}</button>
+                        <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12 "
+                            title="Смотреть дополнительную информацию">
+                            <button class="font-medium hover:underline cursor-pointer"
+                                (click)="showChildDrawing($event.target)">{{item.numberDrawing}}</button>
                         </td>
-                        <td *ngIf="item.type_position!==5" class=" py-1 w-1.5/12 " >
+                        <td *ngIf="item.type_position!==5" class=" py-1 w-1.5/12 ">
                             {{item.numberDrawing}}
                         </td>
                         <td class=" py-1 w-1.5/12" id="name" title="Смотреть чертеж">
@@ -519,15 +528,15 @@
                         <td class=" py-1 w-0.5/12 text-center" id="qvolity">
                             {{item.quantity}}
                         </td>
-                        <td *ngIf="item.type_position!==1" class=" py-1 w-1/12 text-center" id="weight1">
+                        <td *ngIf="item.type_position!==1" class=" py-1 w-0.5/12 text-center" id="weight1">
                             {{item.weight | number:"1.0-3"}}
                         </td>
 
-                        <td *ngIf="item.type_position===1 && item.uselength===1" class=" py-1 w-1/12 text-center"
+                        <td *ngIf="item.type_position===1 && item.uselength===1" class=" py-1 w-0.5/12 text-center"
                             id="rol1">
                             {{item.len!*item.weight!/1000 | number:"1.0-3"}}
                         </td>
-                        <td *ngIf="item.type_position===1 && item.uselength===0" class=" py-1 w-1/12 text-center"
+                        <td *ngIf="item.type_position===1 && item.uselength===0" class=" py-1 w-0.5/12 text-center"
                             id="rol2">
                             {{(item.h?item.dw!*item.h!:item.dw!*item.dw!)/1000000*item.weight! | number:"1.0-3"}}
                         </td>
@@ -537,17 +546,17 @@
                         <td class=" py-1 w-1.5/12 " id="nameBlank">
                             {{item.name_item}}
                         </td>
-                        <td *ngIf="item.specific_units===0" class=" py-1 w-0.5/12 text-center" id="from m">
+                        <td *ngIf="item.specific_units===0" class=" py-1 w-1/12 text-center" id="from m">
                             % от m, кг
                         </td>
-                        <td *ngIf="item.specific_units===1" class=" py-1 w-0.5/12 text-center" id="from s">
+                        <td *ngIf="item.specific_units===1" class=" py-1 w-1/12 text-center" id="from s">
                             % от S, м.кв
                         </td>
-                        <td *ngIf="item.specific_units===2" class=" py-1 w-0.5/12 text-center" id="inputData">
+                        <td *ngIf="item.specific_units===2" class=" py-1 w-1/12 text-center" id="inputData">
                             Ввод данных
                         </td>
                         <td *ngIf="!(item.specific_units===0 || item.specific_units===1 || item.specific_units===2)"
-                            id="pusto" class=" py-1 w-0.5/12 text-center">
+                            id="pusto" class=" py-1 w-1/12 text-center">
                         </td>
                         <td class=" py-1 w-0.5/12 text-center " id="len">
                             {{ item.len }}

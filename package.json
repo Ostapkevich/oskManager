@@ -20,14 +20,15 @@
     "@angular/router": "^16.2.12",
     "flowbite": "^2.0.0",
     "flowbite-datepicker": "^1.2.4",
+    "ngx-extended-pdf-viewer": "^19.4.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "tw-elements": "^1.0.0",
     "zone.js": "~0.13.3"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^15.1.2",
-    "@angular/cli": "^15.2.10",
+    "@angular-devkit/build-angular": "^16.2.12",
+    "@angular/cli": "^16.2.12",
     "@angular/compiler-cli": "^16.2.12",
     "@types/jasmine": "~4.3.0",
     "autoprefixer": "^10.4.16",

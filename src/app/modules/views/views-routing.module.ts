@@ -4,6 +4,7 @@ import { ViewDrawingsComponent } from './view-drawings/view-drawings.component';
 
 const routes: Routes = [
   {path:'drawings', component:ViewDrawingsComponent, canDeactivate:[] },
+ 
   
  ];
 

@@ -6,6 +6,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { DrawingsDatabaseComponent } from '../../new-machine/drawings-database/drawings-database.component';
 import { Ispecification, IBlank, IMaterial, Idrawings } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { DrawingsDatabaseService } from '../../new-machine/drawings-database/drawings-database.service';
+import { PdfViewerComponent } from 'src/app/pdf-viewer/pdf-viewer.component';
+
 
 
 interface IcurrentDrawing {
@@ -18,7 +20,7 @@ interface IcurrentDrawing {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent],
+  imports: [CommonModule, FormsModule, DrawingsDatabaseComponent, PdfViewerComponent],
   providers: [],
   selector: 'app-viewDrawings',
   templateUrl: './view-drawings.component.html',
@@ -50,7 +52,8 @@ export class ViewDrawingsComponent implements OnInit, DoCheck {
   showDetail = false;
 
   hasScroll: boolean = false;
-  @ViewChild('divSP') divElement!: ElementRef;
+  @ViewChild('divSP', {static: false}) divElement!: ElementRef;
+  @ViewChild(PdfViewerComponent, {static: false}) pdfComponent!: PdfViewerComponent;
 
   drawingsLinks: Array<IcurrentDrawing> = [];
 path='assets/СВ35-501 Удлинитель к борштангше.JPG';
@@ -165,7 +168,10 @@ path='assets/СВ35-501 Удлинитель к борштангше.JPG';
     this.tblDrawingsClick();
     console.log(this.collections)
     const index = this.tblNavigator?.findRowButton(targetButton, 3);
-    console.log(this.collections[index!].path[0])
+   console.log(this.collections[index!].path[0])
+    this.pdfComponent.pathDrawing=`http://localhost:3000/drawings/download/${this.collections[index!].path[0]}`;
+    console.log( 'this.pdfComponent.pathDrawing ', this.pdfComponent.pathDrawing)
+    window.open('/viewDrawing',  '_blank' );
    // this.path='http://localhost:3000/'+this.collections[index!].path[0].replace(/\\/g, '/');
    
     console.log(this.path)

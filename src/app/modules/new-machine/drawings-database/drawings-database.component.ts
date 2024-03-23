@@ -116,13 +116,6 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
     let event = new Event("click");
     document.getElementById('numberDrawing')!.dispatchEvent(event);
     this.scan();
-
-    /* document.getElementById('tblSpecification')!.addEventListener('scroll',  function(e) {
-      e.preventDefault();
-    }); */
-
-
-
   }
 
 

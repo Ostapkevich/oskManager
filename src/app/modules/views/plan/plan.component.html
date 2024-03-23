@@ -1,0 +1,100 @@
+<div class="w-2/3 mx-auto mt-4 ">
+    <p class="absolute top-[130px] left-[150px] text-4xl  text-white">Чертеж</p>
+
+    <form id="formDrawing">
+
+        <div class="grid grid-cols-12 gap-2 items-end mt-8 ">
+            <div>
+                <label for="idOrder" class="block mb-2 text-sm font-medium  text-white">ID {{idOrder}}</label>
+                <input type="number" id="idOrder" name="idOrder" [ngModel]="idOrder" (keypress)="inputEnter($event)"
+                    autocomplete="off"
+                    class="border  text-sm w-full block   py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="col-span-2">
+                <label for="numberOrder" class="block mb-2 text-sm font-medium  text-white">Номер
+                    {{drawingNamber}}</label>
+                <input required type="text" id="numberOrder" name="numberOrder" [ngModel]="drawingNamber"
+                    autocomplete="off" ngModel (keypress)="inputEnter($event)"
+                    class="border  text-sm w-full block   py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="col-span-2">
+                <label for="nameDrawing" class="block mb-2 text-sm font-medium  text-white">Название</label>
+                <input required type="text" id="nameDrawing" name="nameDrawing" [(ngModel)]="drawingName"
+                    autocomplete="off"
+                    class="border w-full text-sm  block  py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+        </div>
+    </form>
+
+    <hr class="mt-4 border-gray-500">
+
+
+
+
+
+
+    <table class="w-full " id="tblHeadPlan">
+        <tbody class="text-sm   bg-gray-700 text-gray-400  ">
+            <tr>
+                <td class="w-0.5/12 r py-2">
+                    <svg class="  mx-auto w-6 h-3  text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="none" viewBox="0 0 16 12">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 5.917 5.724 10.5 15 1.5" />
+                    </svg>
+                </td>
+                <td class="w-1/12 ">Создан</td>
+                <td class="w-1/12 ">Заказ</td>
+                <td class="w-4/12">Название</td>
+                <td class="w-0.5/12 text-center ">Шт.</td>
+                <td class="w-3/12">Заказчик</td>
+                <td class="w-1/12 text-center">Плановая отгрузка</td>
+                <td class="w-1/12 text-center">Закрыт</td>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <div #divOrder class=" max-h-160 relative overflow-x-auto shadow-md "
+        [ngStyle]="{'width': hasScroll ? 'calc(100% + 22px)' : '100%'}" id="divOrder">
+        <table id="tblOrders" class="w-full  text-sm text-left rtl:text-right  text-gray-300    ">
+            <tbody id="tbodySpecification">
+                <tr class="border-b bg-gray-800 border-gray-700  hover:bg-gray-600"
+                    [ngClass]="(hasScroll) ? 'text-teal-300' : hasScroll  ? 'text-orange-200' : ''"
+                    *ngFor="let item of orders; let i = index">
+                    <td class="py-1 w-0.5/12 ">
+                        <div class="flex justify-center">
+                            <input type="checkbox" (change)="orderNavigator?.boxChange($event)" [id]="'inp'+i"
+                                class="w-4 h-4 text-blue-600    focus:ring-blue-600 ring-offset-gray-800 focus:ring-offset-gray-800 focus:ring-2 bg-gray-700 border-gray-600">
+                        </div>
+                    </td>
+                    <td class=" py-1 w-1/12 ">
+                        {{item.creation}}
+                    </td>
+                    <td class=" py-1 w-1/12">
+                        <button class="font-medium hover:underline cursor-pointer">{{item.number_order}}</button>
+                    </td>
+
+                    <td class=" py-1 w-4/12  ">
+                        {{item.name_order}}
+                    </td>
+                    <td class=" py-1 w-0.5/12 text-center" >
+                        {{item.quantity}}
+                    </td>
+                    <td class=" py-1 w-3/12 ">
+                        {{item.customer}}
+                    </td>
+                    <td class=" py-1 w-1/12 text-center">
+                        {{item.shipment}}
+                    </td>
+                    <td class=" py-1 w-1/12 text-center">
+                        {{item.closedDate}}
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

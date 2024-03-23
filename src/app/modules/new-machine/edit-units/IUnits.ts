@@ -1,5 +1,5 @@
 interface Iunits {
-    id_specification?: number|null;
+    id_unit?: number|null;
     order_machine?:string;
     unit:string;
     number_unit: string;

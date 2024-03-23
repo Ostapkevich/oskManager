@@ -20,7 +20,8 @@ interface Ispecification {
   nameDrawing: string | undefined,
   isSB: number | undefined,
   noBlank:string |undefined,
-  s:number
+  s:number,
+  path:string[]
 }
 
 interface IMaterial {

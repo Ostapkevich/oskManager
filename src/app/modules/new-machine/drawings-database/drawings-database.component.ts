@@ -1,17 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef, DoCheck } from '@angular/core';
-import { RolledComponent } from 'src/app/modules/materials/rolled/rolled.component';
 import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { RolledComponent } from 'src/app/modules/materials/rolled/rolled.component';
 import { HardwareComponent } from 'src/app/modules/materials/hardware/hardware.component';
 import { OthersComponent } from 'src/app/modules/materials/others/others.component';
 import { PurchasedComponent } from 'src/app/modules/materials/purchased/purchased.component';
 import { TableNavigator } from 'src/app/classes/tableNavigator';
-import { FormsModule } from '@angular/forms';
-import { Modal, ModalOptions } from 'flowbite';
 import { AppService } from 'src/app/app.service';
 import { ViewDrawingsComponent } from '../../views/view-drawings/view-drawings.component';
-import { NgForm } from '@angular/forms';
 import { Ispecification, IMaterial, IBlank } from './interfaceDrawingSP';
 import { DrawingsDatabaseService } from './drawings-database.service';
+import { Modal, ModalOptions } from 'flowbite';
 
 //import { DrawingService} from './drawing.service';
 //import { DrawingSpService } from '../../views/drawingSP/drawingSp.service';
@@ -30,12 +29,9 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
   constructor(private appService: AppService, private drawingsDbService: DrawingsDatabaseService) { }
 
   dataChanged: boolean | null | undefined = false;
-  //blankChange:boolean=false;
-  materialChange: boolean = false;
-  spChange: boolean = false;
   isDrawingInfo: boolean = true;
   radioMaterial: number = 1;// определяет какой радио выбран - прокат| метизы | метариалы | покупные
-  changedData = false;
+  //changedData = false;
   //oldTypeBlank: number | undefined;
 
 
@@ -89,8 +85,6 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
   }
 
 
-
-
   changeRadio(element: HTMLInputElement, type: number) {
     this.radioMaterial = type;
     const radioButtons = document.querySelectorAll('input[type="radio"]');
@@ -100,6 +94,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
       }
     });
   };
+
 
   async scan() {
     try {
@@ -113,8 +108,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
 
 
   formChange(dataForm: NgForm) {
-    this.dataChanged = dataForm.dirty;
-
+    //this.dataChanged = dataForm.dirty;
   }
 
 
@@ -257,7 +251,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
       if (typeof data.response === 'number') {
         this.idDrawing = data.response;
         this.drawingNamber = numberDraw;
-        this.dataChanged = false;
+       // this.dataChanged = false;
         if (!saveAll) {
           alert('Данные сохранены!');
         }
@@ -385,6 +379,15 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
     }
   }
 
+  showImageDrawing(targetButton: any) {
+    this.tblSpesificationClick();
+    const index: number = this.spNavigator?.findRowButton(targetButton, 4)!;
+    const path = this.specificatios[index].path![0];
+    const encodedPath = encodeURIComponent(`${path}`);
+    window.open(`/download/${encodedPath}`, '_blank');
+
+  }
+
 
   async getDrawingInfoFull(idOrNumber: number | string, findBy: 'id' | 'number') {
     try {
@@ -412,22 +415,16 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
         this.specificatios = data.positionsSP;
 
       }
-      this.dataChanged = false;
-      //this.blankChange=false;
-      this.materialChange = false;
-      this.spChange = false;
-      console.log(this.specificatios)
     } catch (error) {
       alert(error);
     }
 
   }
-
-
+ 
 
   inputEnter(event?: any) {
     if (event?.key === 'Enter') {
-      const idElem = document.getElementById('idDrawing');
+        const idElem = document.getElementById('idDrawing');
       const numberElem = document.getElementById('numberDrawing');
       let data: any;
       if (event?.target === numberElem) {
@@ -437,6 +434,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
         const id = +(idElem as HTMLInputElement).value
         this.getDrawingInfoFull(id, 'id');
       }
+      //this.dataChanged = false;
     }
   }
 
@@ -481,7 +479,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
           break;
         case 2:
           this.blank!.typeBlank = 2;
-          this.changedData = true;
+          // this.changedData = true;
           this.selectBlank(this.hardwareComponent!);
           if (this.tempBlank) {
             await this.deleteBlank();
@@ -494,7 +492,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
           break;
         case 4:
           this.blank!.typeBlank = 4;
-          this.changedData = true;
+          // this.changedData = true;
           this.selectBlank(this.purchasedComponent!);
           if (this.tempBlank) {
             await this.deleteBlank();
@@ -1351,7 +1349,7 @@ export class DrawingsDatabaseComponent implements OnInit, DoCheck {
         this.specificatios[i!] = this.specificatios[i! + 1];
         this.specificatios[i! + 1] = unit;
       }
-      this.changedData = true;
+      //this.changedData = true;
     }
   }
 

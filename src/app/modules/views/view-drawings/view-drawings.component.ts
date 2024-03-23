@@ -6,7 +6,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { DrawingsDatabaseComponent } from '../../new-machine/drawings-database/drawings-database.component';
 import { Ispecification, IBlank, IMaterial, Idrawings } from '../../new-machine/drawings-database/interfaceDrawingSP';
 import { DrawingsDatabaseService } from '../../new-machine/drawings-database/drawings-database.service';
-import { PdfViewerComponent } from 'src/app/pdf-viewer/pdf-viewer.component';
+import { PdfViewerComponent } from 'src/app/components/pdf-viewer/pdf-viewer.component';
 
 
 
@@ -164,17 +164,24 @@ path='assets/СВ35-501 Удлинитель к борштангше.JPG';
     }
   }
 
-  showImageDrawing(targetButton:any){
+  showImageTblDrawing(targetButton:any){
     this.tblDrawingsClick();
-    console.log(this.collections)
     const index = this.tblNavigator?.findRowButton(targetButton, 3);
-   console.log(this.collections[index!].path[0])
-    this.pdfComponent.pathDrawing=`http://localhost:3000/drawings/download/${this.collections[index!].path[0]}`;
-    console.log( 'this.pdfComponent.pathDrawing ', this.pdfComponent.pathDrawing)
-    window.open('/viewDrawing',  '_blank' );
-   // this.path='http://localhost:3000/'+this.collections[index!].path[0].replace(/\\/g, '/');
+    const path=this.collections[index!].path[0];
+    console.log('path ',path)
+    const encodedPath = encodeURIComponent(`${path}`);
+    window.open(`/download/${encodedPath}`, '_blank' );
    
-    console.log(this.path)
+  }
+
+  showImageTblSP(targetButton:any){
+    this.tblSpesificationClick();
+    const index = this.spNavigator?.findRowButton(targetButton,4);
+    const path=this.specificatios[index!].path![0];
+    console.log('path ',path)
+    const encodedPath = encodeURIComponent(`${path}`);
+    window.open(`/download/${encodedPath}`, '_blank' );
+   
   }
 
    async showChildDrawing(numberButton: any) {
@@ -198,6 +205,9 @@ path='assets/СВ35-501 Удлинитель к борштангше.JPG';
     }
   }
 
+  btnDelDrawing(){
+    
+  }
 
   async drawingLinkClick(elem:any) {
     try {

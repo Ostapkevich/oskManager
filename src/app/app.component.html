@@ -14,18 +14,23 @@
 
       <ul
         class="flex flex-col mx-10 font-medium p-4 md:p-0 mt-4 border  rounded-lg  md:flex-row md:space-x-8 md:mt-0 md:border-0  bg-gray-800 md:bg-gray-900 border-gray-700">
+        
         <li>
           <a href="https://www.oskt.com.ua" target="_blank" class="flex items-center">
             <img src="assets/osk3.png" class=" h-10 mr-3" alt="Flowbite Logo" />
           </a>
         </li>
+        
+
         <li>
           <a routerLink=""
             class="block py-2 pl-3 pr-4 text-white  rounded   md:p-0 md:text-blue-500 bg-blue-600 md:bg-transparent"
             aria-current="page">Главная</a>
         </li>
+        
+
         <li>
-          <button id="bntDesigning" aria-expanded="true" data-dropdown-toggle="dropdownDesigning"
+                   <button id="bntDesigning" aria-expanded="true" data-dropdown-toggle="dropdownDesigning"
             class="flex items-center justify-between w-full py-2 pl-3 pr-4   border-b    md:border-0  md:p-0 md:w-auto text-white md:hover:text-blue-500 focus:text-white border-gray-700 hover:bg-gray-700 md:hover:bg-transparent">Проектирование
             <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 10 6">
@@ -33,7 +38,7 @@
                 d="m1 1 4 4 4-4" />
             </svg></button>
           <!-- dropdownNavbar -->
-          <div id="dropdownDesigning" #dropDown
+          <div id="dropdownDesigning" 
             class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
             <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
               <li>
@@ -43,7 +48,7 @@
 
               <li>
                 <a routerLink="instruments/formOrder" id="linkFormOder"
-                  class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Формировать состав</a>
+                  class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Создать узлы</a>
               </li>
               <li>
                 <a routerLink="instruments/drawingsDatabase" id="linkFormOder"
@@ -72,8 +77,10 @@
             </div>
           </div>
         </li>
+
+
         <li>
-          <button id="btnDropdownView" aria-expanded="true" data-dropdown-toggle="dropdownView"
+          <button id="btnDropdownVIew" aria-expanded="true" data-dropdown-toggle="dropdownView"
             class="flex items-center justify-between w-full py-2 pl-3 pr-4   border-b    md:border-0  md:p-0 md:w-auto text-white md:hover:text-blue-500 focus:text-white border-gray-700 hover:bg-gray-700 md:hover:bg-transparent">Просмотр
             <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 10 6">
@@ -81,7 +88,7 @@
                 d="m1 1 4 4 4-4" />
             </svg></button>
           <!-- dropdownNavbar -->
-          <div id="dropdownView" #dropDown
+          <div id="dropdownView" 
             class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
             <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
               <li>
@@ -136,12 +143,81 @@
 
         </li>
 
+
+        <li>
+          <button id="btnDropdownPlan" aria-expanded="true" data-dropdown-toggle="dropdownPlan"
+            class="flex items-center justify-between w-full py-2 pl-3 pr-4   border-b    md:border-0  md:p-0 md:w-auto text-white md:hover:text-blue-500 focus:text-white border-gray-700 hover:bg-gray-700 md:hover:bg-transparent">План
+            <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 10 6">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 4 4 4-4" />
+            </svg></button>
+          <!-- dropdownNavbar -->
+          <div id="dropdownPlan" 
+            class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
+            <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
+              <li>
+                <a routerLink="views/drawings" class="block px-4 py-2  hover:bg-gray-600 hover:text-white">Чертежей</a>
+              </li>
+
+              <li aria-labelledby="libraryLink1">
+                <button id="btnLibrary" data-dropdown-toggle="viewSomething" data-dropdown-placement="right-start"
+                  type="button"
+                  class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">Материалов
+                  <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 10 6">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="m1 1 4 4 4-4" />
+                  </svg></button>
+                <!--library -->
+                <div id="viewSomething" class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow  bg-gray-700">
+                  <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
+                    <li>
+                      <a routerLink="materials/rolled"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Прокат</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/hardware"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Метизы</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/others"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Материалы</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/purchased"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Покупные изделия</a>
+                    </li>
+                    <li>
+                      <a routerLink="materials/types"
+                        class="block px-4 py-2  hover:bg-gray-600 text-gray-400 hover:text-white">Категории
+                        материалов</a>
+                    </li>
+
+
+                  </ul>
+                </div>
+              </li>
+             
+            </ul>
+            <div class="py-1">
+              <a class="block px-4 py-2 text-sm  hover:bg-gray-600 text-gray-400 hover:text-white">Sign
+                out</a>
+            </div>
+          </div>
+
+        </li>
+
+
         <li>
           <a href="#"
-            class="block py-2 pl-3 pr-4  rounded   md:border-0  md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">План</a>
+            class="block py-2 pl-3 pr-4  rounded   md:border-0  md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">Дрполнительно</a>
         </li>
+
+
+
         <li>
-          <button id="dropdownNavbarLink" aria-expanded="true" data-dropdown-toggle="dropdownPlan"
+          <button id="dropdownNavbarInstruments" aria-expanded="true" data-dropdown-toggle="dropdownInstruments"
             class="flex items-center justify-between w-full py-2 pl-3 pr-4   border-b    md:border-0  md:p-0 md:w-auto text-white md:hover:text-blue-500 focus:text-white border-gray-700 hover:bg-gray-700 md:hover:bg-transparent">Инструменты
             <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
               viewBox="0 0 10 6">
@@ -149,7 +225,7 @@
                 d="m1 1 4 4 4-4" />
             </svg></button>
           <!-- dropdownNavbar -->
-          <div id="dropdownPlan" #dropDown
+          <div id="dropdownInstruments" 
             class="z-10 hidden font-normal  divide-y  rounded-lg shadow w-52 bg-gray-700 divide-gray-600">
             <ul class="py-2 text-sm  text-gray-400" aria-labelledby="dropdownLargeButton">
               <li>
@@ -157,7 +233,7 @@
               </li>
              
               <li aria-labelledby="libraryLink">
-                <button id="btnLibrary" data-dropdown-toggle="idLibrary" data-dropdown-placement="right-start"
+                <button id="btnLibrary1" data-dropdown-toggle="idLibrary" data-dropdown-placement="right-start"
                   type="button"
                   class="flex items-center justify-between w-full px-4 py-2  hover:bg-gray-600 hover:text-white">База
                   материалов
@@ -167,7 +243,7 @@
                       d="m1 1 4 4 4-4" />
                   </svg></button>
                 <!--library -->
-                <div id="idLibrary" class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow  bg-gray-700">
+                <div id="idLibrary2" class="z-10 hidden  divide-y divide-gray-100 rounded-lg shadow  bg-gray-700">
                   <ul class="py-2 text-sm  text-gray-200" aria-labelledby="btnLibrary">
                     <li>
                       <a routerLink="materials/rolled"
@@ -206,10 +282,13 @@
           </div>
         </li>
 
+
         <li>
           <a href="#"
             class="block py-2 pl-3 pr-4  rounded   md:border-0  md:p-0 text-white md:hover:text-blue-500 hover:bg-gray-700 hover:text-white md:hover:bg-transparent">Печать</a>
         </li>
+
+        
       </ul>
     </div>
   </div>

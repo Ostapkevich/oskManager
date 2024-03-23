@@ -32,9 +32,9 @@ export class EditUnitsComponent implements OnInit {
   newTemplate!: TemplateRef<any>;
 
   loadTemplate(unit: Partial<Iunits>) {
-    if (unit.id_specification && unit.newOrEdit === undefined) {
+    if (unit.id_unit && unit.newOrEdit === undefined) {
       return this.readOnlyTemplate
-    } else if (unit.id_specification && unit.newOrEdit === true) {
+    } else if (unit.id_unit && unit.newOrEdit === true) {
       return this.editTemplate;
     } else {
       return this.newTemplate;
@@ -88,7 +88,7 @@ export class EditUnitsComponent implements OnInit {
     }
     const editedUnit: Partial<Iunits> = {};
     let index = this.navigator!.findCheckedRowNumber();
-    editedUnit.id_specification = null;
+    editedUnit.id_unit = null;
     editedUnit.unit = '';
     editedUnit.number_unit = '';
     editedUnit.name_unit = '';
@@ -144,7 +144,7 @@ export class EditUnitsComponent implements OnInit {
       if (i == null) {
         return;
       }
-      const idSp = this.units[i].id_specification;
+      const idSp = this.units[i].id_unit;
       if (!idSp) {
         alert('Для удаления добавленного узла используйте кнопку "Омена".')
         return;
@@ -191,9 +191,9 @@ export class EditUnitsComponent implements OnInit {
         delete sentUnits[i].started;
         delete sentUnits[i].finished;
         delete sentUnits[i].newOrEdit;
-        if (item.id_specification === undefined) {
+        if (item.id_unit === undefined) {
           this.units[i].status_unit = 1;
-          sentUnits[i].id_specification = null;
+          sentUnits[i].id_unit = null;
         }
         i++;
       }

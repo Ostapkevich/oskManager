@@ -5,7 +5,7 @@
         <div class="grid grid-cols-12 gap-2 items-end mt-8 ">
             <div>
                 <label for="idDrawing" class="block mb-2 text-sm font-medium  text-white">ID {{idDrawing}}</label>
-                <input type="number" id="idDrawing" name="idDrawing" [ngModel]="idDrawing"
+                <input type="number" id="idDrawing" name="idDrawing" [ngModel]="idDrawing" 
                     (keypress)="inputEnter($event)" autocomplete="off"
                     class="border  text-sm w-full block   py-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
 
@@ -70,7 +70,7 @@
         <div class="grid gap-4 grid-cols-12 items-end mt-6">
             <div class="col-span-3 flex rounded-md shadow-sm" role="group">
                 <button *ngIf="isDrawingInfo" type="button"
-                    class="w-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-se-xl  focus:z-10   border-white text-white  hover:bg-gray-900">
+                    class="w-1/2 px-2 py-2 text-sm font-medium  bg-transparent border  rounded-se-xl  focus:z-10   border-white text-white cursor-text">
                     Данные чертежа
                 </button>
                 <button *ngIf="!isDrawingInfo" type="button" (click)="isDrawingInfo=true"
@@ -82,7 +82,7 @@
                     Добавить данные
                 </button>
                 <button *ngIf="!isDrawingInfo" type="button"
-                    class="w-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-se-xl  focus:z-10    border-white text-white  hover:bg-gray-900">
+                    class="w-1/2 px-2 py-2 text-sm font-medium bg-transparent border  rounded-se-xl  focus:z-10    border-white text-white cursor-text">
                     Добавить данные
                 </button>
             </div>
@@ -538,10 +538,14 @@
                     <td class=" py-1 w-1.5/12 ">
                         {{item.numberDrawing}}
                     </td>
-                    <td class=" py-1 w-1.5/12" id="name">
-                        {{item.nameDrawing}}
+                   
+                    <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12" id="name">
+                        <button class="font-medium hover:underline cursor-pointer"
+                        (click)="showImageDrawing($event.target)">{{item.nameDrawing}}</button> 
                     </td>
-
+                    <td *ngIf="item.type_position!==5" class=" py-1 w-1.5/12" id="name">
+                        {{item.nameDrawing}}
+                   </td>
                     <td class=" py-1 w-0.5/12 text-center" id="qvolity">
                         {{item.quantity}}
                     </td>

@@ -22,7 +22,8 @@ export class AppComponent implements OnInit {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
-      if (event.url === '/viewDrawing') {
+      console.log('event.url ', event.url)
+      if (event.url.startsWith('/download') === true) {
         this.showNav = false;
       } else {
         this.showNav = true;

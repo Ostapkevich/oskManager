@@ -33,8 +33,11 @@
                     class=" border  text-sm  block w-full py-2 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500">
             </div>
             <input value="Поиск"
-                class="block self-end text-white focus:ring-4 focus:outline-none font-medium  text-sm px-14 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
+                class= "basis-24 block self-end text-white focus:ring-4 focus:outline-none font-medium  text-sm px-14 py-2.5 text-center bg-blue-600 hover:bg-blue-700 focus:ring-blue-800"
                 type="submit" />
+            <button type="button" (click)="btnDelDrawing()"
+                class="px-8 self-end py-2.5 text-sm font-medium text-center text-white  focus:ring-4 focus:outline-none  bg-red-600 hover:bg-red-700 focus:ring-blue-800">Удалить
+                чертеж</button>
         </div>
     </form>
     <table *ngIf="collections.length>0" class="w-full mt-4" id="headSpecification">
@@ -79,17 +82,17 @@
                 <td class=" py-1 w-0.5/12 text-center ">
                     {{ item.idDrawing}}
                 </td>
-                <td *ngIf="showAllElements===true" class=" py-1 w-1.5/12 " title="Смотреть дополнительную информацию">
+                <td *ngIf="showAllElements===true" class=" py-1 w-1.5/12 " title="Открыть">
                     <button class="font-medium hover:underline cursor-pointer"
                         (click)="showParentDrawing($event.target)">{{item.numberDrawing}}</button>
 
                 </td>
-                <td *ngIf="showAllElements===false"  class=" py-1 w-1.5/12 ">
+                <td *ngIf="showAllElements===false" class=" py-1 w-1.5/12 ">
                     {{item.numberDrawing}}
                 </td>
                 <td class=" py-1 w-2/12" id="name" title="Смотреть чертеж">
                     <button class="font-medium hover:underline cursor-pointer"
-                    (click)="showImageDrawing($event.target)">{{item.numberDrawing}}</button> 
+                        (click)="showImageTblDrawing($event.target)">{{item.nameDrawing}}</button>
                 </td>
 
                 <td class=" py-1 w-0.5/12 text-center" id="weight1">
@@ -512,18 +515,20 @@
                         <td class=" py-1 w-0.5/12 text-center ">
                             {{ item.idItem }}
                         </td>
-                        <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12 "
-                            title="Смотреть дополнительную информацию">
+                        <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12 " title="Открыть">
                             <button class="font-medium hover:underline cursor-pointer"
                                 (click)="showChildDrawing($event.target)">{{item.numberDrawing}}</button>
                         </td>
                         <td *ngIf="item.type_position!==5" class=" py-1 w-1.5/12 ">
                             {{item.numberDrawing}}
                         </td>
-                        <td class=" py-1 w-1.5/12" id="name" title="Смотреть чертеж">
+                        <td *ngIf="item.type_position!==5" class=" py-1 w-1.5/12" id="name">
                             {{item.nameDrawing}}
                         </td>
-
+                        <td *ngIf="item.type_position===5" class=" py-1 w-1.5/12" id="name" title="Смотреть чертеж">
+                            <button class="font-medium hover:underline cursor-pointer"
+                                (click)="showImageTblSP($event.target)">{{item.nameDrawing}}</button>
+                        </td>
                         <td class=" py-1 w-0.5/12 text-center" id="qvolity">
                             {{item.quantity}}
                         </td>
